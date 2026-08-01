@@ -1,1 +1,223 @@
+\section{GitHub Connection \& Repository Management}
 
+\subsection{Introduction}
+
+GitHub đóng vai trò trung tâm trong quá trình phát triển phần mềm của dự án \textbf{LivingDocs}. Đây là nơi lưu trữ mã nguồn, quản lý lịch sử thay đổi, phối hợp làm việc nhóm và hỗ trợ quy trình phát triển hiện đại dựa trên Git.
+
+Trong dự án Công nghệ Phần mềm, việc tích hợp GitHub với hệ thống \textbf{LivingDocs} là cần thiết nhằm đạt được các mục tiêu sau:
+
+\begin{itemize}
+    \item Quản lý mã nguồn tập trung và nhất quán giữa các thành viên trong nhóm.
+    \item Đồng bộ thay đổi mã nguồn với hệ thống tài liệu tự động.
+    \item Theo dõi lịch sử commit và Pull Request để kiểm soát tiến độ phát triển.
+    \item Hỗ trợ quy trình review và kiểm tra chất lượng phần mềm trước khi triển khai.
+    \item Giảm tình trạng tài liệu bị lỗi thời so với mã nguồn thực tế.
+\end{itemize}
+
+Nhờ khả năng tích hợp trực tiếp với GitHub, LivingDocs có thể tự động phát hiện thay đổi của mã nguồn và hỗ trợ cập nhật tài liệu tương ứng, giúp duy trì tính đồng bộ giữa tài liệu kỹ thuật và hệ thống đang phát triển.
+
+\subsection{GitHub Connection Using OAuth2}
+
+Để đảm bảo an toàn khi truy cập dữ liệu GitHub của người dùng, hệ thống LivingDocs sử dụng cơ chế \textbf{OAuth2 Authorization Code Flow}. Đây là phương thức xác thực tiêu chuẩn được GitHub khuyến nghị cho các ứng dụng web cần truy cập repository của người dùng.
+
+\paragraph{Cơ chế OAuth2}
+
+OAuth2 cho phép người dùng cấp quyền truy cập cho LivingDocs mà không cần chia sẻ mật khẩu GitHub. Hệ thống chỉ nhận được một \texttt{access token} với phạm vi quyền hạn đã được người dùng chấp thuận.
+
+\paragraph{Quy trình đăng nhập và xác thực}
+
+\begin{enumerate}
+    \item Người dùng chọn chức năng \textbf{Connect GitHub}.
+    \item Hệ thống chuyển hướng đến trang xác thực của GitHub.
+    \item Người dùng đăng nhập GitHub và cấp quyền truy cập repository.
+    \item GitHub trả về một \texttt{authorization code}.
+    \item LivingDocs gửi code này đến GitHub để lấy \texttt{access token}.
+    \item Token được mã hóa và lưu trữ an toàn trong hệ thống.
+\end{enumerate}
+
+\paragraph{Lợi ích của OAuth2}
+
+\begin{itemize}
+    \item \textbf{Bảo mật cao}: không lưu mật khẩu GitHub trong hệ thống.
+    \item \textbf{Phân quyền rõ ràng}: chỉ truy cập những repository được cấp phép.
+    \item \textbf{Dễ thu hồi quyền}: người dùng có thể hủy quyền truy cập bất kỳ lúc nào trên GitHub.
+    \item \textbf{Tuân thủ chuẩn hiện đại}: tương thích với các chính sách bảo mật của GitHub.
+\end{itemize}
+
+Cơ chế này giúp LivingDocs duy trì khả năng tích hợp mạnh mẽ với GitHub mà vẫn đảm bảo an toàn cho dữ liệu và tài khoản của người dùng.
+
+\subsection{Repository Management}
+
+Sau khi kết nối GitHub thành công, LivingDocs cho phép người dùng lựa chọn các repository cần quản lý và đồng bộ với hệ thống tài liệu.
+
+\paragraph{Lựa chọn Repository}
+
+Hệ thống sử dụng GitHub REST API để lấy danh sách repository mà người dùng có quyền truy cập. Người dùng có thể chọn một hoặc nhiều repository để đưa vào workspace của LivingDocs.
+
+Thông tin được lưu trữ bao gồm:
+
+\begin{itemize}
+    \item Repository ID.
+    \item Tên repository.
+    \item Chủ sở hữu (owner).
+    \item Nhánh mặc định (default branch).
+    \item Thời gian đồng bộ gần nhất.
+\end{itemize}
+
+\paragraph{Đồng bộ dữ liệu từ Branch chính}
+
+LivingDocs ưu tiên đồng bộ dữ liệu từ \texttt{main} hoặc \texttt{master} vì đây là phiên bản ổn định của dự án. Quá trình đồng bộ bao gồm:
+
+\begin{itemize}
+    \item Cập nhật commit mới nhất.
+    \item Lấy danh sách file thay đổi.
+    \item Đồng bộ Pull Request đã merge.
+    \item Cập nhật metadata của repository.
+\end{itemize}
+
+\paragraph{Theo dõi trạng thái cập nhật}
+
+Hệ thống duy trì trạng thái đồng bộ thông qua các chỉ số sau:
+
+\begin{itemize}
+    \item Commit cuối cùng đã xử lý.
+    \item Pull Request đang mở.
+    \item Pull Request đã merge.
+    \item Thời gian đồng bộ gần nhất.
+    \item Trạng thái thành công hoặc thất bại của lần đồng bộ.
+\end{itemize}
+
+Nhờ cơ chế này, LivingDocs luôn duy trì được phiên bản tài liệu tương ứng với trạng thái mới nhất của mã nguồn trong repository.
+
+\subsection{CI/CD Integration with GitHub Actions}
+
+Để tự động hóa quy trình phát triển và giảm thao tác thủ công, LivingDocs tích hợp với \textbf{GitHub Actions} nhằm hỗ trợ quy trình \textbf{Continuous Integration / Continuous Deployment (CI/CD)}.
+
+\paragraph{Workflow tự động Build/Test}
+
+Khi có commit mới được đẩy lên repository hoặc khi Pull Request được tạo, GitHub Actions sẽ tự động kích hoạt workflow kiểm tra. Quy trình thường bao gồm:
+
+\begin{enumerate}
+    \item Checkout mã nguồn.
+    \item Thiết lập môi trường chạy.
+    \item Build project.
+    \item Chạy unit test và integration test.
+    \item Gửi kết quả về GitHub.
+\end{enumerate}
+
+\paragraph{Tự động cập nhật tài liệu khi Merge PR}
+
+Sau khi Pull Request được merge vào branch chính, workflow sẽ gọi API của LivingDocs để:
+
+\begin{itemize}
+    \item Phân tích thay đổi của mã nguồn.
+    \item Xác định tài liệu liên quan cần cập nhật.
+    \item Sinh đề xuất thay đổi tài liệu.
+    \item Đồng bộ phiên bản tài liệu mới vào hệ thống.
+\end{itemize}
+
+\paragraph{Lợi ích của CI/CD}
+
+\begin{itemize}
+    \item \textbf{Giảm lỗi thủ công}: hạn chế quên cập nhật tài liệu hoặc bỏ sót bước kiểm tra.
+    \item \textbf{Tăng tốc độ phát triển}: kiểm tra tự động giúp phát hiện lỗi sớm hơn.
+    \item \textbf{Đảm bảo chất lượng}: mọi thay đổi đều được build và test trước khi đưa vào branch chính.
+    \item \textbf{Duy trì tính đồng bộ}: tài liệu luôn được cập nhật theo thay đổi của mã nguồn.
+\end{itemize}
+
+Việc tích hợp GitHub Actions giúp LivingDocs trở thành một phần tự nhiên của quy trình DevOps hiện đại.
+
+\subsection{Pull Request and Commit Tracking}
+
+Theo dõi Pull Request và commit là chức năng quan trọng giúp LivingDocs liên kết sự thay đổi của mã nguồn với tài liệu kỹ thuật tương ứng.
+
+\paragraph{Ghi nhận thay đổi từ Pull Request}
+
+Khi GitHub gửi sự kiện \texttt{pull\_request}, hệ thống sẽ:
+
+\begin{enumerate}
+    \item Nhận webhook từ GitHub.
+    \item Xác minh chữ ký bảo mật của webhook.
+    \item Lấy danh sách file được thêm, sửa hoặc xóa.
+    \item Phân loại mức độ ảnh hưởng đến tài liệu.
+    \item Tạo bản ghi theo dõi trong hệ thống LivingDocs.
+\end{enumerate}
+
+\paragraph{Liên kết Commit với tài liệu}
+
+Mỗi commit được gắn với:
+
+\begin{itemize}
+    \item Module hoặc thành phần hệ thống bị ảnh hưởng.
+    \item API hoặc class được thay đổi.
+    \item Tài liệu thiết kế hoặc tài liệu API liên quan.
+    \item Phiên bản tài liệu cần cập nhật.
+\end{itemize}
+
+Cơ chế này cho phép truy vết từ tài liệu đến commit và ngược lại, hỗ trợ kiểm toán và bảo trì hệ thống hiệu quả hơn.
+
+\paragraph{Quy trình Review và Merge}
+
+\begin{enumerate}
+    \item Developer tạo Pull Request.
+    \item GitHub Actions tự động build và chạy test.
+    \item LivingDocs phân tích ảnh hưởng đến tài liệu.
+    \item Reviewer kiểm tra mã nguồn và đề xuất cập nhật tài liệu.
+    \item Sau khi được chấp thuận, Pull Request được merge vào branch chính.
+    \item Hệ thống kích hoạt đồng bộ tài liệu cuối cùng.
+\end{enumerate}
+
+Quy trình này đảm bảo mọi thay đổi quan trọng của mã nguồn đều được xem xét cùng với tài liệu tương ứng trước khi chính thức tích hợp vào hệ thống.
+
+\subsection{Security and Error Handling}
+
+Do GitHub Integration làm việc với dịch vụ bên ngoài và dữ liệu mã nguồn quan trọng, hệ thống cần có cơ chế bảo mật và xử lý lỗi phù hợp để đảm bảo tính ổn định và an toàn.
+
+\paragraph{Token hết hạn}
+
+Access token của GitHub có thể hết hạn hoặc bị người dùng thu hồi quyền truy cập. Khi phát hiện token không còn hợp lệ, LivingDocs sẽ:
+
+\begin{itemize}
+    \item Đánh dấu trạng thái kết nối là \texttt{EXPIRED}.
+    \item Tạm dừng quá trình đồng bộ repository.
+    \item Hiển thị thông báo yêu cầu người dùng kết nối lại GitHub.
+\end{itemize}
+
+\paragraph{Lỗi kết nối GitHub}
+
+Các lỗi phổ biến bao gồm:
+
+\begin{itemize}
+    \item Mất kết nối mạng.
+    \item GitHub API không phản hồi.
+    \item Vượt quá giới hạn request (rate limit).
+    \item Webhook gửi thất bại.
+\end{itemize}
+
+Hệ thống áp dụng cơ chế \textbf{retry với exponential backoff} để thử gửi lại yêu cầu trước khi đánh dấu lỗi đồng bộ.
+
+\paragraph{Cơ chế cảnh báo và Refresh Token}
+
+LivingDocs hỗ trợ:
+
+\begin{itemize}
+    \item Cảnh báo khi token sắp hết hạn.
+    \item Gửi thông báo đến người dùng qua giao diện hệ thống.
+    \item Làm mới token tự động nếu GitHub hỗ trợ refresh token cho ứng dụng OAuth tương ứng.
+    \item Ghi log toàn bộ quá trình xác thực và đồng bộ để hỗ trợ kiểm tra và khắc phục sự cố.
+\end{itemize}
+
+\paragraph{Đảm bảo an toàn dữ liệu khi đồng bộ}
+
+Để bảo vệ dữ liệu mã nguồn và thông tin xác thực, hệ thống áp dụng các biện pháp sau:
+
+\begin{itemize}
+    \item Mã hóa token bằng AES trước khi lưu trữ.
+    \item Chỉ sử dụng giao thức HTTPS/TLS cho mọi kết nối với GitHub.
+    \item Xác minh chữ ký \texttt{X-Hub-Signature-256} của webhook để chống giả mạo yêu cầu.
+    \item Phân quyền truy cập theo vai trò người dùng (RBAC).
+    \item Không ghi token hoặc dữ liệu nhạy cảm vào log ứng dụng.
+\end{itemize}
+
+Những cơ chế trên giúp LivingDocs duy trì khả năng đồng bộ ổn định với GitHub, đồng thời đảm bảo tính bảo mật, toàn vẹn và khả năng truy vết của dữ liệu trong suốt quá trình quản lý repository và tài liệu.
+```
