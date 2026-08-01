@@ -1,1 +1,206 @@
+\section{System Requirements}
 
+\subsection{Requirements Introduction}
+
+Tài liệu này mô tả các yêu cầu chức năng và phi chức năng của hệ thống \textbf{LivingDocs} trong phạm vi dự án Công nghệ Phần mềm. Mục tiêu của phần yêu cầu là xác định rõ những chức năng hệ thống cần cung cấp, các điều kiện hoạt động, cũng như các ràng buộc kỹ thuật cần tuân thủ trong quá trình thiết kế và triển khai.
+
+Hệ thống LivingDocs được xây dựng nhằm hỗ trợ đồng bộ tài liệu kỹ thuật với mã nguồn được quản lý trên GitHub. Việc xác định đầy đủ yêu cầu giúp đảm bảo hệ thống đáp ứng đúng nhu cầu quản lý tài liệu, theo dõi thay đổi mã nguồn và hỗ trợ quy trình phát triển phần mềm hiện đại.
+
+\paragraph{Phạm vi hệ thống}
+
+Phạm vi của hệ thống bao gồm:
+
+\begin{itemize}
+    \item Kết nối tài khoản GitHub thông qua cơ chế OAuth2.
+    \item Quản lý repository cần theo dõi và đồng bộ.
+    \item Theo dõi commit, branch và Pull Request.
+    \item Đồng bộ tự động dữ liệu mã nguồn với hệ thống LivingDocs.
+    \item Hỗ trợ tích hợp CI/CD để tự động cập nhật tài liệu khi có thay đổi mã nguồn.
+\end{itemize}
+
+Những yêu cầu này đóng vai trò nền tảng cho việc thiết kế kiến trúc hệ thống và triển khai các thành phần GitHub Integration của LivingDocs.
+
+\subsection{Functional Requirements}
+
+\subsubsection{FR1: GitHub Authentication Using OAuth2}
+
+Hệ thống phải cho phép người dùng đăng nhập và kết nối tài khoản GitHub bằng giao thức \textbf{OAuth2}.
+
+\paragraph{Mô tả}
+
+\begin{itemize}
+    \item Người dùng chọn chức năng \textbf{Connect GitHub}.
+    \item Hệ thống chuyển hướng đến trang xác thực GitHub.
+    \item Sau khi người dùng cấp quyền truy cập, hệ thống nhận được \texttt{authorization code}.
+    \item Mã xác thực được trao đổi để lấy \texttt{access token}.
+    \item Token được lưu trữ an toàn để sử dụng cho các yêu cầu API tiếp theo.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+
+Người dùng có thể kết nối thành công tài khoản GitHub mà không cần cung cấp mật khẩu trực tiếp cho LivingDocs.
+
+\subsubsection{FR2: Repository Selection and Management}
+
+Hệ thống phải cho phép người dùng lựa chọn repository cần quản lý sau khi xác thực GitHub thành công.
+
+\paragraph{Mô tả}
+
+\begin{itemize}
+    \item Hiển thị danh sách repository mà người dùng có quyền truy cập.
+    \item Cho phép chọn một hoặc nhiều repository.
+    \item Lưu thông tin repository bao gồm tên, owner, branch mặc định và thời gian đồng bộ gần nhất.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+
+Repository được thêm vào workspace của LivingDocs và sẵn sàng cho quá trình đồng bộ tự động.
+
+\subsubsection{FR3: Commit and Pull Request Synchronization}
+
+Hệ thống phải đồng bộ thông tin commit và Pull Request từ GitHub với LivingDocs.
+
+\paragraph{Mô tả}
+
+\begin{itemize}
+    \item Lấy danh sách commit mới từ branch chính.
+    \item Theo dõi Pull Request được tạo, cập nhật hoặc merge.
+    \item Ghi nhận danh sách file thay đổi trong mỗi Pull Request.
+    \item Liên kết thay đổi mã nguồn với tài liệu liên quan trong LivingDocs.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+
+LivingDocs luôn phản ánh trạng thái mới nhất của mã nguồn trong repository GitHub.
+
+\subsubsection{FR4: CI/CD Integration for Automatic Documentation Update}
+
+Hệ thống phải hỗ trợ tích hợp với \textbf{GitHub Actions} hoặc công cụ CI/CD tương đương để tự động cập nhật tài liệu.
+
+\paragraph{Mô tả}
+
+\begin{itemize}
+    \item Kích hoạt workflow khi có commit hoặc Pull Request mới.
+    \item Build và kiểm tra mã nguồn tự động.
+    \item Gửi thông tin thay đổi đến LivingDocs thông qua API nội bộ.
+    \item Tự động tạo hoặc cập nhật tài liệu liên quan sau khi Pull Request được merge.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+
+Tài liệu kỹ thuật được cập nhật tự động mà không cần thao tác thủ công từ người dùng.
+
+\subsubsection{FR5: Synchronization Status Management}
+
+Hệ thống phải quản lý và hiển thị trạng thái của quá trình đồng bộ.
+
+\paragraph{Mô tả}
+
+\begin{itemize}
+    \item Theo dõi trạng thái \texttt{SUCCESS}, \texttt{FAILED} hoặc \texttt{PENDING}.
+    \item Lưu thời gian bắt đầu và kết thúc đồng bộ.
+    \item Ghi nhận thông tin lỗi nếu quá trình đồng bộ thất bại.
+    \item Cho phép người dùng thực hiện đồng bộ lại khi cần thiết.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+
+Người dùng có thể theo dõi và kiểm soát toàn bộ quá trình đồng bộ giữa GitHub và LivingDocs.
+
+\subsection{Non-Functional Requirements}
+
+\subsubsection{NFR1: Security}
+
+Hệ thống phải đảm bảo an toàn cho dữ liệu và thông tin xác thực của người dùng.
+
+\paragraph{Yêu cầu}
+
+\begin{itemize}
+    \item Access token phải được mã hóa trước khi lưu trữ.
+    \item Chỉ sử dụng kết nối HTTPS/TLS khi giao tiếp với GitHub API.
+    \item Áp dụng cơ chế phân quyền truy cập theo vai trò người dùng.
+    \item Không ghi dữ liệu nhạy cảm vào log hệ thống.
+\end{itemize}
+
+\subsubsection{NFR2: Performance}
+
+Quá trình đồng bộ phải hoạt động hiệu quả và không ảnh hưởng đáng kể đến hệ thống chính.
+
+\paragraph{Yêu cầu}
+
+\begin{itemize}
+    \item Đồng bộ incremental thay vì tải lại toàn bộ repository.
+    \item Ưu tiên xử lý bất đồng bộ đối với các tác vụ phân tích lớn.
+    \item Thời gian phản hồi của API phải đủ nhanh để hỗ trợ trải nghiệm người dùng.
+\end{itemize}
+
+\subsubsection{NFR3: Scalability}
+
+Hệ thống phải có khả năng mở rộng để phục vụ nhiều repository và nhiều người dùng đồng thời.
+
+\paragraph{Yêu cầu}
+
+\begin{itemize}
+    \item Hỗ trợ quản lý nhiều repository trong cùng một tài khoản.
+    \item Cho phép nhiều người dùng sử dụng hệ thống đồng thời.
+    \item Thiết kế dịch vụ theo hướng module hóa để dễ dàng mở rộng trong tương lai.
+\end{itemize}
+
+\subsubsection{NFR4: Reliability and Recovery}
+
+Hệ thống phải duy trì tính ổn định và có khả năng phục hồi khi xảy ra lỗi kết nối hoặc lỗi dịch vụ bên ngoài.
+
+\paragraph{Yêu cầu}
+
+\begin{itemize}
+    \item Tự động thử lại khi GitHub API tạm thời không phản hồi.
+    \item Lưu trạng thái đồng bộ để tiếp tục xử lý sau khi phục hồi.
+    \item Ghi log chi tiết để hỗ trợ giám sát và khắc phục sự cố.
+\end{itemize}
+
+\subsubsection{NFR5: Usability}
+
+Giao diện người dùng phải trực quan và dễ sử dụng đối với thành viên nhóm phát triển phần mềm.
+
+\paragraph{Yêu cầu}
+
+\begin{itemize}
+    \item Các chức năng kết nối GitHub và đồng bộ phải dễ tìm thấy.
+    \item Hiển thị trạng thái đồng bộ rõ ràng bằng biểu tượng hoặc màu sắc.
+    \item Cung cấp thông báo lỗi và hướng dẫn xử lý khi xảy ra sự cố.
+\end{itemize}
+
+\subsection{System Constraints}
+
+\subsubsection{Official GitHub API}
+
+Hệ thống phải sử dụng \textbf{GitHub REST API} hoặc \textbf{GitHub GraphQL API} chính thức để đảm bảo tính tương thích và tuân thủ chính sách của GitHub.
+
+\subsubsection{Repository Access Scope}
+
+Hệ thống chỉ hỗ trợ các repository:
+
+\begin{itemize}
+    \item Public repository.
+    \item Private repository mà người dùng đã cấp quyền truy cập thông qua OAuth2.
+\end{itemize}
+
+Những repository không có quyền truy cập hợp lệ sẽ không được phép đồng bộ với LivingDocs.
+
+\subsubsection{LivingDocs Internal API Integration}
+
+Việc trao đổi dữ liệu giữa GitHub Integration và LivingDocs phải được thực hiện thông qua \textbf{API nội bộ} của hệ thống.
+
+\paragraph{Ràng buộc}
+
+\begin{itemize}
+    \item Chỉ các dịch vụ được xác thực mới được phép gọi API nội bộ.
+    \item Dữ liệu đồng bộ phải tuân theo định dạng chuẩn do LivingDocs quy định.
+    \item Mọi yêu cầu cập nhật tài liệu phải được kiểm tra quyền truy cập trước khi xử lý.
+\end{itemize}
+
+\subsection{Conclusion}
+
+Phần yêu cầu hệ thống đã xác định các yêu cầu chức năng và phi chức năng quan trọng của hệ thống \textbf{LivingDocs}. Các yêu cầu chức năng tập trung vào việc kết nối GitHub bằng OAuth2, quản lý repository, đồng bộ commit và Pull Request, tích hợp CI/CD và quản lý trạng thái đồng bộ. Đồng thời, các yêu cầu phi chức năng đảm bảo hệ thống đáp ứng các tiêu chí về bảo mật, hiệu năng, khả năng mở rộng, độ ổn định và tính dễ sử dụng.
+
+Việc tích hợp GitHub đóng vai trò cốt lõi trong kiến trúc LivingDocs vì nó giúp hệ thống theo dõi chính xác mọi thay đổi của mã nguồn và tự động cập nhật tài liệu tương ứng. Điều này góp phần đảm bảo tài liệu kỹ thuật luôn \textbf{cập nhật, nhất quán và phản ánh đúng trạng thái thực tế của hệ thống phần mềm}, từ đó nâng cao chất lượng quản lý dự án và hiệu quả phối hợp của nhóm phát triển.
