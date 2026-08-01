@@ -1,1 +1,145 @@
+\section{System Workflow \& Automation Pipeline}
 
+\subsection{Introduction}
+
+Quy trình làm việc (Workflow) đóng vai trò là "xương sống" vận hành hệ thống \textbf{LivingDocs}, liên kết chặt chẽ các thành phần từ việc theo dõi mã nguồn GitHub, phân tích cú pháp mã nguồn, truy vấn ngữ cảnh RAG cho đến khâu sinh tài liệu bằng AI Engine. Một quy trình tự động hóa mạch lạc đảm bảo tài liệu được duy trì liên tục mà không làm gián đoạn luồng làm việc hiện tại của các kỹ sư phần mềm.
+
+Trong hệ thống \textbf{LivingDocs}, quy trình làm việc được thiết kế để đạt được các mục tiêu chính sau:
+
+\begin{itemize}
+    \item Tự động hóa toàn bộ vòng đời cập nhật tài liệu từ lúc phát sinh commit đến khi phát hành tài liệu chính thức.
+    \item Đảm bảo phản hồi nhanh chóng với mô hình xử lý sự kiện theo thời gian thực (Event-Driven Architecture).
+    \item Tích hợp cơ chế kiểm duyệt từ con người (Human-in-the-Loop) để đảm bảo độ tin cậy và chất lượng tài liệu.
+    \item Khả năng chịu lỗi cao và khôi phục trạng thái quy trình khi gặp sự cố mạng hoặc lỗi dịch vụ bên ngoài.
+    \item Cung cấp khả năng truy vết (Traceability) minh bạch cho từng bước xử lý trong đường ống (pipeline).
+\end{itemize}
+
+Nhờ sự phối hợp nhịp nhàng giữa các module, workflow của LivingDocs giúp kết nối tự nhiên giữa quy trình phát triển mã nguồn và quản lý tài liệu kỹ thuật.
+
+\subsection{Event-Driven Trigger Mechanism}
+
+Hệ thống sử dụng kiến trúc dựa trên sự kiện (Event-Driven) để kích hoạt luồng công việc ngay khi có thay đổi từ môi trường phát triển mã nguồn.
+
+\paragraph{Nguồn sự kiện kích hoạt (Trigger Sources)}
+
+Quy trình làm việc có thể được kích hoạt thông qua nhiều kênh khác nhau:
+
+\begin{itemize}
+    \item \textbf{GitHub Webhooks}: Kích hoạt tự động khi nhận các sự kiện \texttt{push}, \texttt{pull\_request}, hoặc \texttt{release} từ repository.
+    \item \textbf{Thao tác thủ công (Manual Trigger)}: Người dùng chủ động yêu cầu tái tạo hoặc cập nhật tài liệu cho một module cụ thể trên giao diện web.
+    \item \textbf{Lịch trình định kỳ (Scheduled Cron Job)}: Chạy quét tổng thể định kỳ để phát hiện các tài liệu bị lệch ngữ cảnh so với mã nguồn thực tế.
+    \item \textbf{CI/CD Pipeline Integration}: Kích hoạt thông qua GitHub Actions khi hoàn thành các bước build và test hệ thống.
+\end{itemize}
+
+\paragraph{Xác thực và Hàng chờ sự kiện}
+
+Khi một sự kiện được gửi đến hệ thống:
+
+\begin{enumerate}
+    \item Trình tiếp nhận (\texttt{Webhook Receiver}) xác minh chữ ký bảo mật \texttt{X-Hub-Signature-256} từ GitHub.
+    \item Sự kiện hợp lệ được phân loại và đẩy vào hàng chờ thông điệp (\texttt{Message Queue}) như RabbitMQ hoặc Redis Pub/Sub.
+    \item Cơ chế hàng chờ giúp tách rời (\texttt{decouple}) khâu tiếp nhận và khâu xử lý nặng, tránh nghẽn hệ thống khi có lượng lớn commit đồng thời.
+\end{enumerate}
+
+\paragraph{Lợi ích của Cơ chế Dựa trên Sự kiện}
+
+\begin{itemize}
+    \item \textbf{Xử lý bất đồng bộ}: Giúp hệ thống phản hồi GitHub tức thì mà không cần chờ AI sinh tài liệu hoàn tất.
+    \item \textbf{Khả năng mở rộng tốt}: Dễ dàng gia tăng các Worker node để xử lý hàng chờ khi tải hệ thống tăng cao.
+    \item \textbf{Kiểm soát thứ tự}: Đảm bảo các thay đổi được xử lý theo đúng trình tự thời gian phát sinh.
+\end{itemize}
+
+\subsection{Core Execution Pipeline}
+
+Đường ống xử lý trung tâm là nơi biến dữ liệu mã nguồn thô thành nội dung tài liệu hoàn chỉnh thông qua các giai đoạn nối tiếp nhau.
+
+\paragraph{Giai đoạn 1: Phân tích Khác biệt Mã nguồn (Code Diff Analysis)}
+
+\begin{itemize}
+    \item Lấy danh sách các tệp bị thay đổi (\texttt{added}, \texttt{modified}, \texttt{deleted}) từ commit hoặc Pull Request.
+    \item Phân tích AST để xác định chính xác các hàm, lớp hoặc điểm cuối API bị ảnh hưởng trực tiếp.
+    \item Lọc bỏ các tệp không chứa logic kỹ thuật (như tệp cấu hình tạm, hình ảnh, tài nguyên tĩnh).
+\end{itemize}
+
+\paragraph{Giai đoạn 2: Bổ sung Ngữ cảnh và Truy vấn RAG}
+
+\begin{enumerate}
+    \item Trích xuất nội dung mã nguồn cũ và mới của các thành phần bị ảnh hưởng.
+    \item Thực hiện truy vấn ngữ nghĩa trên \texttt{Vector Database} để tìm các đoạn tài liệu hiện có liên quan.
+    \item Đóng gói ngữ cảnh gồm: Mã nguồn thay đổi + Tài liệu liên quan + Mẫu prompt định dạng chuẩn.
+\end{enumerate}
+
+\paragraph{Giai đoạn 3: Sinh nội dung và Hậu xử lý (Generation \& Post-processing)}
+
+\begin{itemize}
+    \item AI Engine nhận gói ngữ cảnh và thực hiện sinh nội dung tài liệu tương ứng.
+    \item Bộ kiểm tra cú pháp (\texttt{Syntax Validator}) xác minh tính hợp lệ của mã Markdown, LaTeX hoặc sơ đồ Mermaid.
+    \item Bộ kiểm tra liên kết (\texttt{Link Checker}) đảm bảo không bị gãy liên kết (\texttt{broken links}) đến các phần khác trong hệ thống tài liệu.
+\end{itemize}
+
+\subsection{Human-in-the-Loop and Review Approval Process}
+
+Đảm bảo độ chính xác và tính chịu trách nhiệm của tài liệu do AI sinh ra thông qua cơ chế duyệt tài liệu linh hoạt trước khi chính thức xuất bản.
+
+\paragraph{Đề xuất Thay đổi Tài liệu (Documentation Proposal)}
+
+Sau khi sinh tài liệu thành công, LivingDocs không đè trực tiếp lên tài liệu chính mà tạo ra một bản đề xuất (\texttt{Proposal}):
+
+\begin{itemize}
+    \item Nếu sự kiện bắt nguồn từ Pull Request trên GitHub, hệ thống có thể phản hồi trực tiếp một comment hoặc mở một PR tài liệu riêng biệt.
+    \item Nếu thao tác trên giao diện LivingDocs, bản thảo sẽ lưu dưới dạng trạng thái \texttt{DRAFT\_REVIEW}.
+\end{itemize}
+
+\paragraph{Giao diện So sánh Trực quan (Side-by-Side Diff)}
+
+Người dùng được cung cấp giao diện trực quan bao gồm:
+
+\begin{itemize}
+    \item Màn hình so sánh mã nguồn thay đổi bên trái và đề xuất tài liệu bên phải.
+    \item Đánh dấu trực quan các đoạn nội dung được thêm mới, sửa đổi hoặc xóa bỏ.
+    \item Khả năng chỉnh sửa trực tiếp nội dung đề xuất trước khi chấp thuận.
+\end{itemize}
+
+\paragraph{Quy trình Phê duyệt và Đồng bộ}
+
+\begin{enumerate}
+    \item Developer hoặc Technical Writer nhận thông báo có bản đề xuất tài liệu mới.
+    \item Người kiểm duyệt xem xét nội dung, tiến hành chỉnh sửa thủ công nếu cần.
+    \item Nhấn nút \textbf{Approve \& Merge} để xác nhận.
+    \item Hệ thống chính thức cập nhật tài liệu vào kho lưu trữ chính và đồng bộ chỉ mục Vector RAG mới.
+\end{enumerate}
+
+\subsection{State Tracking, Resilience and Auditing}
+
+Một quy trình làm việc chuyên nghiệp đòi hỏi khả năng theo dõi trạng thái chặt chẽ, xử lý ngoại lệ tin cậy và lưu trữ nhật ký truy vết đầy đủ.
+
+\paragraph{Quản lý Trạng thái Quy trình (Workflow State Machine)}
+
+Mỗi lượt chạy quy trình được quản lý như một máy trạng thái hữu hạn (\texttt{Finite State Machine}) với các trạng thái chính:
+
+\begin{itemize}
+    \item \texttt{QUEUED}: Sự kiện đang nằm trong hàng chờ xử lý.
+    \item \texttt{ANALYZING}: Đang phân tích mã nguồn và trích xuất AST.
+    \item \texttt{GENERATING}: Đang trong quá trình gọi AI Engine sinh tài liệu.
+    \item \texttt{AWAITING\_REVIEW}: Đã sinh xong tài liệu, đang chờ người dùng kiểm duyệt.
+    \item \texttt{COMPLETED}: Tài liệu đã được duyệt và đồng bộ thành công.
+    \item \texttt{FAILED}: Quy trình gặp lỗi và bị gián đoạn.
+\end{itemize}
+
+\paragraph{Xử lý Sự cố và Khôi phục Trạng thái}
+
+\begin{itemize}
+    \item \textbf{Retry Mechanism}: Khi gặp lỗi tạm thời (Mạng gián đoạn, AI Service bận), hệ thống tự động thử lại tối đa 3 lần với khoảng thời gian dãn cách tăng dần.
+    \item \textbf{Dead Letter Queue (DLQ)}: Nếu thất bại sau số lần thử lại tối đa, công việc được chuyển vào DLQ để kỹ thuật viên kiểm tra thủ công.
+    \item \textbf{State Rollback}: Nếu quá trình cập nhật tài liệu thất bại ở khâu cuối, hệ thống hoàn trả về trạng thái ổn định trước đó.
+\end{itemize}
+
+\paragraph{Nhật ký Truy vết và Báo cáo (Audit Logs \& Monitoring)}
+
+\begin{itemize}
+    \item Ghi lại toàn bộ lịch sử thay đổi trạng thái của quy trình cùng thời gian thực thi (\texttt{execution time}).
+    \item Theo dõi thời gian xử lý từng giai đoạn để phát hiện điểm nghẽn (\texttt{bottleneck}).
+    \item Gửi thông báo sự cố qua Email/Slack/Webhook đến quản trị viên khi quy trình thất bại.
+\end{itemize}
+
+Nhờ vào kiến trúc workflow chặt chẽ, an toàn và dễ theo dõi, \textbf{LivingDocs} đảm bảo quy trình duy trì tài liệu diễn ra tự động, chính xác và liền mạch cùng tiến độ phát triển phần mềm của dự án.
