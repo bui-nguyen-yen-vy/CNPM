@@ -2,7 +2,7 @@
 
 \subsection{Introduction}
 
-GitHub đóng vai trò trung tâm trong quá trình phát triển phần mềm của dự án \textbf{LivingDocs}. Đây là nơi lưu trữ mã nguồn, quản lý lịch sử thay đổi, phối hợp làm việc nhóm và hỗ trợ quy trình phát triển hiện đại dựa trên Git.
+GitHub được sử dụng như nền tảng quản lý mã nguồn của dự án LivingDocs. Toàn bộ tài liệu, mã nguồn và lịch sử thay đổi đều được lưu trữ tập trung trên GitHub nhằm hỗ trợ các thành viên làm việc nhóm hiệu quả hơn.
 
 Trong dự án Công nghệ Phần mềm, việc tích hợp GitHub với hệ thống \textbf{LivingDocs} là cần thiết nhằm đạt được các mục tiêu sau:
 
@@ -18,8 +18,7 @@ Nhờ khả năng tích hợp trực tiếp với GitHub, LivingDocs có thể t
 
 \subsection{GitHub Connection Using OAuth2}
 
-Để đảm bảo an toàn khi truy cập dữ liệu GitHub của người dùng, hệ thống LivingDocs sử dụng cơ chế \textbf{OAuth2 Authorization Code Flow}. Đây là phương thức xác thực tiêu chuẩn được GitHub khuyến nghị cho các ứng dụng web cần truy cập repository của người dùng.
-
+Để người dùng có thể kết nối tài khoản GitHub với LivingDocs mà không phải cung cấp mật khẩu trực tiếp, hệ thống sử dụng cơ chế OAuth2 Authorization Code Flow do GitHub hỗ trợ.
 \paragraph{Cơ chế OAuth2}
 
 OAuth2 cho phép người dùng cấp quyền truy cập cho LivingDocs mà không cần chia sẻ mật khẩu GitHub. Hệ thống chỉ nhận được một \texttt{access token} với phạm vi quyền hạn đã được người dùng chấp thuận.
@@ -66,8 +65,7 @@ Thông tin được lưu trữ bao gồm:
 
 \paragraph{Đồng bộ dữ liệu từ Branch chính}
 
-LivingDocs ưu tiên đồng bộ dữ liệu từ \texttt{main} hoặc \texttt{master} vì đây là phiên bản ổn định của dự án. Quá trình đồng bộ bao gồm:
-
+Theo thiết kế của hệ thống, sau khi kết nối GitHub thành công, người dùng sẽ có thể lựa chọn repository cần quản lý. Thông tin của repository sẽ được lưu để phục vụ cho quá trình theo dõi tài liệu và đồng bộ sau này.
 \begin{itemize}
     \item Cập nhật commit mới nhất.
     \item Lấy danh sách file thay đổi.
@@ -87,15 +85,13 @@ Hệ thống duy trì trạng thái đồng bộ thông qua các chỉ số sau:
     \item Trạng thái thành công hoặc thất bại của lần đồng bộ.
 \end{itemize}
 
-Nhờ cơ chế này, LivingDocs luôn duy trì được phiên bản tài liệu tương ứng với trạng thái mới nhất của mã nguồn trong repository.
-
+Trong giai đoạn hiện tại của dự án, nội dung này mới dừng ở mức thiết kế và mô tả giải pháp. Việc triển khai chức năng kết nối và đồng bộ Repository sẽ được thực hiện sau khi các thành phần Backend và Database của hệ thống được hoàn thiện.
 \subsection{CI/CD Integration with GitHub Actions}
 
-Để tự động hóa quy trình phát triển và giảm thao tác thủ công, LivingDocs tích hợp với \textbf{GitHub Actions} nhằm hỗ trợ quy trình \textbf{Continuous Integration / Continuous Deployment (CI/CD)}.
-
+Để hỗ trợ quá trình phát triển trong các giai đoạn tiếp theo, LivingDocs dự kiến tích hợp với \textbf{GitHub Actions} nhằm tự động hóa quy trình \textbf{Continuous Integration / Continuous Deployment (CI/CD)}. Việc tích hợp này sẽ được triển khai khi hệ thống hoàn thành các thành phần Backend, Frontend và Database.
 \paragraph{Workflow tự động Build/Test}
 
-Khi có commit mới được đẩy lên repository hoặc khi Pull Request được tạo, GitHub Actions sẽ tự động kích hoạt workflow kiểm tra. Quy trình thường bao gồm:
+Trong giai đoạn triển khai hệ thống, khi có commit mới được đẩy lên repository hoặc Pull Request được tạo, GitHub Actions có thể được cấu hình để tự động kích hoạt workflow kiểm tra. Quy trình thường bao gồm:
 
 \begin{enumerate}
     \item Checkout mã nguồn.
@@ -107,7 +103,7 @@ Khi có commit mới được đẩy lên repository hoặc khi Pull Request đ�
 
 \paragraph{Tự động cập nhật tài liệu khi Merge PR}
 
-Sau khi Pull Request được merge vào branch chính, workflow sẽ gọi API của LivingDocs để:
+Sau khi Pull Request được merge vào branch chính, workflow có thể gọi API của LivingDocs để:
 
 \begin{itemize}
     \item Phân tích thay đổi của mã nguồn.
@@ -125,8 +121,7 @@ Sau khi Pull Request được merge vào branch chính, workflow sẽ gọi API 
     \item \textbf{Duy trì tính đồng bộ}: tài liệu luôn được cập nhật theo thay đổi của mã nguồn.
 \end{itemize}
 
-Việc tích hợp GitHub Actions giúp LivingDocs trở thành một phần tự nhiên của quy trình DevOps hiện đại.
-
+Trong giai đoạn triển khai sau này, nhóm dự kiến tích hợp GitHub Actions để hỗ trợ quy trình CI/CD.
 \subsection{Pull Request and Commit Tracking}
 
 Theo dõi Pull Request và commit là chức năng quan trọng giúp LivingDocs liên kết sự thay đổi của mã nguồn với tài liệu kỹ thuật tương ứng.
@@ -194,8 +189,7 @@ Các lỗi phổ biến bao gồm:
     \item Webhook gửi thất bại.
 \end{itemize}
 
-Hệ thống áp dụng cơ chế \textbf{retry với exponential backoff} để thử gửi lại yêu cầu trước khi đánh dấu lỗi đồng bộ.
-
+Trong trường hợp GitHub API không phản hồi, hệ thống sẽ thử gửi lại yêu cầu nhiều lần trước khi thông báo lỗi đến người dùng.
 \paragraph{Cơ chế cảnh báo và Refresh Token}
 
 LivingDocs hỗ trợ:
@@ -203,7 +197,7 @@ LivingDocs hỗ trợ:
 \begin{itemize}
     \item Cảnh báo khi token sắp hết hạn.
     \item Gửi thông báo đến người dùng qua giao diện hệ thống.
-    \item Làm mới token tự động nếu GitHub hỗ trợ refresh token cho ứng dụng OAuth tương ứng.
+    \item Nếu access token không còn hợp lệ hoặc người dùng thu hồi quyền truy cập, hệ thống sẽ yêu cầu người dùng thực hiện kết nối lại GitHub để tiếp tục đồng bộ dữ liệu.
     \item Ghi log toàn bộ quá trình xác thực và đồng bộ để hỗ trợ kiểm tra và khắc phục sự cố.
 \end{itemize}
 
@@ -212,12 +206,11 @@ LivingDocs hỗ trợ:
 Để bảo vệ dữ liệu mã nguồn và thông tin xác thực, hệ thống áp dụng các biện pháp sau:
 
 \begin{itemize}
-    \item Mã hóa token bằng AES trước khi lưu trữ.
+    \item Token được lưu trữ dưới dạng mã hóa nhằm đảm bảo an toàn thông tin và hạn chế nguy cơ rò rỉ dữ liệu xác thực.
     \item Chỉ sử dụng giao thức HTTPS/TLS cho mọi kết nối với GitHub.
     \item Xác minh chữ ký \texttt{X-Hub-Signature-256} của webhook để chống giả mạo yêu cầu.
     \item Phân quyền truy cập theo vai trò người dùng (RBAC).
     \item Không ghi token hoặc dữ liệu nhạy cảm vào log ứng dụng.
 \end{itemize}
 
-Những cơ chế trên giúp LivingDocs duy trì khả năng đồng bộ ổn định với GitHub, đồng thời đảm bảo tính bảo mật, toàn vẹn và khả năng truy vết của dữ liệu trong suốt quá trình quản lý repository và tài liệu.
-```
+Các nội dung trình bày trong chương này là cơ sở cho việc triển khai chức năng GitHub Integration trong các Sprint tiếp theo. Trong giai đoạn hiện tại, nhóm tập trung hoàn thiện yêu cầu, thiết kế hệ thống và tài liệu kỹ thuật trước khi bắt đầu phát triển mã nguồn.
