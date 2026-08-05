@@ -1,1 +1,79 @@
-
+\section{System Testing}
+\subsection{Introduction}
+Kiểm thử phần mềm (Software Testing) là một giai đoạn quan trọng trong quy trình phát triển phần mềm nhằm đảm bảo hệ thống hoạt động đúng theo yêu cầu đã đặc tả, phát hiện lỗi sớm và nâng cao chất lượng sản phẩm trước khi đưa vào sử dụng.
+Đối với hệ thống \textbf{LivingDocs}, việc kiểm thử giúp xác minh các chức năng như kết nối GitHub, sinh tài liệu bằng AI, đồng bộ tài liệu, quản lý phiên bản và phát hiện sự sai lệch giữa mã nguồn và tài liệu. Ngoài việc kiểm tra tính đúng đắn của chức năng, quá trình kiểm thử còn giúp đánh giá hiệu năng, độ ổn định và khả năng đáp ứng của hệ thống trong các điều kiện sử dụng khác nhau.
+Trong giai đoạn hiện tại của dự án, nhóm tập trung xây dựng kế hoạch kiểm thử và xác định phạm vi kiểm thử. Việc triển khai kiểm thử thực tế sẽ được thực hiện sau khi các thành phần Backend, Frontend và Database của hệ thống được hoàn thiện.
+\subsection{Testing Objectives}
+Mục tiêu của quá trình kiểm thử bao gồm:
+\begin{itemize}
+    \item Kiểm tra các chức năng của hệ thống hoạt động đúng theo yêu cầu đã đặc tả.
+    \item Đảm bảo quá trình kết nối và đồng bộ dữ liệu với GitHub hoạt động chính xác.
+    \item Kiểm tra chức năng sinh tài liệu bằng AI và khả năng cập nhật tài liệu tự động.
+    \item Đánh giá khả năng phát hiện sự sai lệch giữa mã nguồn và tài liệu.
+    \item Kiểm tra tính ổn định, hiệu năng và khả năng mở rộng của hệ thống.
+    \item Phát hiện và khắc phục lỗi trước khi hệ thống được triển khai chính thức.
+\end{itemize}
+\subsection{Testing Scope}
+Phạm vi kiểm thử của hệ thống LivingDocs bao gồm các chức năng chính sau:
+\begin{itemize}
+    \item GitHub Connection \& Repository Management.
+    \item AI Source-Code Reading \& Documentation Generation.
+    \item Automatic Documentation Update.
+    \item Documentation Drift Detection.
+    \item Review \& Approval Workflow.
+    \item Knowledge Base \& Version History.
+    \item Administration \& System Configuration.
+\end{itemize}
+Ngoài các chức năng chính, hệ thống cũng sẽ được kiểm thử về khả năng bảo mật, hiệu năng và khả năng xử lý lỗi trong quá trình đồng bộ dữ liệu với GitHub.
+\subsection{Testing Strategy}
+Nhóm dự kiến áp dụng nhiều phương pháp kiểm thử nhằm đảm bảo chất lượng của hệ thống.
+\paragraph{Functional Testing}
+Kiểm tra các chức năng của hệ thống theo đúng yêu cầu đã phân tích và thiết kế.
+\paragraph{Integration Testing}
+Kiểm tra sự tương tác giữa các module như GitHub Integration, AI Documentation và Database nhằm đảm bảo dữ liệu được trao đổi chính xác giữa các thành phần.
+\paragraph{System Testing}
+Đánh giá toàn bộ hệ thống sau khi hoàn thành việc tích hợp nhằm đảm bảo các chức năng hoạt động ổn định trong môi trường thực tế.
+\paragraph{User Acceptance Testing (UAT)}
+Kiểm tra khả năng đáp ứng yêu cầu của người dùng cuối trước khi hệ thống được đưa vào sử dụng.
+\subsection{Testing Levels}
+Quá trình kiểm thử dự kiến được thực hiện theo các mức sau:
+\paragraph{Unit Testing}
+Kiểm thử từng hàm hoặc từng lớp của hệ thống nhằm đảm bảo các thành phần hoạt động chính xác trước khi tích hợp.
+\paragraph{Integration Testing}
+Kiểm tra sự kết nối giữa các module như Backend, Database và GitHub API nhằm phát hiện lỗi phát sinh trong quá trình trao đổi dữ liệu.
+\paragraph{System Testing}
+Kiểm tra toàn bộ hệ thống sau khi tích hợp hoàn chỉnh để đảm bảo mọi chức năng đáp ứng đúng yêu cầu của dự án.
+\paragraph{Acceptance Testing}
+Thực hiện kiểm thử với các kịch bản sử dụng thực tế nhằm đánh giá mức độ đáp ứng yêu cầu của người dùng.
+\subsection{Testing Environment}
+Môi trường kiểm thử dự kiến của hệ thống được trình bày trong Bảng dưới đây.
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Thành phần} & \textbf{Công nghệ} \\ \hline
+Backend & Java Spring Boot \\ \hline
+Frontend & ReactJS \\ \hline
+Database & MySQL \\ \hline
+IDE & Visual Studio Code \\ \hline
+Version Control & GitHub \\ \hline
+API Testing & Postman \\ \hline
+Browser & Google Chrome \\ \hline
+Operating System & Windows 11 \\ \hline
+\end{tabular}
+\end{center}
+Môi trường trên được lựa chọn nhằm đảm bảo phù hợp với kiến trúc của hệ thống và hỗ trợ quá trình phát triển, kiểm thử cũng như triển khai sau này.
+\subsection{Future Testing Plan}
+Sau khi hoàn thành việc phát triển hệ thống, nhóm dự kiến thực hiện quy trình kiểm thử theo các bước sau:
+\begin{enumerate}
+    \item Xây dựng bộ Test Case cho từng chức năng của hệ thống.
+    \item Thực hiện Unit Testing đối với từng module.
+    \item Thực hiện Integration Testing giữa các thành phần của hệ thống.
+    \item Thực hiện System Testing để đánh giá toàn bộ hệ thống.
+    \item Ghi nhận lỗi, phân loại mức độ ảnh hưởng và tiến hành sửa lỗi.
+    \item Thực hiện Regression Testing sau khi sửa lỗi.
+    \item Tiến hành User Acceptance Testing trước khi triển khai chính thức.
+\end{enumerate}
+Quy trình này giúp đảm bảo hệ thống đạt được chất lượng mong muốn và hạn chế tối đa các lỗi phát sinh trong quá trình vận hành.
+\subsection{Conclusion}
+Kiểm thử phần mềm là một hoạt động không thể thiếu nhằm đảm bảo chất lượng và độ tin cậy của hệ thống LivingDocs. Trong giai đoạn hiện tại, nhóm đã xây dựng kế hoạch kiểm thử và xác định phạm vi, mục tiêu cũng như chiến lược kiểm thử cho toàn bộ hệ thống.
+Trong các Sprint tiếp theo, sau khi hoàn thành việc phát triển Backend, Frontend và Database, nhóm sẽ triển khai kiểm thử thực tế theo kế hoạch đã đề ra nhằm đánh giá tính chính xác, hiệu năng, khả năng bảo mật và mức độ đáp ứng yêu cầu của hệ thống trước khi hoàn thiện sản phẩm.
