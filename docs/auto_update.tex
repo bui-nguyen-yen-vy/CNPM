@@ -1,1 +1,444 @@
 
+
+import subprocess
+
+tex_content = r"""\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, backgrounds, calc}
+
+% Define custom colors
+\definecolor{primaryblue}{RGB}{26, 82, 118}
+\definecolor{secondaryblue}{RGB}{41, 128, 185}
+\definecolor{lightbg}{RGB}{245, 247, 250}
+\definecolor{codebg}{RGB}{240, 243, 246}
+\definecolor{accentorange}{RGB}{211, 84, 0}
+\definecolor{darkgreen}{RGB}{39, 174, 96}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={auto_update.tex - Module Cập nhật Tài liệu Tự động},
+}
+
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{darkgreen},
+    keywordstyle=\color{primaryblue}\bfseries,
+    stringstyle=\color{accentorange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    rulecolor=\color{lightgray}
+}
+
+\begin{document}
+
+% Page Header / Title Block
+\begin{center}
+    {\Large \bfseries MÔN HỌC: CÔNG NGHỆ PHẦN MỀM}\\[0.3em]
+    {\large \bfseries BÁO CÁO MÔ HÌNH HÓA VÀ THIẾT KẾ HỆ THỐNG "LIVING DOCS"}\\[0.5em]
+    \rule{\textwidth}{1pt}\\[0.8em]
+    {\Large \bfseries PHÂN HỆ: AUTOMATIC DOCUMENTATION UPDATE ON SOURCE-CODE CHANGE}\\[0.3em]
+    {\large \textbf{File Nguồn:} \texttt{auto\_update.tex} \quad|\quad \textbf{Thành viên phụ trách:} Anh Kiệt (Task 3 \& Task 6)}
+    \\[0.8em]
+    \rule{\textwidth}{1pt}
+\end{center}
+
+\vspace{1em}
+
+\section{Tổng quan Phân hệ Cập nhật Tài liệu Tự động (Automatic Documentation Update)}
+
+\subsection{Giới thiệu và Mục tiêu}
+Trong các dự án phát triển phần mềm hiện đại, hiện tượng "lệch pha tài liệu" (documentation drift) diễn ra rất phổ biến khi mã nguồn liên tục thay đổi thông qua các Commit hoặc Pull Request (PR) nhưng tài liệu không được cập nhật tương ứng. Phân hệ \textbf{Automatic Documentation Update on Source-Code Change} thuộc hệ thống \textbf{Living Docs} giải quyết triệt để vấn đề này bằng cách:
+\begin{itemize}
+    \item Lắng nghe tự động các sự kiện thay đổi mã nguồn từ GitHub Webhook (Push Commit, Open/Update PR, Merge PR).
+    \item Sử dụng phân tích cây cú pháp trừu tượng (Abstract Syntax Tree - AST) kết hợp mô hình AI (LLM + RAG) để xác định chính xác các thực thể mã nguồn bị ảnh hưởng (Class, Method, Endpoint, Parameter, Dependency) và tự động sinh bản thảo tài liệu cập nhật tương ứng.
+    \item Đưa các bản cập nhật tài liệu tự động vào quy trình kiểm duyệt nghiêm ngặt với 3 vai trò (AI, Staff Reviewer, Manager Approver) trước khi lưu hoặc merge chính thức vào kho lưu trữ (Repository).
+    \item Cung cấp khả năng so sánh khác biệt (Diff View), ghi vết lịch sử thay đổi (Change Log) chỉn chu và hỗ trợ khôi phục (Rollback) phiên bản tài liệu an toàn.
+\end{itemize}
+
+\subsection{Phạm vi và Nhiệm vụ (Task 3)}
+Nhiệm vụ Task 3 do \textbf{Anh Kiệt} đảm nhận tập trung vào các chức năng cốt lõi sau:
+\begin{enumerate}
+    \item \textbf{Tự động kích hoạt cập nhật tài liệu} ngay khi phát hiện thay đổi mã nguồn trong Commit/PR.
+    \item \textbf{Cấu hình linh hoạt} bật/tắt tính năng auto-update cho từng Repository, Module hoặc Document cụ thể.
+    \item \textbf{Giao diện hiển thị và So sánh Diff} giữa phiên bản AI tự động cập nhật và phiên bản hiện tại đang phát hành.
+    \item \textbf{Quy trình xử lý phản hồi từ Developer}: Cho phép Chấp nhận (Accept), Chỉnh sửa (Edit), Bỏ qua (Dismiss), hoặc Yêu cầu sinh lại (Regenerate).
+    \item \textbf{Khôi phục phiên bản (Rollback)} tài liệu về trạng thái trước khi diễn ra đợt tự động cập nhật.
+\end{enumerate}
+
+---
+
+\section{Yêu cầu Chức năng chi tiết (Detailed Functional Requirements)}
+
+Dưới đây là chi tiết các yêu cầu chức năng thuộc phân hệ \texttt{auto\_update.tex} dành cho các nhóm người dùng và vai trò liên quan.
+
+\subsection{Bảng mô tả Yêu cầu Chức năng (Functional Requirements Matrix)}
+
+\begin{table}[h!]
+\centering
+\small
+\caption{Danh sách các Yêu cầu Chức năng của Phân hệ Automatic Documentation Update}
+\vspace{0.5em}
+\begin{tabularx}{\textwidth}{|l|p{3.8cm}|X|c|}
+\hline
+\textbf{Mã YC} & \textbf{Tên Chức năng} & \textbf{Mô tả Chi tiết Chức năng} & \textbf{Độ ưu tiên} \\ \hline
+\textbf{FR-AU-01} & Auto-Update Trigger & Tự động phát hiện thay đổi mã nguồn qua Commit/PR, xác định các tài liệu bị ảnh hưởng và tạo phiên bản tài liệu mới. & Critical \\ \hline
+\textbf{FR-AU-02} & Toggle Auto-Update & Cho phép bật/tắt cấu hình tự động cập nhật tài liệu cho từng Repo, Module hoặc loại Tài liệu. & High \\ \hline
+\textbf{FR-AU-03} & Auto-Updated View & Hiển thị danh sách các tài liệu đã được AI tự động cập nhật sau các thay đổi mã nguồn. & High \\ \hline
+\textbf{FR-AU-04} & Code Change Linkage & Hiển thị chi tiết Commit Hash, Author, và Code Diff đã kích hoạt lần tự động cập nhật tài liệu tương ứng. & High \\ \hline
+\textbf{FR-AU-05} & Side-by-Side Diff View & Cung cấp giao diện so sánh trực quan từng dòng (Diff View) giữa bản AI cập nhật và bản đang phát hành (Published). & Critical \\ \hline
+\textbf{FR-AU-06} & Developer Actions & Developer có thể Accept (chuyển sang Review), Edit (sửa trực tiếp) hoặc Dismiss (bỏ qua) phiên bản tự động cập nhật. & Critical \\ \hline
+\textbf{FR-AU-07} & On-Demand Re-update & Cho phép người dùng chủ động kích hoạt lại quá trình sinh/cập nhật tài liệu cho một thực thể mã nguồn khi cần. & Medium \\ \hline
+\textbf{FR-AU-08} & Single-Doc Rollback & Cho phép khôi phục tài liệu về phiên bản trước khi đợt tự động cập nhật diễn ra. & Critical \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection{Mô tả Chi tiết từng Use Case}
+
+\subsubsection{UC-AU-01: Tự động cập nhật tài liệu khi mã nguồn thay đổi}
+\begin{itemize}
+    \item \textbf{Actor}: System (GitHub Webhook / Event Bus), Developer.
+    \item \textbf{Pre-conditions}: Repository đã được kết nối với Living Docs và bật tính năng Auto-Update.
+    \item \textbf{Trigger}: Developer push commit hoặc tạo/cập nhật Pull Request trên GitHub.
+    \item \textbf{Main Flow}:
+        \begin{enumerate}
+            \item GitHub gửi sự kiện Webhook (\texttt{push} hoặc \texttt{pull\_request}) đến hệ thống Living Docs.
+            \item Service \texttt{CodeAnalysisService} thực hiện phân tích AST Code Diff để trích xuất các hàm, lớp, API endpoint bị sửa đổi.
+            \item Service \texttt{RagRetrievalService} truy vấn Knowledge Base để tìm các tài liệu liên quan đến các thực thể mã vừa thay đổi.
+            \item AI Engine (Python FastAPI) nhận thông tin Code Diff, Template, và Tài liệu hiện tại để sinh ra bản dự thảo tài liệu mới (Draft Auto-Updated Version).
+            \item Hệ thống lưu trữ bản nháp mới, đánh dấu trạng thái \texttt{PENDING\_DEV\_ACCEPTANCE} hoặc tự động đẩy vào luồng \texttt{IN\_REVIEW} theo chính sách cấu hình.
+            \item Gửi thông báo đến Developer liên quan qua UI/Email/Slack.
+        \end{enumerate}
+    \item \textbf{Post-conditions}: Phiên bản tài liệu mới được tạo và liên kết chính xác với Commit Hash và Code Diff.
+\end{itemize}
+
+\subsubsection{UC-AU-02: So sánh Diff và Duyệt bản Cập nhật Tự động}
+\begin{itemize}
+    \item \textbf{Actor}: Developer / Author.
+    \item \textbf{Pre-conditions}: Tài liệu đã có bản AI Auto-Updated ở trạng thái chờ duyệt.
+    \item \textbf{Main Flow}:
+        \begin{enumerate}
+            \item Developer truy cập màn hình chi tiết tài liệu hoặc danh sách thông báo Auto-Update.
+            \item Chọn xem khác biệt (Diff View) để so sánh song song (Side-by-Side) bản đang phát hành và bản AI đề xuất.
+            \item Hệ thống hiển thị bằng màu sắc (Xanh: Thêm mới, Đỏ: Xóa, Vàng: Chỉnh sửa).
+            \item Developer thực hiện một trong các thao tác:
+                \begin{itemize}
+                    \item \textbf{Accept}: Đồng ý nội dung, chuyển tài liệu sang hàng chờ kiểm duyệt của Staff (Staff Review Queue).
+                    \item \textbf{Edit}: Mở trình soạn thảo Markdown/WYSIWYG để chỉnh sửa lại nội dung do AI sinh ra trước khi gửi Review.
+                    \item \textbf{Dismiss}: Bỏ qua bản cập nhật AI nếu thay đổi trong mã không ảnh hưởng tới tài liệu.
+                \end{itemize}
+        \end{enumerate}
+\end{itemize}
+
+---
+
+\section{Thiết kế Kiến trúc \& Sơ đồ Tuần tự (Sequence Diagrams)}
+
+\subsection{Kiến trúc Phân hệ Cập nhật Tự động}
+Phân hệ Auto Update hoạt động theo mô hình Event-Driven Microservices kết hợp với AI Engine:
+\begin{itemize}
+    \item \textbf{Spring Boot Backend (Core Service)}: Lắng nghe GitHub Webhook qua Kafka Topic \texttt{code-change-events}, quản lý quy trình nghiệp vụ và lưu trữ PostgreSQL.
+    \item \textbf{Python FastAPI (AI Service)}: Phân tích AST, thực hiện RAG trên Vector Store và gọi LLM (OpenAI/Claude/Local LLM) để cập nhật tài liệu.
+    \item \textbf{PostgreSQL Database}: Lưu trữ Version History, Change Logs, Document Metadata.
+    \item \textbf{Redis Cache}: Lưu trữ tạm thời trạng thái Diff và session duyệt của người dùng.
+\end{itemize}
+
+\subsection{Sơ đồ Tuần tự (Sequence Diagram): Luồng Cập nhật Tài liệu Tự động}
+
+Dưới đây là sơ đồ tương tác giữa các thành phần khi một Commit/PR được đẩy lên GitHub:
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.2cm and 1.8cm,
+    font=\sffamily\small,
+    box/.style={draw=primaryblue, fill=lightbg, rectangle, rounded corners, minimum width=2.2cm, minimum height=0.8cm, align=center, bold},
+    line/.style={draw, -latex, thick}
+]
+
+% Nodes
+\node (github) [box] {GitHub App /\\Webhook};
+\node (backend) [box, right=of github] {Spring Boot\\Backend};
+\node (kafka) [box, right=of backend] {Kafka Event Bus\\(\texttt{code-change})};
+\node (ai) [box, below=1.5cm of backend] {Python AI Engine\\(AST + LLM)};
+\node (db) [box, below=1.5cm of kafka] {PostgreSQL /\\Change Log DB};
+
+% Arrows / Connections
+\draw[line] (github) -- node[above, font=\tiny] {1. Push / PR Event} (backend);
+\draw[line] (backend) -- node[above, font=\tiny] {2. Publish Event} (kafka);
+\draw[line] (kafka) |- node[near start, right, font=\tiny] {3. Consume Event} (ai);
+\draw[line] (ai) -- node[left, font=\tiny] {4. Parse AST \& Gen Diff} (backend);
+\draw[line] (backend) -- node[right, font=\tiny] {5. Save Auto-Update Draft \& Log} (db);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{1em}
+
+\subsection{Sơ đồ Tuần tự Chi tiết bằng Mã PlantUML / Text Flow}
+
+\begin{lstlisting}[language=SQL, caption={Trình tự thực thi xử lý sự kiện Auto-Update}]
+[GitHub Webhook] -> (POST /api/v1/webhooks/github) -> [Spring Boot GateKeeper]
+  1. GateKeeper kiem tra Signature & HMAC Token.
+  2. Trich xuat: Repository ID, Commit Hash, Code Diff, Author.
+  3. Đua Message vao Kafka Topic: "raw-code-events".
+
+[Kafka Consumer] -> [CodeAnalysisService]
+  1. Tai ve cac file code bi thay doi (.java, .py, .ts).
+  2. Goi Python AI Engine qua gRPC/REST: /api/v1/ai/ast-diff
+  3. Tranh luat AST: Phat hien phuong thuc 'getPaymentStatus()' bi doi Tham so.
+
+[Python AI Engine]
+  1. RAG Query: Tim cac Document Chunk chua keyword 'getPaymentStatus'.
+  2. Prompting LLM: "Cap nhat doan van ban tai lieu sau theo Code Diff moi..."
+  3. Tra ve JSON: { document_id, updated_content, confidence_score, diff_summary }
+
+[Spring Boot Backend]
+  1. Tao Record moi trong bang `document_versions`:
+     - version_number = current_version + 0.1
+     - created_by_role = 'AI'
+     - trigger_type = 'COMMIT'
+     - trigger_ref = 'commit_sha_123456'
+     - status = 'PENDING_DEV'
+  2. Tao Audit Record trong bang `document_change_logs`.
+  3. Ban WebSockets Notification toi Web Client cua Author.
+\end{lstlisting}
+
+---
+
+\section{Mô hình Dữ liệu \& Cấu trúc Cơ sở Dữ liệu (Database Schema)}
+
+Để hỗ trợ tính năng quản lý lịch sử phiên bản (Version History), ghi log thay đổi (Change Log) và khôi phục (Rollback), phân hệ thiết kế các bảng dữ liệu chuyên dụng trong PostgreSQL.
+
+\subsection{Sơ đồ Thực thể Mối quan hệ (ERD - Table Schemas)}
+
+\begin{lstlisting}[language=SQL, caption={Cấu trúc Dữ liệu PostgreSQL cho Phân hệ Auto Update}]
+-- Bang quan ly Thong tin Tai lieu
+CREATE TABLE documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    repository_id UUID NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    current_version_id UUID,
+    auto_update_enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bang quan ly Phiên ban Tai lieu (Document Versions)
+CREATE TABLE document_versions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    version_number VARCHAR(20) NOT NULL, -- Vi du: "1.2.0-draft", "2.0.0"
+    content TEXT NOT NULL,
+    created_by_role VARCHAR(20) NOT NULL, -- 'AI', 'DEVELOPER', 'STAFF', 'MANAGER'
+    created_by_user_id UUID,
+    trigger_type VARCHAR(30) NOT NULL, -- 'COMMIT', 'PULL_REQUEST', 'MANUAL_REGEN', 'ROLLBACK'
+    trigger_commit_hash VARCHAR(40),
+    pull_request_number INT,
+    confidence_score FLOAT, -- Điểm tin cậy của AI (0.0 - 1.0)
+    status VARCHAR(30) NOT NULL, -- 'DRAFT', 'PENDING_DEV', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'PUBLISHED'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bang Nhat ky Thay doi (Change Log & Audit Trail)
+CREATE TABLE document_change_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    from_version_id UUID REFERENCES document_versions(id),
+    to_version_id UUID REFERENCES document_versions(id),
+    acting_role VARCHAR(20) NOT NULL, -- 'AI', 'STAFF', 'MANAGER'
+    action_type VARCHAR(50) NOT NULL, -- 'AUTO_UPDATE_GENERATED', 'DEV_ACCEPTED', 'STAFF_APPROVED', 'ROLLBACK'
+    change_summary TEXT,
+    grounding_evidence JSONB, -- Luu tru { code_diff, commit_sha, file_path, lines }
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bang Cau hinh Auto-Update per Repo/Module
+CREATE TABLE auto_update_configs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    repository_id UUID NOT NULL,
+    module_path VARCHAR(255),
+    is_auto_update_active BOOLEAN DEFAULT TRUE,
+    require_staff_review BOOLEAN DEFAULT TRUE,
+    require_manager_approval BOOLEAN DEFAULT TRUE,
+    updated_by UUID,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+---
+
+\section{Thiết kế Giao diện \& Luồng Tương tác Người dùng (UI/UX Design)}
+
+\subsection{Màn hình So sánh Khác biệt (Side-by-Side Diff View)}
+Giao diện hiển thị trực quan khác biệt giúp Developer nhanh chóng nhận biết những chỉnh sửa do AI đề xuất:
+\begin{itemize}
+    \item \textbf{Cột Trái (Published Version)}: Hiển thị nội dung tài liệu hiện tại đang áp dụng trên hệ thống.
+    \item \textbf{Cột Phải (AI Auto-Updated Version)}: Hiển thị nội dung do AI tự động cập nhật dựa trên Code Commit mới nhất.
+    \item \textbf{Khối Bằng chứng (Grounding Evidence Box)}: Đính kèm đường link dẫn tới Commit SHA, Pull Request, và dòng mã nguồn bị thay đổi trong file repository.
+    \item \textbf{Thanh Công cụ Hành động (Action Bar)}:
+        \begin{itemize}
+            \item Nút \textbf{[Accept \& Submit for Review]}: Duyệt bản cập nhật và chuyển sang bước Staff Review.
+            \item Nút \textbf{[Edit Draft]}: Chuyển sang chế độ chỉnh sửa trực tiếp trên Editor.
+            \item Nút \textbf{[Regenerate]}: Gửi yêu cầu AI phân tích lại mã nguồn và tạo bản thảo mới.
+            \item Nút \textbf{[Dismiss]}: Tối ưu bỏ qua bản gợi ý nếu không cần thiết.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Màn hình Lịch sử Phiên bản \& Khôi phục (Version History \& Rollback)}
+\begin{itemize}
+    \item Hỗ trợ dạng dòng thời gian (Timeline View) liệt kê danh sách toàn bộ các phiên bản đã được ghi nhận.
+    \item Mỗi cột mốc hiển thị rõ: \textbf{Tên phiên bản}, \textbf{Tác nhân thực hiện} (biểu tượng AI, Staff hoặc Manager), \textbf{Thời gian}, và \textbf{Lý do/Commit liên quan}.
+    \item Nút \textbf{[Rollback to This Version]}: Cho phép người dùng có thẩm quyền (Developer / Technical Lead) bấm khôi phục tài liệu về đúng trạng thái tại phiên bản được chọn. Một bản ghi Change Log loại \texttt{ROLLBACK} sẽ tự động được khởi tạo để đảm bảo tính minh bạch.
+\end{itemize}
+
+---
+
+\section{Cài đặt Thực nghiệm \& Mã nguồn Minh họa (Implementation Snippets)}
+
+Dưới đây là đoạn mã ví dụ triển khai Service xử lý sự kiện Auto-Update trong Java Spring Boot và AI Engine trong Python.
+
+\subsection{Java Spring Boot: Listener xử lý sự kiện Auto Update}
+
+\begin{lstlisting}[language=Java, caption={AutoUpdateEventListener.java trong Spring Boot}]
+package com.livingdocs.service;
+
+import com.livingdocs.dto.CodeChangeEvent;
+import com.livingdocs.model.DocumentVersion;
+import com.livingdocs.repository.DocumentVersionRepository;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class AutoUpdateEventListener {
+
+    private final AiEngineClient aiEngineClient;
+    private final DocumentVersionRepository versionRepository;
+    private final NotificationService notificationService;
+
+    public AutoUpdateEventListener(AiEngineClient aiEngineClient, 
+                                  DocumentVersionRepository versionRepository,
+                                  NotificationService notificationService) {
+        this.aiEngineClient = aiEngineClient;
+        this.versionRepository = versionRepository;
+        this.notificationService = notificationService;
+    }
+
+    @KafkaListener(topics = "code-change-events", groupId = "living-docs-auto-update")
+    @Transactional
+    public void handleCodeChange(CodeChangeEvent event) {
+        // 1. Kiem tra cau hinh auto-update cua Repo
+        if (!isAutoUpdateEnabled(event.getRepositoryId())) {
+            return;
+        }
+
+        // 2. Goi AI Engine de sinh noi dung cap nhat
+        AutoUpdateResult result = aiEngineClient.generateUpdatedDoc(event);
+
+        if (result.hasChanges()) {
+            // 3. Luu phien ban Auto-Updated moi
+            DocumentVersion newVersion = new DocumentVersion();
+            newVersion.setDocumentId(result.getDocumentId());
+            newVersion.setContent(result.getUpdatedContent());
+            newVersion.setCreatedByRole("AI");
+            newVersion.setTriggerType("COMMIT");
+            newVersion.setTriggerCommitHash(event.getCommitHash());
+            newVersion.setConfidenceScore(result.getConfidenceScore());
+            newVersion.setStatus("PENDING_DEV");
+
+            versionRepository.save(newVersion);
+
+            // 4. Gui thong bao cho Author/Developer
+            notificationService.notifyDeveloper(event.getAuthorId(), newVersion.getId());
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Python FastAPI: Phân tích AST và Gọi AI Engine}
+
+\begin{lstlisting}[language=Python, caption={ast\_update\_service.py trong Python AI Service}]
+import ast
+from typing import Dict, Any
+
+class ASTCodeAnalyzer:
+    def extract_modified_entities(self, old_code: str, new_code: str) -> Dict[str, Any]:
+        """Phan tich AST de tim cac ham/lop bi thay doi signature hoac docstring"""
+        old_tree = ast.parse(old_code)
+        new_tree = ast.parse(new_code)
+        
+        # Thuc hien so sanh cac FunctionDef, ClassDef
+        modified_functions = []
+        # (Logic so sanh AST chi tiet...)
+        
+        return {
+            "modified_functions": modified_functions,
+            "has_breaking_changes": True
+        }
+
+async def generate_doc_update_prompt(code_diff: str, current_doc: str) -> str:
+    prompt = f"""
+    Ban la mot chuyen gia ky thuat phan mem. Hay cap nhat tai lieu duoi day
+    dua tren thay doi ma nguon (Code Diff).
+    
+    [Tai lieu hien tai]:
+    {current_doc}
+    
+    [Code Diff]:
+    {code_diff}
+    
+    Yeu cau: Chi cap nhat cac phan bi anh huong. Giu nguyen dinh dang Markdown.
+    """
+    return prompt
+\end{lstlisting}
+
+---
+
+\section{Đóng góp \& Phân công Công việc trong Nhóm}
+
+Trong đồ án môn học Công nghệ Phần mềm, phân hệ này được phân công chi tiết như sau:
+\begin{itemize}
+    \item \textbf{Thành viên phụ trách chính}: \textbf{Anh Kiệt}
+    \item \textbf{Nhiệm vụ cụ thể}: 
+        \begin{itemize}
+            \item \textbf{Task 3}: Thiết kế & Triển khai Phân hệ Automatic Documentation Update on Source-Code Change.
+            \item \textbf{Task 6}: Thiết kế & Triển khai Knowledge Base \& Version History (Quản lý lịch sử thay đổi, ghi Change Log và cơ chế Rollback phiên bản).
+            \item Phối hợp với \textbf{Thanh Minh} (Task 1 - GitHub Connection) để nhận sự kiện Webhook.
+            \item Phối hợp với \textbf{Minh Ngọc} (Task 2 - AI Generation) để tích hợp AI Service.
+            \item Chuyển giao dữ liệu cho \textbf{Yến Vy} (Task 5 - Review Workflow) để thực hiện quy trình duyệt 3 cấp.
+        \end{itemize}
+\end{itemize}
+
+\section{Kết luận}
+Phân hệ \texttt{auto\_update.tex} đóng vai trò là "trái tim" tự động hóa của hệ thống \textbf{Living Docs}. Nhờ việc kết hợp phân tích cú pháp AST, trí tuệ nhân tạo LLM/RAG và quy trình kiểm duyệt đa tầng (AI $\rightarrow$ Staff $\rightarrow$ Manager), hệ thống loại bỏ tối đa các thao tác thủ công, giữ cho tài liệu kỹ thuật luôn đồng bộ thời gian thực với mã nguồn dự án.
+
+\end{document}
+"""
+
+with open("auto_update.tex", "w", encoding="utf-8") as f:
+    f.write(tex_content)
+
+# Compile tex to pdf
+res = subprocess.run(["xelatex", "-interaction=nonstopmode", "auto_update.tex"], capture_output=True, text=True)
+print("XELATEX RETURN CODE:", res.returncode)
+print("STDOUT SUMMARY:", res.stdout[-500:])
+print("STDERR SUMMARY:", res.stderr[-500:])
