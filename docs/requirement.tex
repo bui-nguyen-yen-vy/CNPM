@@ -107,89 +107,6 @@ Hệ thống phải quản lý và hiển thị trạng thái của quá trình 
 
 Người dùng có thể theo dõi và kiểm soát toàn bộ quá trình đồng bộ giữa GitHub và LivingDocs.
 
-\subsubsection{FR6: Static Code Analysis and AI Documentation Generation}
-
-Hệ thống phải tự động phân tích cấu trúc mã nguồn và sinh ra tài liệu kỹ thuật chi tiết bằng cách tích hợp các Mô hình Ngôn ngữ Lớn (LLM).
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Tự động trích xuất Cây Cú pháp Trừu tượng (\texttt{Abstract Syntax Tree - AST}) từ các tệp mã nguồn để xác định danh sách các hàm, lớp, tham số, kiểu dữ liệu trả về và các điểm cuối API (\texttt{API Endpoints}).
-    \item Đóng gói thông tin cấu trúc mã nguồn cùng các đoạn ghi chú (\texttt{inline comments}) gửi đến AI Engine thông qua các mẫu prompt được chuẩn hóa.
-    \item Sinh nội dung tài liệu kỹ thuật chi tiết bao gồm: Mô tả chức năng hàm/lớp, Tài liệu API Specifications (đầy đủ Request/Response/Status Code), và Tài liệu Hướng dẫn Sử dụng.
-    \item Hỗ trợ xuất và định dạng kết quả theo chuẩn Markdown hoặc mã nguồn LaTeX sẵn sàng để xuất bản.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Tài liệu kỹ thuật được khởi tạo tự động có cấu trúc chặt chẽ, chính xác và phản ánh đúng 100\% khai báo mã nguồn mà không cần kỹ sư viết tay thủ công.
-
-\subsubsection{FR7: Context Management and Retrieval-Augmented Generation (RAG)}
-
-Hệ thống phải triển khai kiến trúc RAG để truy vấn ngữ cảnh dự án toàn cục, nâng cao độ chính xác khi sinh tài liệu.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Tự động chia nhỏ (\texttt{code chunking}) và chuyển đổi tài liệu cùng mã nguồn dự án thành dạng nhúng vector (\texttt{vector embeddings}) thông qua Embedding Model.
-    \item Lưu trữ và đánh chỉ mục dữ liệu vector trong Cơ sở dữ liệu Vector (\texttt{Vector Database}).
-    \item Khi phát sinh yêu cầu sinh tài liệu, hệ thống thực hiện tìm kiếm ngữ nghĩa (\texttt{semantic search}) để trích xuất các đoạn văn bản/mã nguồn liên quan nhất trong toàn bộ dự án làm ngữ cảnh bổ sung cho AI.
-    \item Kiểm soát và tối ưu hóa dung lượng ngữ cảnh (\texttt{context window}) để đảm bảo không vượt quá giới hạn token của LLM.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-AI Engine nắm bắt được mối liên hệ toàn cục giữa các module, loại bỏ hoàn toàn hiện tượng "ảo giác" (\texttt{hallucination}) hoặc đưa ra thông tin không có trong codebase.
-
-\subsubsection{FR8: Automated Architecture and Diagram Generation}
-
-Hệ thống phải phân tích kiến trúc mã nguồn và tự động tạo mã nguồn biểu đồ kỹ thuật.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Phân tích mối quan hệ phụ thuộc (\texttt{dependencies}), quan hệ kế thừa và giao tiếp giữa các lớp/module trong dự án.
-    \item Tự động sinh mã biểu đồ theo cú pháp Mermaid.js hoặc PlantUML cho Sơ đồ Lớp (\texttt{Class Diagram}), Sơ đồ Tuần tự (\texttt{Sequence Diagram}) và Sơ đồ Luồng dữ liệu (\texttt{Data Flow Diagram}).
-    \item Kiểm tra tính hợp lệ cú pháp của đoạn mã biểu đồ sinh ra trước khi trả về giao diện.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Các biểu đồ kiến trúc hệ thống được vẽ tự động, có khả năng render trực quan trên giao diện web và tự động vẽ lại khi kiến trúc mã nguồn thay đổi.
-
-\subsubsection{FR9: Documentation Drift Detection and Alerting}
-
-Hệ thống phải tự động phát hiện sự lệch ngữ cảnh (\texttt{Documentation Drift}) giữa tài liệu lưu trữ và mã nguồn thực tế.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Khi có commit mới, hệ thống phân tích sự thay đổi mã nguồn (\texttt{Code Diff}) và so sánh với phiên bản tài liệu hiện tại trong cơ sở dữ liệu.
-    \item Phát hiện các trường hợp mâu thuẫn như: hàm bị đổi tên/chữ ký, tham số API bị thêm/xóa, hoặc logic nghiệp vụ đã thay đổi nhưng tài liệu chưa cập nhật.
-    \item Ghi nhận mức độ lệch ngữ cảnh và hiển thị cảnh báo trực quan kèm vị trí tài liệu bị lỗi thời cho người dùng.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Giúp nhóm phát triển ngay lập tức nhận biết các phần tài liệu cần được cập nhật, ngăn chặn tình trạng tài liệu bị lỗi thời so với thực tế.
-
-\subsubsection{FR10: Human-in-the-Loop Review and Proposal Management}
-
-Hệ thống phải cung cấp quy trình kiểm duyệt và chỉnh sửa trực quan dành cho người dùng trước khi áp dụng tài liệu mới do AI sinh ra.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Tài liệu sau khi AI sinh ra được lưu dưới dạng Đề xuất cập nhật (\texttt{Documentation Proposal}) ở trạng thái bản thảo (\texttt{DRAFT\_REVIEW}).
-    \item Cung cấp giao diện so sánh song song (Side-by-Side Diff) giữa mã nguồn vừa thay đổi và nội dung tài liệu đề xuất.
-    \item Cho phép kỹ sư chỉnh sửa trực tiếp nội dung bản thảo, thêm bớt ghi chú trước khi bấm xác nhận (\textbf{Approve \& Merge}).
-    \item Đồng bộ tài liệu đã duyệt vào branch chính và cập nhật lại chỉ mục Vector DB.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Đảm bảo tính kiểm soát tuyệt đối của con người đối với sản phẩm do AI tạo ra, kết hợp tốc độ của AI và độ tin cậy của chuyên gia phần mềm.
-
 \subsection{Non-Functional Requirements}
 
 \subsubsection{NFR1: Security}
@@ -253,54 +170,6 @@ Giao diện người dùng phải trực quan và dễ sử dụng đối với 
     \item Cung cấp thông báo lỗi và hướng dẫn xử lý khi xảy ra sự cố.
 \end{itemize}
 
-\subsubsection{NFR6: AI Output Accuracy and Quality Control}
-
-Nội dung tài liệu do AI Engine sinh ra phải đạt các tiêu chuẩn khắt khe về độ chính xác kỹ thuật và định dạng.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Tỷ lệ cú pháp Markdown, mã LaTeX và sơ đồ Mermaid sinh ra phải đạt độ hợp lệ tối thiểu $98\%$ (không bị lỗi render giao diện).
-    \item Tỷ lệ thông tin sai lệch hoặc bịa đặt (Hallucination Rate) phải được kiểm soát dưới $2\%$ nhờ cơ chế RAG và bộ kiểm tra AST.
-    \item Tất cả các tên hàm, biến, lớp và đường dẫn API trong tài liệu phải khớp $100\%$ với mã nguồn thực tế.
-\end{itemize}
-
-\subsubsection{NFR7: AI Security, Privacy and Zero Data Retention}
-
-Hệ thống phải bảo đảm an toàn tuyệt đối cho quyền sở hữu trí tuệ, mã nguồn doanh nghiệp và dữ liệu cá nhân.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item \textbf{Zero Data Retention}: Bắt buộc sử dụng các cổng API doanh nghiệp (Enterprise API) có cam kết không lưu trữ hoặc sử dụng mã nguồn của dự án để huấn luyện lại mô hình AI.
-    \item \textbf{Data Masking}: Tự động quét và loại bỏ/mã hóa các thông tin nhạy cảm như API Keys, Passwords, Token xác thực và Thông tin Định danh Cá nhân (\texttt{PII}) trước khi truyền payload sang AI Service.
-    \item Toàn bộ dữ liệu truyền nhận với dịch vụ AI phải được mã hóa chuẩn HTTPS/TLS 1.3.
-\end{itemize}
-
-\subsubsection{NFR8: Fault Tolerance and AI Model Fallback}
-
-Hệ thống phải duy trì khả năng hoạt động liên tục và chịu lỗi tốt khi các dịch vụ AI bên ngoài gặp sự cố.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Áp dụng thuật toán \textbf{Exponential Backoff Retry} khi gặp lỗi nghẽn mạng hoặc chạm giới hạn request (\texttt{rate limit}) của AI API.
-    \item Thiết lập cơ chế chuyển đổi mô hình tự động (\textbf{Model Fallback}): Nếu mô hình AI chính (như GPT-4) không phản hồi, hệ thống tự động chuyển sang mô hình dự phòng (như Claude hoặc Gemini).
-    \item Trường hợp toàn bộ dịch vụ AI bị gián đoạn, hệ thống phải kích hoạt chế độ sinh tài liệu cơ bản dựa trên khung mẫu (\texttt{Template-based}) trích xuất từ AST mà không làm ngắt quãng quy trình hệ thống.
-\end{itemize}
-
-\subsubsection{NFR9: AI Latency and Cost Optimization}
-
-Quá trình sinh tài liệu bằng AI phải tối ưu thời gian phản hồi và kiểm soát chi phí sử dụng API.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Thời gian sinh tài liệu hoàn chỉnh (End-to-End Latency) không vượt quá $10$ giây đối với các commit có quy mô trung bình.
-    \item Chỉ gửi phần mã nguồn thay đổi (\texttt{Code Diff}) thay vì toàn bộ tệp nguồn để tiết kiệm ít nhất $60\%$ lượng token tiêu thụ.
-    \item Áp dụng cơ chế Caching đối với các truy vấn RAG và prompt trùng lặp để giảm thiểu số lần gọi API không cần thiết.
-\end{itemize}
-
 \subsection{System Constraints}
 
 \subsubsection{Official GitHub API}
@@ -335,3 +204,135 @@ Việc trao đổi dữ liệu giữa GitHub Integration và LivingDocs phải �
 Phần yêu cầu hệ thống đã xác định các yêu cầu chức năng và phi chức năng quan trọng của hệ thống \textbf{LivingDocs}. Các yêu cầu chức năng tập trung vào việc kết nối GitHub bằng OAuth2, quản lý repository, đồng bộ commit và Pull Request, tích hợp CI/CD và quản lý trạng thái đồng bộ. Đồng thời, các yêu cầu phi chức năng đảm bảo hệ thống đáp ứng các tiêu chí về bảo mật, hiệu năng, khả năng mở rộng, độ ổn định và tính dễ sử dụng.
 
 Việc tích hợp GitHub đóng vai trò cốt lõi trong kiến trúc LivingDocs vì nó giúp hệ thống theo dõi chính xác mọi thay đổi của mã nguồn và tự động cập nhật tài liệu tương ứng. Điều này góp phần đảm bảo tài liệu kỹ thuật luôn \textbf{cập nhật, nhất quán và phản ánh đúng trạng thái thực tế của hệ thống phần mềm}, từ đó nâng cao chất lượng quản lý dự án và hiệu quả phối hợp của nhóm phát triển.
+
+
+\section{AI Engine System Requirements}
+
+\subsection{AI Functional Requirements}
+
+\subsubsection{FR6: Static Code Analysis and AI Documentation Generation}
+
+Hệ thống phải tự động phân tích cấu trúc mã nguồn và sinh ra tài liệu kỹ thuật chi tiết bằng cách tích hợp các Mô hình Ngôn ngữ Lớn (LLM).
+
+\paragraph{Mô tả}
+\begin{itemize}
+    \item Tự động trích xuất Cây Cú pháp Trừu tượng (\texttt{Abstract Syntax Tree - AST}) từ các tệp mã nguồn để xác định danh sách các hàm, lớp, tham số, kiểu dữ liệu trả về và các điểm cuối API (\texttt{API Endpoints}).
+    \item Đóng gói thông tin cấu trúc mã nguồn cùng các đoạn ghi chú (\texttt{inline comments}) gửi đến AI Engine thông qua các mẫu prompt được chuẩn hóa.
+    \item Sinh nội dung tài liệu kỹ thuật chi tiết bao gồm: Mô tả chức năng hàm/lớp, Tài liệu API Specifications (đầy đủ Request/Response/Status Code), và Tài liệu Hướng dẫn Sử dụng.
+    \item Hỗ trợ xuất và định dạng kết quả theo chuẩn Markdown hoặc mã nguồn LaTeX sẵn sàng để xuất bản.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+Tài liệu kỹ thuật được khởi tạo tự động có cấu trúc chặt chẽ, chính xác và phản ánh đúng 100\% khai báo mã nguồn mà không cần kỹ sư viết tay thủ công.
+
+
+\subsubsection{FR7: Context Management and Retrieval-Augmented Generation (RAG)}
+
+Hệ thống phải triển khai kiến trúc RAG để truy vấn ngữ cảnh dự án toàn cục, nâng cao độ chính xác khi sinh tài liệu.
+
+\paragraph{Mô tả}
+\begin{itemize}
+    \item Tự động chia nhỏ (\texttt{code chunking}) và chuyển đổi tài liệu cùng mã nguồn dự án thành dạng nhúng vector (\texttt{vector embeddings}) thông qua Embedding Model.
+    \item Lưu trữ và đánh chỉ mục dữ liệu vector trong Cơ sở dữ liệu Vector (\texttt{Vector Database}).
+    \item Khi phát sinh yêu cầu sinh tài liệu, hệ thống thực hiện tìm kiếm ngữ nghĩa (\texttt{semantic search}) để trích xuất các đoạn văn bản/mã nguồn liên quan nhất trong toàn bộ dự án làm ngữ cảnh bổ sung cho AI.
+    \item Kiểm soát và tối ưu hóa dung lượng ngữ cảnh (\texttt{context window}) để đảm bảo không vượt quá giới hạn token của LLM.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+AI Engine nắm bắt được mối liên hệ toàn cục giữa các module, loại bỏ hoàn toàn hiện tượng "ảo giác" (\texttt{hallucination}) hoặc đưa ra thông tin không có trong codebase.
+
+
+\subsubsection{FR8: Automated Architecture and Diagram Generation}
+
+Hệ thống phải phân tích kiến trúc mã nguồn và tự động tạo mã nguồn biểu đồ kỹ thuật.
+
+\paragraph{Mô tả}
+\begin{itemize}
+    \item Phân tích mối quan hệ phụ thuộc (\texttt{dependencies}), quan hệ kế thừa và giao tiếp giữa các lớp/module trong dự án.
+    \item Tự động sinh mã biểu đồ theo cú pháp Mermaid.js hoặc PlantUML cho Sơ đồ Lớp (\texttt{Class Diagram}), Sơ đồ Tuần tự (\texttt{Sequence Diagram}) và Sơ đồ Luồng dữ liệu (\texttt{Data Flow Diagram}).
+    \item Kiểm tra tính hợp lệ cú pháp của đoạn mã biểu đồ sinh ra trước khi trả về giao diện.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+Các biểu đồ kiến trúc hệ thống được vẽ tự động, có khả năng render trực quan trên giao diện web và tự động vẽ lại khi kiến trúc mã nguồn thay đổi.
+
+
+\subsubsection{FR9: Documentation Drift Detection and Alerting}
+
+Hệ thống phải tự động phát hiện sự lệch ngữ cảnh (\texttt{Documentation Drift}) giữa tài liệu lưu trữ và mã nguồn thực tế.
+
+\paragraph{Mô tả}
+\begin{itemize}
+    \item Khi có commit mới, hệ thống phân tích sự thay đổi mã nguồn (\texttt{Code Diff}) và so sánh với phiên bản tài liệu hiện tại trong cơ sở dữ liệu.
+    \item Phát hiện các trường hợp mâu thuẫn như: hàm bị đổi tên/chữ ký, tham số API bị thêm/xóa, hoặc logic nghiệp vụ đã thay đổi nhưng tài liệu chưa cập nhật.
+    \item Ghi nhận mức độ lệch ngữ cảnh và hiển thị cảnh báo trực quan kèm vị trí tài liệu bị lỗi thời cho người dùng.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+Giúp nhóm phát triển ngay lập tức nhận biết các phần tài liệu cần được cập nhật, ngăn chặn tình trạng tài liệu bị lỗi thời so với thực tế.
+
+
+\subsubsection{FR10: Human-in-the-Loop Review and Proposal Management}
+
+Hệ thống phải cung cấp quy trình kiểm duyệt và chỉnh sửa trực quan dành cho người dùng trước khi áp dụng tài liệu mới do AI sinh ra.
+
+\paragraph{Mô tả}
+\begin{itemize}
+    \item Tài liệu sau khi AI sinh ra được lưu dưới dạng Đề xuất cập nhật (\texttt{Documentation Proposal}) ở trạng thái bản thảo (\texttt{DRAFT\_REVIEW}).
+    \item Cung cấp giao diện so sánh song song (Side-by-Side Diff) giữa mã nguồn vừa thay đổi và nội dung tài liệu đề xuất.
+    \item Cho phép kỹ sư chỉnh sửa trực tiếp nội dung bản thảo, thêm bớt ghi chú trước khi bấm xác nhận (\textbf{Approve \& Merge}).
+    \item Đồng bộ tài liệu đã duyệt vào branch chính và cập nhật lại chỉ mục Vector DB.
+\end{itemize}
+
+\paragraph{Kết quả mong đợi}
+Đảm bảo tính kiểm soát tuyệt đối của con người đối với sản phẩm do AI tạo ra, kết hợp tốc độ của AI và độ tin cậy của chuyên gia phần mềm.
+
+
+\subsection{AI Non-Functional Requirements}
+
+\subsubsection{NFR6: AI Output Accuracy and Quality Control}
+
+Nội dung tài liệu do AI Engine sinh ra phải đạt các tiêu chuẩn khắt khe về độ chính xác kỹ thuật và định dạng.
+
+\paragraph{Yêu cầu}
+\begin{itemize}
+    \item Tỷ lệ cú pháp Markdown, mã LaTeX và sơ đồ Mermaid sinh ra phải đạt độ hợp lệ tối thiểu $98\%$ (không bị lỗi render giao diện).
+    \item Tỷ lệ thông tin sai lệch hoặc bịa đặt (Hallucination Rate) phải được kiểm soát dưới $2\%$ nhờ cơ chế RAG và bộ kiểm tra AST.
+    \item Tất cả các tên hàm, biến, lớp và đường dẫn API trong tài liệu phải khớp $100\%$ với mã nguồn thực tế.
+\end{itemize}
+
+
+\subsubsection{NFR7: AI Security, Privacy and Zero Data Retention}
+
+Hệ thống phải bảo đảm an toàn tuyệt đối cho quyền sở hữu trí tuệ, mã nguồn doanh nghiệp và dữ liệu cá nhân.
+
+\paragraph{Yêu cầu}
+\begin{itemize}
+    \item \textbf{Zero Data Retention}: Bắt buộc sử dụng các cổng API doanh nghiệp (Enterprise API) có cam kết không lưu trữ hoặc sử dụng mã nguồn của dự án để huấn luyện lại mô hình AI.
+    \item \textbf{Data Masking}: Tự động quét và loại bỏ/mã hóa các thông tin nhạy cảm như API Keys, Passwords, Token xác thực và Thông tin Định danh Cá nhân (\texttt{PII}) trước khi truyền payload sang AI Service.
+    \item Toàn bộ dữ liệu truyền nhận với dịch vụ AI phải được mã hóa chuẩn HTTPS/TLS 1.3.
+\end{itemize}
+
+
+\subsubsection{NFR8: Fault Tolerance and AI Model Fallback}
+
+Hệ thống phải duy trì khả năng hoạt động liên tục và chịu lỗi tốt khi các dịch vụ AI bên ngoài gặp sự cố.
+
+\paragraph{Yêu cầu}
+\begin{itemize}
+    \item Áp dụng thuật toán \textbf{Exponential Backoff Retry} khi gặp lỗi nghẽn mạng hoặc chạm giới hạn request (\texttt{rate limit}) của AI API.
+    \item Thiết lập cơ chế chuyển đổi mô hình tự động (\textbf{Model Fallback}): Nếu mô hình AI chính (như GPT-4) không phản hồi, hệ thống tự động chuyển sang mô hình dự phòng (như Claude hoặc Gemini).
+    \item Trường hợp toàn bộ dịch vụ AI bị gián đoạn, hệ thống phải kích hoạt chế độ sinh tài liệu cơ bản dựa trên khung mẫu (\texttt{Template-based}) trích xuất từ AST mà không làm ngắt quãng quy trình hệ thống.
+\end{itemize}
+
+
+\subsubsection{NFR9: AI Latency and Cost Optimization}
+
+Quá trình sinh tài liệu bằng AI phải tối ưu thời gian phản hồi và kiểm soát chi phí sử dụng API.
+
+\paragraph{Yêu cầu}
+\begin{itemize}
+    \item Thời gian sinh tài liệu hoàn chỉnh (End-to-End Latency) không vượt quá $10$ giây đối với các commit có quy mô trung bình.
+    \item Chỉ gửi phần mã nguồn thay đổi (\texttt{Code Diff}) thay vì toàn bộ tệp nguồn để tiết kiệm ít nhất $60\%$ lượng token tiêu thụ.
+    \item Áp dụng cơ chế Caching đối với các truy vấn RAG và prompt trùng lặp để giảm thiểu số lần gọi API không cần thiết.
+\end{itemize}
