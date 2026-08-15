@@ -336,3 +336,240 @@ Quá trình sinh tài liệu bằng AI phải tối ưu thời gian phản hồi
     \item Chỉ gửi phần mã nguồn thay đổi (\texttt{Code Diff}) thay vì toàn bộ tệp nguồn để tiết kiệm ít nhất $60\%$ lượng token tiêu thụ.
     \item Áp dụng cơ chế Caching đối với các truy vấn RAG và prompt trùng lặp để giảm thiểu số lần gọi API không cần thiết.
 \end{itemize}
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[itemize]{leftmargin=1.2cm}
+\setlist[enumerate]{leftmargin=1.2cm}
+
+
+\title{\textbf{LivingDocs -- Requirements}\\
+\large Yêu cầu hệ thống cho Auto Update, Knowledge Base \& Version History}
+\author{Báo cáo môn Công nghệ phần mềm}
+\date{}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+
+\section{Tổng quan}
+Tài liệu này mô tả các yêu cầu của hệ thống LivingDocs đối với chức năng
+\textbf{Auto Update, Knowledge Base \& Version History}. Nội dung được xây dựng
+để liên kết với hai tài liệu chức năng \texttt{auto\_update.tex} và
+\texttt{knowledge\_base.tex}.
+
+
+\texttt{auto\_update.tex} tập trung vào phát hiện thay đổi từ GitHub, phân tích
+mã nguồn, xác định tài liệu bị ảnh hưởng và tạo đề xuất cập nhật bằng AI.
+\texttt{knowledge\_base.tex} tập trung vào lưu trữ tri thức, quản lý tài liệu
+và lịch sử phiên bản.
+
+
+\section{Mục tiêu}
+\begin{itemize}
+    \item Duy trì tài liệu đồng bộ với mã nguồn dự án.
+    \item Phát hiện thay đổi từ commit hoặc Pull Request trên GitHub.
+    \item Phân tích thành phần mã nguồn và tài liệu bị ảnh hưởng.
+    \item Hỗ trợ AI tạo hoặc cập nhật phiên bản tài liệu mới.
+    \item Lưu trữ tài liệu tập trung trong Knowledge Base.
+    \item Theo dõi, so sánh, phê duyệt và khôi phục phiên bản.
+    \item Đảm bảo mọi thay đổi có thể truy vết qua lịch sử và audit trail.
+\end{itemize}
+
+
+\section{Liên kết với các tài liệu chức năng}
+\begin{longtable}{p{3.2cm} p{5.2cm} p{5.2cm}}
+\toprule
+\textbf{Tài liệu} & \textbf{Nội dung chính} & \textbf{Liên kết với Requirements}\\
+\midrule
+\texttt{auto\_update.tex} &
+Phát hiện thay đổi GitHub, AST, RAG, LLM, phân tích tác động và tạo phiên bản mới. &
+Cơ sở cho FR04, FR05 và quy trình cập nhật tài liệu.\\
+\texttt{knowledge\_base.tex} &
+Knowledge Base, Version History, so sánh, chấp nhận và khôi phục phiên bản. &
+Cơ sở cho FR01, FR02, FR03, FR06, FR07, FR08, FR09 và FR10.\\
+\bottomrule
+\end{longtable}
+
+
+Nếu các file nằm cùng thư mục, có thể mở trực tiếp:
+\href{auto_update.tex}{auto\_update.tex} và
+\href{knowledge_base.tex}{knowledge\_base.tex}.
+
+
+\section{Yêu cầu chức năng}
+\begin{longtable}{p{1.5cm} p{11.8cm}}
+\toprule
+\textbf{ID} & \textbf{Yêu cầu}\\
+\midrule
+FR01 & Hệ thống cho phép thêm, cập nhật, lưu trữ, tìm kiếm và truy xuất tài liệu trong Knowledge Base.\\
+FR02 & Hệ thống tự động tạo phiên bản mới khi tài liệu được AI hoặc người dùng cập nhật.\\
+FR03 & Hệ thống lưu mã phiên bản, thời gian, người thực hiện, nội dung thay đổi và trạng thái.\\
+FR04 & Hệ thống tiếp nhận commit hoặc Pull Request từ GitHub và phát hiện thay đổi mã nguồn.\\
+FR05 & Hệ thống phân tích code entity bị ảnh hưởng và xác định tài liệu liên quan để đề xuất hoặc tạo nội dung cập nhật.\\
+FR06 & Hệ thống cho phép so sánh hai phiên bản và hiển thị nội dung thêm, sửa hoặc xóa.\\
+FR07 & Staff có thể kiểm tra, chỉnh sửa, chấp nhận hoặc từ chối phiên bản AI.\\
+FR08 & Manager có thể phê duyệt, publish/commit hoặc khôi phục phiên bản đã ghi nhận.\\
+FR09 & Hệ thống lưu toàn bộ change history và audit trail.\\
+FR10 & Hệ thống cho phép truy xuất các phiên bản tài liệu trước đó.\\
+FR11 & Hệ thống lưu grounding evidence gồm file nguồn, code entity, commit hash và diff.\\
+FR12 & Hệ thống cho phép điều hướng giữa tài liệu và thành phần mã nguồn liên quan.\\
+\bottomrule
+\end{longtable}
+
+
+\section{Yêu cầu phi chức năng}
+\begin{itemize}
+    \item \textbf{Bảo mật:} Kiểm soát quyền truy cập và chỉnh sửa theo vai trò.
+    \item \textbf{Tin cậy:} Không làm mất các phiên bản cũ khi cập nhật hoặc rollback.
+    \item \textbf{Truy vết:} Mỗi thay đổi có timestamp, vai trò/người thực hiện và commit/Pull Request liên quan.
+    \item \textbf{Hiệu năng:} Tìm kiếm và truy xuất tài liệu có thời gian phản hồi phù hợp.
+    \item \textbf{Tính nhất quán:} Tài liệu phản ánh đúng trạng thái mã nguồn sau cập nhật.
+    \item \textbf{Chất lượng AI:} Nội dung AI có grounding evidence và được human review theo quy trình.
+    \item \textbf{Khả năng bảo trì:} Hệ thống hỗ trợ API và kiến trúc rõ ràng để dễ mở rộng.
+\end{itemize}
+
+
+\section{Quy trình nghiệp vụ}
+\begin{verbatim}
+GitHub Commit / Pull Request
+            |
+            v
+      Phat hien thay doi
+            |
+            v
+   AST + Semantic Analysis
+            |
+            v
+    Thanh phan bi anh huong
+            |
+            v
+       RAG Retrieval
+            |
+            v
+       LLM Analysis
+            |
+            v
+    AI cap nhat tai lieu
+            |
+            v
+      Tao phien ban moi
+            |
+            v
+     Luu Knowledge Base
+            |
+            v
+        Staff Review
+         /       \
+      Reject     Approve
+        |           |
+        v           v
+     Revision   Manager Review
+                    |
+              /             \
+           Reject          Approve
+             |                |
+             v                v
+          Revision         Published
+                              |
+                              v
+                         Change Log
+\end{verbatim}
+
+
+\section{Trạng thái phiên bản}
+\begin{longtable}{p{3.2cm} p{10.1cm}}
+\toprule
+\textbf{Trạng thái} & \textbf{Ý nghĩa}\\
+\midrule
+Draft & Phiên bản đang được tạo hoặc chỉnh sửa.\\
+In Review & Phiên bản đang chờ Staff kiểm tra.\\
+Approved & Phiên bản đã được phê duyệt ở bước tương ứng.\\
+Rejected & Phiên bản bị từ chối và cần chỉnh sửa.\\
+Published & Phiên bản chính thức đã được xuất bản hoặc commit.\\
+\bottomrule
+\end{longtable}
+
+
+\section{Chấp nhận và khôi phục}
+Sau khi AI tạo phiên bản mới, hệ thống đưa phiên bản vào trạng thái
+\textit{In Review}. Staff kiểm tra nội dung và grounding evidence. Nếu hợp lệ,
+phiên bản được chuyển cho Manager phê duyệt.
+
+
+Khi Manager phê duyệt, phiên bản có thể trở thành \textit{Published} hoặc được
+commit vào repository.
+
+
+Nếu phiên bản không phù hợp, người có quyền có thể khôi phục về phiên bản trước.
+Rollback không xóa lịch sử cũ mà được ghi nhận như một sự kiện mới trong change
+log, gồm người thực hiện, thời gian và phiên bản được khôi phục.
+
+
+\section{Phân quyền}
+\begin{longtable}{p{3cm} p{10.3cm}}
+\toprule
+\textbf{Vai trò} & \textbf{Trách nhiệm}\\
+\midrule
+Developer & Kết nối GitHub, tạo tài liệu, xem đề xuất AI, chỉnh sửa draft và gửi review.\\
+Staff & Kiểm tra grounding evidence, so sánh phiên bản, chỉnh sửa, approve hoặc reject.\\
+Manager & Phê duyệt cuối, quyết định publish/commit và rollback phiên bản.\\
+Technical Lead & Quản lý chính sách auto-update, collection, version history và chất lượng tài liệu.\\
+Administrator & Quản lý người dùng, quyền, GitHub integration, cấu hình AI và hệ thống.\\
+\bottomrule
+\end{longtable}
+
+
+\section{Tiêu chí nghiệm thu}
+\begin{enumerate}
+    \item Phát hiện được thay đổi từ commit hoặc Pull Request.
+    \item Xác định được code entity và tài liệu có khả năng bị ảnh hưởng.
+    \item Tạo được phiên bản tài liệu mới sau cập nhật.
+    \item Lưu được thông tin phiên bản và nguồn thay đổi.
+    \item Cho phép xem Diff giữa các phiên bản.
+    \item Staff có thể review và Manager có thể approve/reject.
+    \item Người có quyền có thể rollback mà không làm mất lịch sử.
+    \item Toàn bộ quá trình có thể truy vết qua change log/audit trail.
+\end{enumerate}
+
+
+\section{Kết luận}
+File \texttt{requirements.tex} đóng vai trò là tài liệu yêu cầu, kết nối
+\texttt{auto\_update.tex} và \texttt{knowledge\_base.tex}. Auto Update cung cấp
+cơ chế phát hiện và phân tích thay đổi từ GitHub, còn Knowledge Base \& Version
+History cung cấp cơ chế lưu trữ, quản lý và truy xuất tài liệu.
+
+
+Chuỗi liên kết chính:
+\[
+\text{GitHub}
+\rightarrow
+\text{Auto Update}
+\rightarrow
+\text{Impact Analysis}
+\rightarrow
+\text{AI Update}
+\rightarrow
+\text{Knowledge Base}
+\rightarrow
+\text{Version History}
+\rightarrow
+\text{Review/Approve/Rollback}
+\]
+
+
+\end{document}
