@@ -348,23 +348,19 @@ Quá trình sinh tài liệu bằng AI phải tối ưu thời gian phản hồi
 \usepackage{booktabs}
 \usepackage{hyperref}
 
-
 \hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
 \setlist[itemize]{leftmargin=1.2cm}
 \setlist[enumerate]{leftmargin=1.2cm}
-
 
 \title{\textbf{LivingDocs -- Requirements}\\
 \large Yêu cầu hệ thống cho Auto Update, Knowledge Base \& Version History}
 \author{Báo cáo môn Công nghệ phần mềm}
 \date{}
 
-
 \begin{document}
 \maketitle
 \tableofcontents
 \newpage
-
 
 \section{Tổng quan}
 Tài liệu này mô tả các yêu cầu của hệ thống LivingDocs đối với chức năng
@@ -372,12 +368,10 @@ Tài liệu này mô tả các yêu cầu của hệ thống LivingDocs đối v
 để liên kết với hai tài liệu chức năng \texttt{auto\_update.tex} và
 \texttt{knowledge\_base.tex}.
 
-
 \texttt{auto\_update.tex} tập trung vào phát hiện thay đổi từ GitHub, phân tích
 mã nguồn, xác định tài liệu bị ảnh hưởng và tạo đề xuất cập nhật bằng AI.
 \texttt{knowledge\_base.tex} tập trung vào lưu trữ tri thức, quản lý tài liệu
 và lịch sử phiên bản.
-
 
 \section{Mục tiêu}
 \begin{itemize}
@@ -389,7 +383,6 @@ và lịch sử phiên bản.
     \item Theo dõi, so sánh, phê duyệt và khôi phục phiên bản.
     \item Đảm bảo mọi thay đổi có thể truy vết qua lịch sử và audit trail.
 \end{itemize}
-
 
 \section{Liên kết với các tài liệu chức năng}
 \begin{longtable}{p{3.2cm} p{5.2cm} p{5.2cm}}
@@ -405,11 +398,9 @@ Cơ sở cho FR01, FR02, FR03, FR06, FR07, FR08, FR09 và FR10.\\
 \bottomrule
 \end{longtable}
 
-
 Nếu các file nằm cùng thư mục, có thể mở trực tiếp:
 \href{auto_update.tex}{auto\_update.tex} và
 \href{knowledge_base.tex}{knowledge\_base.tex}.
-
 
 \section{Yêu cầu chức năng}
 \begin{longtable}{p{1.5cm} p{11.8cm}}
@@ -431,7 +422,6 @@ FR12 & Hệ thống cho phép điều hướng giữa tài liệu và thành ph�
 \bottomrule
 \end{longtable}
 
-
 \section{Yêu cầu phi chức năng}
 \begin{itemize}
     \item \textbf{Bảo mật:} Kiểm soát quyền truy cập và chỉnh sửa theo vai trò.
@@ -442,7 +432,6 @@ FR12 & Hệ thống cho phép điều hướng giữa tài liệu và thành ph�
     \item \textbf{Chất lượng AI:} Nội dung AI có grounding evidence và được human review theo quy trình.
     \item \textbf{Khả năng bảo trì:} Hệ thống hỗ trợ API và kiến trúc rõ ràng để dễ mở rộng.
 \end{itemize}
-
 
 \section{Quy trình nghiệp vụ}
 \begin{verbatim}
@@ -490,7 +479,6 @@ GitHub Commit / Pull Request
                          Change Log
 \end{verbatim}
 
-
 \section{Trạng thái phiên bản}
 \begin{longtable}{p{3.2cm} p{10.1cm}}
 \toprule
@@ -504,21 +492,17 @@ Published & Phiên bản chính thức đã được xuất bản hoặc commit.
 \bottomrule
 \end{longtable}
 
-
 \section{Chấp nhận và khôi phục}
 Sau khi AI tạo phiên bản mới, hệ thống đưa phiên bản vào trạng thái
 \textit{In Review}. Staff kiểm tra nội dung và grounding evidence. Nếu hợp lệ,
 phiên bản được chuyển cho Manager phê duyệt.
 
-
 Khi Manager phê duyệt, phiên bản có thể trở thành \textit{Published} hoặc được
 commit vào repository.
-
 
 Nếu phiên bản không phù hợp, người có quyền có thể khôi phục về phiên bản trước.
 Rollback không xóa lịch sử cũ mà được ghi nhận như một sự kiện mới trong change
 log, gồm người thực hiện, thời gian và phiên bản được khôi phục.
-
 
 \section{Phân quyền}
 \begin{longtable}{p{3cm} p{10.3cm}}
@@ -533,7 +517,6 @@ Administrator & Quản lý người dùng, quyền, GitHub integration, cấu h�
 \bottomrule
 \end{longtable}
 
-
 \section{Tiêu chí nghiệm thu}
 \begin{enumerate}
     \item Phát hiện được thay đổi từ commit hoặc Pull Request.
@@ -546,13 +529,11 @@ Administrator & Quản lý người dùng, quyền, GitHub integration, cấu h�
     \item Toàn bộ quá trình có thể truy vết qua change log/audit trail.
 \end{enumerate}
 
-
 \section{Kết luận}
 File \texttt{requirements.tex} đóng vai trò là tài liệu yêu cầu, kết nối
 \texttt{auto\_update.tex} và \texttt{knowledge\_base.tex}. Auto Update cung cấp
 cơ chế phát hiện và phân tích thay đổi từ GitHub, còn Knowledge Base \& Version
 History cung cấp cơ chế lưu trữ, quản lý và truy xuất tài liệu.
-
 
 Chuỗi liên kết chính:
 \[
@@ -570,6 +551,5 @@ Chuỗi liên kết chính:
 \rightarrow
 \text{Review/Approve/Rollback}
 \]
-
 
 \end{document}
