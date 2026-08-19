@@ -1,1 +1,101 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
 
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[itemize]{leftmargin=1.2cm}
+\setlist[enumerate]{leftmargin=1.2cm}
+
+\title{\textbf{LivingDocs -- Administration \& System Configuration}\\
+\large Tài liệu thiết kế chức năng Quản trị & Cấu hình Hệ thống}
+\author{Báo cáo môn Công nghệ phần mềm}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Tổng quan}
+Mô-đun \textbf{Administration \& System Configuration} (viết tắt là \texttt{administration.tex}) đóng vai trò quản trị tập trung cho toàn bộ hệ thống LivingDocs. Mô-đun này cung cấp các công cụ cho Administrator để quản lý người dùng, phân quyền truy cập, cấu hình tích hợp với GitHub, thiết lập các thông số mô hình AI, và truy vết mọi hoạt động qua audit log.
+
+Tài liệu này liên kết với yêu cầu hệ thống tại \texttt{administration\_requirements.tex}.
+
+\section{Mục tiêu & Phạm vi}
+\begin{itemize}
+    \item Quản lý vòng đời tài khoản người dùng (tạo, sửa, khóa, xóa).
+    \item Phân quyền theo các vai trò hệ thống (Developer, Staff, Manager, Technical Lead, Administrator).
+    \item Cấu hình kết nối GitHub Repositories (Webhook, Access Tokens, Branch tracking).
+    \item Cấu hình tham số AI (chọn Model, điều chỉnh Prompt Templates, thiết lập ngưỡng Drift Thresholds).
+    \item Lưu trữ và tra cứu lịch sử thay đổi hệ thống (Audit Trail / Audit Log).
+\end{itemize}
+
+\section{Chi tiết Chức năng (Functional Details)}
+
+\subsection{Quản lý Người dùng & Phân quyền (FR07, FR08)}
+Administrator có thể thực hiện các thao tác quản trị tài khoản:
+\begin{itemize}
+    \item \textbf{Tạo & Quản lý tài khoản:} Thêm mới người dùng, cập nhật thông tin cá nhân, vô hiệu hóa hoặc xóa tài khoản.
+    \item \textbf{Gán vai trò (Role Assignment):}
+    \begin{itemize}
+        \item \textit{Developer:} Xem báo cáo drift của mã nguồn phụ trách.
+        \item \textit{Staff:} Kiểm tra báo cáo, xác nhận mức độ ảnh hưởng và xử lý drift.
+        \item \textit{Manager:} Giám sát tổng quan dự án.
+        \item \textit{Technical Lead:} Điều chỉnh ngưỡng phát hiện drift, phạm vi theo dõi.
+        \item \textit{Administrator:} Toàn quyền quản trị hệ thống và cấu hình.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Cấu hình Tích hợp GitHub (FR09)}
+Thiết lập kết nối an toàn với các kho chứa mã nguồn trên GitHub:
+\begin{itemize}
+ \item Quản lý Personal Access Tokens (PAT) hoặc GitHub App Credentials.
+    \item Khai báo các Repository và Nhánh (Branch) cần theo dõi drift.
+    \item Thiết lập và kiểm tra URL Webhook nhận sự kiện commit/PR.
+\end{itemize}
+
+\subsection{Cấu hình Tham số AI & Drift (FR10, FR11)}
+\begin{itemize}
+    \item Lựa chọn mô hình AI phân tích (LLM Model).
+    \item Tùy chỉnh Prompt Template phục vụ so sánh mã nguồn - tài liệu.
+    \item Thiết lập ngưỡng phân loại điểm số drift (Minor, Moderate, Critical).
+    \item Bật/Tắt tính năng tự động phát hiện drift theo từng dự án hoặc từng tập tài liệu (collection).
+\end{itemize}
+
+\subsection{Nhật ký Quản trị & Truy vết Audit Log (FR12)}
+Mọi hành động thay đổi cấu hình, phân quyền hoặc thao tác quản trị đều được ghi lại vào nhật ký Audit Log bao gồm:
+\begin{itemize}
+    \item Timestamp (Thời gian thực hiện).
+    \item User ID / Account thực hiện.
+    \item Loại hành động (Create, Update, Delete, Config Change).
+    \item Giá trị trước và sau khi thay đổi (Old/New Value).
+\end{itemize}
+
+\section{Quy trình Quản trị Hệ thống}
+\begin{verbatim}
+Admin Dang nhap -> Chon Module Admin -> Thay doi Cau hinh/Nguoi dung
+                                                  |
+                                                  v
+                                     Kiem tra & Luu Cau hinh
+                                                  |
+                                                  v
+                                        Ghi nhan Audit Log
+\end{verbatim}
+
+\section{Tiêu chí nghiệm thu}
+\begin{enumerate}
+    \item Quản lý tài khoản và phân quyền chính xác theo từng vai trò.
+    \item Tích hợp GitHub thành công và nhận được dữ liệu từ Webhook.
+    \item Cho phép tùy chỉnh linh hoạt tham số AI và ngưỡng cảnh báo.
+    \item Nhật ký Audit Log ghi nhận đầy đủ, không thể chỉnh sửa hoặc xóa lịch sử.
+\end{enumerate}
+
+\end{document}   
