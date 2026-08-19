@@ -1,575 +1,1175 @@
-\section{System Requirements}
-
-\subsection{Requirements Introduction}
-
-Tài liệu này mô tả các yêu cầu chức năng và phi chức năng của hệ thống \textbf{LivingDocs} trong phạm vi dự án Công nghệ Phần mềm. Mục tiêu của phần yêu cầu là xác định rõ những chức năng hệ thống cần cung cấp, các điều kiện hoạt động, cũng như các ràng buộc kỹ thuật cần tuân thủ trong quá trình thiết kế và triển khai.
-
-Hệ thống LivingDocs được xây dựng nhằm hỗ trợ đồng bộ tài liệu kỹ thuật với mã nguồn được quản lý trên GitHub. Việc xác định đầy đủ yêu cầu giúp đảm bảo hệ thống đáp ứng đúng nhu cầu quản lý tài liệu, theo dõi thay đổi mã nguồn và hỗ trợ quy trình phát triển phần mềm hiện đại.
-
-\paragraph{Phạm vi hệ thống}
-
-Phạm vi của hệ thống bao gồm:
-
-\begin{itemize}
-    \item Kết nối tài khoản GitHub thông qua cơ chế OAuth2.
-    \item Quản lý repository cần theo dõi và đồng bộ.
-    \item Theo dõi commit, branch và Pull Request.
-    \item Đồng bộ tự động dữ liệu mã nguồn với hệ thống LivingDocs.
-    \item Hỗ trợ tích hợp CI/CD để tự động cập nhật tài liệu khi có thay đổi mã nguồn.
-\end{itemize}
-
-Những yêu cầu này đóng vai trò nền tảng cho việc thiết kế kiến trúc hệ thống và triển khai các thành phần GitHub Integration của LivingDocs.
-
-\subsection{Functional Requirements}
-
-\subsubsection{FR1: GitHub Authentication Using OAuth2}
-
-Hệ thống phải cho phép người dùng đăng nhập và kết nối tài khoản GitHub bằng giao thức \textbf{OAuth2}.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Người dùng chọn chức năng \textbf{Connect GitHub}.
-    \item Hệ thống chuyển hướng đến trang xác thực GitHub.
-    \item Sau khi người dùng cấp quyền truy cập, hệ thống nhận được \texttt{authorization code}.
-    \item Mã xác thực được trao đổi để lấy \texttt{access token}.
-    \item Token được lưu trữ an toàn để sử dụng cho các yêu cầu API tiếp theo.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Người dùng có thể kết nối thành công tài khoản GitHub mà không cần cung cấp mật khẩu trực tiếp cho LivingDocs.
-
-\subsubsection{FR2: Repository Selection and Management}
-
-Hệ thống phải cho phép người dùng lựa chọn repository cần quản lý sau khi xác thực GitHub thành công.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Hiển thị danh sách repository mà người dùng có quyền truy cập.
-    \item Cho phép chọn một hoặc nhiều repository.
-    \item Lưu thông tin repository bao gồm tên, owner, branch mặc định và thời gian đồng bộ gần nhất.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Repository được thêm vào workspace của LivingDocs và sẵn sàng cho quá trình đồng bộ tự động.
-
-\subsubsection{FR3: Commit and Pull Request Synchronization}
-
-Hệ thống phải đồng bộ thông tin commit và Pull Request từ GitHub với LivingDocs.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Lấy danh sách commit mới từ branch chính.
-    \item Theo dõi Pull Request được tạo, cập nhật hoặc merge.
-    \item Ghi nhận danh sách file thay đổi trong mỗi Pull Request.
-    \item Liên kết thay đổi mã nguồn với tài liệu liên quan trong LivingDocs.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-LivingDocs luôn phản ánh trạng thái mới nhất của mã nguồn trong repository GitHub.
-
-\subsubsection{FR4: CI/CD Integration for Automatic Documentation Update}
-
-Hệ thống phải hỗ trợ tích hợp với \textbf{GitHub Actions} hoặc công cụ CI/CD tương đương để tự động cập nhật tài liệu.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Kích hoạt workflow khi có commit hoặc Pull Request mới.
-    \item Build và kiểm tra mã nguồn tự động.
-    \item Gửi thông tin thay đổi đến LivingDocs thông qua API nội bộ.
-    \item Tự động tạo hoặc cập nhật tài liệu liên quan sau khi Pull Request được merge.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Tài liệu kỹ thuật được cập nhật tự động mà không cần thao tác thủ công từ người dùng.
-
-\subsubsection{FR5: Synchronization Status Management}
-
-Hệ thống phải quản lý và hiển thị trạng thái của quá trình đồng bộ.
-
-\paragraph{Mô tả}
-
-\begin{itemize}
-    \item Theo dõi trạng thái \texttt{SUCCESS}, \texttt{FAILED} hoặc \texttt{PENDING}.
-    \item Lưu thời gian bắt đầu và kết thúc đồng bộ.
-    \item Ghi nhận thông tin lỗi nếu quá trình đồng bộ thất bại.
-    \item Cho phép người dùng thực hiện đồng bộ lại khi cần thiết.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-
-Người dùng có thể theo dõi và kiểm soát toàn bộ quá trình đồng bộ giữa GitHub và LivingDocs.
-
-\subsection{Non-Functional Requirements}
-
-\subsubsection{NFR1: Security}
-
-Hệ thống phải đảm bảo an toàn cho dữ liệu và thông tin xác thực của người dùng.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Access token phải được mã hóa trước khi lưu trữ.
-    \item Chỉ sử dụng kết nối HTTPS/TLS khi giao tiếp với GitHub API.
-    \item Áp dụng cơ chế phân quyền truy cập theo vai trò người dùng.
-    \item Không ghi dữ liệu nhạy cảm vào log hệ thống.
-\end{itemize}
-
-\subsubsection{NFR2: Performance}
-
-Quá trình đồng bộ phải hoạt động hiệu quả và không ảnh hưởng đáng kể đến hệ thống chính.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Đồng bộ incremental thay vì tải lại toàn bộ repository.
-    \item Ưu tiên xử lý bất đồng bộ đối với các tác vụ phân tích lớn.
-    \item Thời gian phản hồi của API phải đủ nhanh để hỗ trợ trải nghiệm người dùng.
-\end{itemize}
-
-\subsubsection{NFR3: Scalability}
-
-Hệ thống phải có khả năng mở rộng để phục vụ nhiều repository và nhiều người dùng đồng thời.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Hỗ trợ quản lý nhiều repository trong cùng một tài khoản.
-    \item Cho phép nhiều người dùng sử dụng hệ thống đồng thời.
-    \item Thiết kế dịch vụ theo hướng module hóa để dễ dàng mở rộng trong tương lai.
-\end{itemize}
-
-\subsubsection{NFR4: Reliability and Recovery}
-
-Hệ thống phải duy trì tính ổn định và có khả năng phục hồi khi xảy ra lỗi kết nối hoặc lỗi dịch vụ bên ngoài.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Tự động thử lại khi GitHub API tạm thời không phản hồi.
-    \item Lưu trạng thái đồng bộ để tiếp tục xử lý sau khi phục hồi.
-    \item Ghi log chi tiết để hỗ trợ giám sát và khắc phục sự cố.
-\end{itemize}
-
-\subsubsection{NFR5: Usability}
-
-Giao diện người dùng phải trực quan và dễ sử dụng đối với thành viên nhóm phát triển phần mềm.
-
-\paragraph{Yêu cầu}
-
-\begin{itemize}
-    \item Các chức năng kết nối GitHub và đồng bộ phải dễ tìm thấy.
-    \item Hiển thị trạng thái đồng bộ rõ ràng bằng biểu tượng hoặc màu sắc.
-    \item Cung cấp thông báo lỗi và hướng dẫn xử lý khi xảy ra sự cố.
-\end{itemize}
-
-\subsection{System Constraints}
-
-\subsubsection{Official GitHub API}
-
-Hệ thống phải sử dụng \textbf{GitHub REST API} hoặc \textbf{GitHub GraphQL API} chính thức để đảm bảo tính tương thích và tuân thủ chính sách của GitHub.
-
-\subsubsection{Repository Access Scope}
-
-Hệ thống chỉ hỗ trợ các repository:
-
-\begin{itemize}
-    \item Public repository.
-    \item Private repository mà người dùng đã cấp quyền truy cập thông qua OAuth2.
-\end{itemize}
-
-Những repository không có quyền truy cập hợp lệ sẽ không được phép đồng bộ với LivingDocs.
-
-\subsubsection{LivingDocs Internal API Integration}
-
-Việc trao đổi dữ liệu giữa GitHub Integration và LivingDocs phải được thực hiện thông qua \textbf{API nội bộ} của hệ thống.
-
-\paragraph{Ràng buộc}
-
-\begin{itemize}
-    \item Chỉ các dịch vụ được xác thực mới được phép gọi API nội bộ.
-    \item Dữ liệu đồng bộ phải tuân theo định dạng chuẩn do LivingDocs quy định.
-    \item Mọi yêu cầu cập nhật tài liệu phải được kiểm tra quyền truy cập trước khi xử lý.
-\end{itemize}
-
-\subsection{Conclusion}
-
-Phần yêu cầu hệ thống đã xác định các yêu cầu chức năng và phi chức năng quan trọng của hệ thống \textbf{LivingDocs}. Các yêu cầu chức năng tập trung vào việc kết nối GitHub bằng OAuth2, quản lý repository, đồng bộ commit và Pull Request, tích hợp CI/CD và quản lý trạng thái đồng bộ. Đồng thời, các yêu cầu phi chức năng đảm bảo hệ thống đáp ứng các tiêu chí về bảo mật, hiệu năng, khả năng mở rộng, độ ổn định và tính dễ sử dụng.
-
-Việc tích hợp GitHub đóng vai trò cốt lõi trong kiến trúc LivingDocs vì nó giúp hệ thống theo dõi chính xác mọi thay đổi của mã nguồn và tự động cập nhật tài liệu tương ứng. Điều này góp phần đảm bảo tài liệu kỹ thuật luôn \textbf{cập nhật, nhất quán và phản ánh đúng trạng thái thực tế của hệ thống phần mềm}, từ đó nâng cao chất lượng quản lý dự án và hiệu quả phối hợp của nhóm phát triển.
-
-
-\section{AI Engine System Requirements}
-
-\subsection{AI Functional Requirements}
-
-\subsubsection{FR6: Static Code Analysis and AI Documentation Generation}
-
-Hệ thống phải tự động phân tích cấu trúc mã nguồn và sinh ra tài liệu kỹ thuật chi tiết bằng cách tích hợp các Mô hình Ngôn ngữ Lớn (LLM).
-
-\paragraph{Mô tả}
-\begin{itemize}
-    \item Tự động trích xuất Cây Cú pháp Trừu tượng (\texttt{Abstract Syntax Tree - AST}) từ các tệp mã nguồn để xác định danh sách các hàm, lớp, tham số, kiểu dữ liệu trả về và các điểm cuối API (\texttt{API Endpoints}).
-    \item Đóng gói thông tin cấu trúc mã nguồn cùng các đoạn ghi chú (\texttt{inline comments}) gửi đến AI Engine thông qua các mẫu prompt được chuẩn hóa.
-    \item Sinh nội dung tài liệu kỹ thuật chi tiết bao gồm: Mô tả chức năng hàm/lớp, Tài liệu API Specifications (đầy đủ Request/Response/Status Code), và Tài liệu Hướng dẫn Sử dụng.
-    \item Hỗ trợ xuất và định dạng kết quả theo chuẩn Markdown hoặc mã nguồn LaTeX sẵn sàng để xuất bản.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-Tài liệu kỹ thuật được khởi tạo tự động có cấu trúc chặt chẽ, chính xác và phản ánh đúng 100\% khai báo mã nguồn mà không cần kỹ sư viết tay thủ công.
-
-
-\subsubsection{FR7: Context Management and Retrieval-Augmented Generation (RAG)}
-
-Hệ thống phải triển khai kiến trúc RAG để truy vấn ngữ cảnh dự án toàn cục, nâng cao độ chính xác khi sinh tài liệu.
-
-\paragraph{Mô tả}
-\begin{itemize}
-    \item Tự động chia nhỏ (\texttt{code chunking}) và chuyển đổi tài liệu cùng mã nguồn dự án thành dạng nhúng vector (\texttt{vector embeddings}) thông qua Embedding Model.
-    \item Lưu trữ và đánh chỉ mục dữ liệu vector trong Cơ sở dữ liệu Vector (\texttt{Vector Database}).
-    \item Khi phát sinh yêu cầu sinh tài liệu, hệ thống thực hiện tìm kiếm ngữ nghĩa (\texttt{semantic search}) để trích xuất các đoạn văn bản/mã nguồn liên quan nhất trong toàn bộ dự án làm ngữ cảnh bổ sung cho AI.
-    \item Kiểm soát và tối ưu hóa dung lượng ngữ cảnh (\texttt{context window}) để đảm bảo không vượt quá giới hạn token của LLM.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-AI Engine nắm bắt được mối liên hệ toàn cục giữa các module, loại bỏ hoàn toàn hiện tượng "ảo giác" (\texttt{hallucination}) hoặc đưa ra thông tin không có trong codebase.
-
-
-\subsubsection{FR8: Automated Architecture and Diagram Generation}
-
-Hệ thống phải phân tích kiến trúc mã nguồn và tự động tạo mã nguồn biểu đồ kỹ thuật.
-
-\paragraph{Mô tả}
-\begin{itemize}
-    \item Phân tích mối quan hệ phụ thuộc (\texttt{dependencies}), quan hệ kế thừa và giao tiếp giữa các lớp/module trong dự án.
-    \item Tự động sinh mã biểu đồ theo cú pháp Mermaid.js hoặc PlantUML cho Sơ đồ Lớp (\texttt{Class Diagram}), Sơ đồ Tuần tự (\texttt{Sequence Diagram}) và Sơ đồ Luồng dữ liệu (\texttt{Data Flow Diagram}).
-    \item Kiểm tra tính hợp lệ cú pháp của đoạn mã biểu đồ sinh ra trước khi trả về giao diện.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-Các biểu đồ kiến trúc hệ thống được vẽ tự động, có khả năng render trực quan trên giao diện web và tự động vẽ lại khi kiến trúc mã nguồn thay đổi.
-
-
-\subsubsection{FR9: Documentation Drift Detection and Alerting}
-
-Hệ thống phải tự động phát hiện sự lệch ngữ cảnh (\texttt{Documentation Drift}) giữa tài liệu lưu trữ và mã nguồn thực tế.
-
-\paragraph{Mô tả}
-\begin{itemize}
-    \item Khi có commit mới, hệ thống phân tích sự thay đổi mã nguồn (\texttt{Code Diff}) và so sánh với phiên bản tài liệu hiện tại trong cơ sở dữ liệu.
-    \item Phát hiện các trường hợp mâu thuẫn như: hàm bị đổi tên/chữ ký, tham số API bị thêm/xóa, hoặc logic nghiệp vụ đã thay đổi nhưng tài liệu chưa cập nhật.
-    \item Ghi nhận mức độ lệch ngữ cảnh và hiển thị cảnh báo trực quan kèm vị trí tài liệu bị lỗi thời cho người dùng.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-Giúp nhóm phát triển ngay lập tức nhận biết các phần tài liệu cần được cập nhật, ngăn chặn tình trạng tài liệu bị lỗi thời so với thực tế.
-
-
-\subsubsection{FR10: Human-in-the-Loop Review and Proposal Management}
-
-Hệ thống phải cung cấp quy trình kiểm duyệt và chỉnh sửa trực quan dành cho người dùng trước khi áp dụng tài liệu mới do AI sinh ra.
-
-\paragraph{Mô tả}
-\begin{itemize}
-    \item Tài liệu sau khi AI sinh ra được lưu dưới dạng Đề xuất cập nhật (\texttt{Documentation Proposal}) ở trạng thái bản thảo (\texttt{DRAFT\_REVIEW}).
-    \item Cung cấp giao diện so sánh song song (Side-by-Side Diff) giữa mã nguồn vừa thay đổi và nội dung tài liệu đề xuất.
-    \item Cho phép kỹ sư chỉnh sửa trực tiếp nội dung bản thảo, thêm bớt ghi chú trước khi bấm xác nhận (\textbf{Approve \& Merge}).
-    \item Đồng bộ tài liệu đã duyệt vào branch chính và cập nhật lại chỉ mục Vector DB.
-\end{itemize}
-
-\paragraph{Kết quả mong đợi}
-Đảm bảo tính kiểm soát tuyệt đối của con người đối với sản phẩm do AI tạo ra, kết hợp tốc độ của AI và độ tin cậy của chuyên gia phần mềm.
-
-
-\subsection{AI Non-Functional Requirements}
-
-\subsubsection{NFR6: AI Output Accuracy and Quality Control}
-
-Nội dung tài liệu do AI Engine sinh ra phải đạt các tiêu chuẩn khắt khe về độ chính xác kỹ thuật và định dạng.
-
-\paragraph{Yêu cầu}
-\begin{itemize}
-    \item Tỷ lệ cú pháp Markdown, mã LaTeX và sơ đồ Mermaid sinh ra phải đạt độ hợp lệ tối thiểu $98\%$ (không bị lỗi render giao diện).
-    \item Tỷ lệ thông tin sai lệch hoặc bịa đặt (Hallucination Rate) phải được kiểm soát dưới $2\%$ nhờ cơ chế RAG và bộ kiểm tra AST.
-    \item Tất cả các tên hàm, biến, lớp và đường dẫn API trong tài liệu phải khớp $100\%$ với mã nguồn thực tế.
-\end{itemize}
-
-
-\subsubsection{NFR7: AI Security, Privacy and Zero Data Retention}
-
-Hệ thống phải bảo đảm an toàn tuyệt đối cho quyền sở hữu trí tuệ, mã nguồn doanh nghiệp và dữ liệu cá nhân.
-
-\paragraph{Yêu cầu}
-\begin{itemize}
-    \item \textbf{Zero Data Retention}: Bắt buộc sử dụng các cổng API doanh nghiệp (Enterprise API) có cam kết không lưu trữ hoặc sử dụng mã nguồn của dự án để huấn luyện lại mô hình AI.
-    \item \textbf{Data Masking}: Tự động quét và loại bỏ/mã hóa các thông tin nhạy cảm như API Keys, Passwords, Token xác thực và Thông tin Định danh Cá nhân (\texttt{PII}) trước khi truyền payload sang AI Service.
-    \item Toàn bộ dữ liệu truyền nhận với dịch vụ AI phải được mã hóa chuẩn HTTPS/TLS 1.3.
-\end{itemize}
-
-
-\subsubsection{NFR8: Fault Tolerance and AI Model Fallback}
-
-Hệ thống phải duy trì khả năng hoạt động liên tục và chịu lỗi tốt khi các dịch vụ AI bên ngoài gặp sự cố.
-
-\paragraph{Yêu cầu}
-\begin{itemize}
-    \item Áp dụng thuật toán \textbf{Exponential Backoff Retry} khi gặp lỗi nghẽn mạng hoặc chạm giới hạn request (\texttt{rate limit}) của AI API.
-    \item Thiết lập cơ chế chuyển đổi mô hình tự động (\textbf{Model Fallback}): Nếu mô hình AI chính (như GPT-4) không phản hồi, hệ thống tự động chuyển sang mô hình dự phòng (như Claude hoặc Gemini).
-    \item Trường hợp toàn bộ dịch vụ AI bị gián đoạn, hệ thống phải kích hoạt chế độ sinh tài liệu cơ bản dựa trên khung mẫu (\texttt{Template-based}) trích xuất từ AST mà không làm ngắt quãng quy trình hệ thống.
-\end{itemize}
-
-
-\subsubsection{NFR9: AI Latency and Cost Optimization}
-
-Quá trình sinh tài liệu bằng AI phải tối ưu thời gian phản hồi và kiểm soát chi phí sử dụng API.
-
-\paragraph{Yêu cầu}
-\begin{itemize}
-    \item Thời gian sinh tài liệu hoàn chỉnh (End-to-End Latency) không vượt quá $10$ giây đối với các commit có quy mô trung bình.
-    \item Chỉ gửi phần mã nguồn thay đổi (\texttt{Code Diff}) thay vì toàn bộ tệp nguồn để tiết kiệm ít nhất $60\%$ lượng token tiêu thụ.
-    \item Áp dụng cơ chế Caching đối với các truy vấn RAG và prompt trùng lặp để giảm thiểu số lần gọi API không cần thiết.
-\end{itemize}
-
 \documentclass[12pt,a4paper]{article}
+
+% =========================
+% Packages
+% =========================
 \usepackage[utf8]{inputenc}
 \usepackage[T5]{fontenc}
 \usepackage[vietnamese]{babel}
 \usepackage[a4paper,margin=2.5cm]{geometry}
+
 \usepackage{enumitem}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{xcolor}
 
+% =========================
+% Configuration
+% =========================
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	urlcolor=blue
+}
 
-\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
 \setlist[itemize]{leftmargin=1.2cm}
 \setlist[enumerate]{leftmargin=1.2cm}
 
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
-\title{\textbf{LivingDocs -- Requirements}\\
-\large Yêu cầu hệ thống cho Auto Update, Knowledge Base \& Version History}
-\author{Báo cáo môn Công nghệ phần mềm}
+% =========================
+% Document Information
+% =========================
+\title{
+	\textbf{LivingDocs -- Software Requirements}\\
+	\large Software Requirements Specification (SRS)
+}
+
+\author{
+	Báo cáo môn Công nghệ phần mềm
+}
+
 \date{}
 
-
+% =========================
+% Document
+% =========================
 \begin{document}
-\maketitle
-\tableofcontents
-\newpage
-
-
-\section{Tổng quan}
-Tài liệu này mô tả các yêu cầu của hệ thống LivingDocs đối với chức năng
-\textbf{Auto Update, Knowledge Base \& Version History}. Nội dung được xây dựng
-để liên kết với hai tài liệu chức năng \texttt{auto\_update.tex} và
-\texttt{knowledge\_base.tex}.
-
-
-\texttt{auto\_update.tex} tập trung vào phát hiện thay đổi từ GitHub, phân tích
-mã nguồn, xác định tài liệu bị ảnh hưởng và tạo đề xuất cập nhật bằng AI.
-\texttt{knowledge\_base.tex} tập trung vào lưu trữ tri thức, quản lý tài liệu
-và lịch sử phiên bản.
-
-
-\section{Mục tiêu}
-\begin{itemize}
-    \item Duy trì tài liệu đồng bộ với mã nguồn dự án.
-    \item Phát hiện thay đổi từ commit hoặc Pull Request trên GitHub.
-    \item Phân tích thành phần mã nguồn và tài liệu bị ảnh hưởng.
-    \item Hỗ trợ AI tạo hoặc cập nhật phiên bản tài liệu mới.
-    \item Lưu trữ tài liệu tập trung trong Knowledge Base.
-    \item Theo dõi, so sánh, phê duyệt và khôi phục phiên bản.
-    \item Đảm bảo mọi thay đổi có thể truy vết qua lịch sử và audit trail.
-\end{itemize}
-
-
-\section{Liên kết với các tài liệu chức năng}
-\begin{longtable}{p{3.2cm} p{5.2cm} p{5.2cm}}
-\toprule
-\textbf{Tài liệu} & \textbf{Nội dung chính} & \textbf{Liên kết với Requirements}\\
-\midrule
-\texttt{auto\_update.tex} &
-Phát hiện thay đổi GitHub, AST, RAG, LLM, phân tích tác động và tạo phiên bản mới. &
-Cơ sở cho FR04, FR05 và quy trình cập nhật tài liệu.\\
-\texttt{knowledge\_base.tex} &
-Knowledge Base, Version History, so sánh, chấp nhận và khôi phục phiên bản. &
-Cơ sở cho FR01, FR02, FR03, FR06, FR07, FR08, FR09 và FR10.\\
-\bottomrule
-\end{longtable}
-
-
-Nếu các file nằm cùng thư mục, có thể mở trực tiếp:
-\href{auto_update.tex}{auto\_update.tex} và
-\href{knowledge_base.tex}{knowledge\_base.tex}.
-
-
-\section{Yêu cầu chức năng}
-\begin{longtable}{p{1.5cm} p{11.8cm}}
-\toprule
-\textbf{ID} & \textbf{Yêu cầu}\\
-\midrule
-FR01 & Hệ thống cho phép thêm, cập nhật, lưu trữ, tìm kiếm và truy xuất tài liệu trong Knowledge Base.\\
-FR02 & Hệ thống tự động tạo phiên bản mới khi tài liệu được AI hoặc người dùng cập nhật.\\
-FR03 & Hệ thống lưu mã phiên bản, thời gian, người thực hiện, nội dung thay đổi và trạng thái.\\
-FR04 & Hệ thống tiếp nhận commit hoặc Pull Request từ GitHub và phát hiện thay đổi mã nguồn.\\
-FR05 & Hệ thống phân tích code entity bị ảnh hưởng và xác định tài liệu liên quan để đề xuất hoặc tạo nội dung cập nhật.\\
-FR06 & Hệ thống cho phép so sánh hai phiên bản và hiển thị nội dung thêm, sửa hoặc xóa.\\
-FR07 & Staff có thể kiểm tra, chỉnh sửa, chấp nhận hoặc từ chối phiên bản AI.\\
-FR08 & Manager có thể phê duyệt, publish/commit hoặc khôi phục phiên bản đã ghi nhận.\\
-FR09 & Hệ thống lưu toàn bộ change history và audit trail.\\
-FR10 & Hệ thống cho phép truy xuất các phiên bản tài liệu trước đó.\\
-FR11 & Hệ thống lưu grounding evidence gồm file nguồn, code entity, commit hash và diff.\\
-FR12 & Hệ thống cho phép điều hướng giữa tài liệu và thành phần mã nguồn liên quan.\\
-\bottomrule
-\end{longtable}
-
-
-\section{Yêu cầu phi chức năng}
-\begin{itemize}
-    \item \textbf{Bảo mật:} Kiểm soát quyền truy cập và chỉnh sửa theo vai trò.
-    \item \textbf{Tin cậy:} Không làm mất các phiên bản cũ khi cập nhật hoặc rollback.
-    \item \textbf{Truy vết:} Mỗi thay đổi có timestamp, vai trò/người thực hiện và commit/Pull Request liên quan.
-    \item \textbf{Hiệu năng:} Tìm kiếm và truy xuất tài liệu có thời gian phản hồi phù hợp.
-    \item \textbf{Tính nhất quán:} Tài liệu phản ánh đúng trạng thái mã nguồn sau cập nhật.
-    \item \textbf{Chất lượng AI:} Nội dung AI có grounding evidence và được human review theo quy trình.
-    \item \textbf{Khả năng bảo trì:} Hệ thống hỗ trợ API và kiến trúc rõ ràng để dễ mở rộng.
-\end{itemize}
-
-
-\section{Quy trình nghiệp vụ}
-\begin{verbatim}
-GitHub Commit / Pull Request
-            |
-            v
-      Phat hien thay doi
-            |
-            v
-   AST + Semantic Analysis
-            |
-            v
-    Thanh phan bi anh huong
-            |
-            v
-       RAG Retrieval
-            |
-            v
-       LLM Analysis
-            |
-            v
-    AI cap nhat tai lieu
-            |
-            v
-      Tao phien ban moi
-            |
-            v
-     Luu Knowledge Base
-            |
-            v
-        Staff Review
-         /       \
-      Reject     Approve
-        |           |
-        v           v
-     Revision   Manager Review
-                    |
-              /             \
-           Reject          Approve
-             |                |
-             v                v
-          Revision         Published
-                              |
-                              v
-                         Change Log
-\end{verbatim}
-
-
-\section{Trạng thái phiên bản}
-\begin{longtable}{p{3.2cm} p{10.1cm}}
-\toprule
-\textbf{Trạng thái} & \textbf{Ý nghĩa}\\
-\midrule
-Draft & Phiên bản đang được tạo hoặc chỉnh sửa.\\
-In Review & Phiên bản đang chờ Staff kiểm tra.\\
-Approved & Phiên bản đã được phê duyệt ở bước tương ứng.\\
-Rejected & Phiên bản bị từ chối và cần chỉnh sửa.\\
-Published & Phiên bản chính thức đã được xuất bản hoặc commit.\\
-\bottomrule
-\end{longtable}
-
-
-\section{Chấp nhận và khôi phục}
-Sau khi AI tạo phiên bản mới, hệ thống đưa phiên bản vào trạng thái
-\textit{In Review}. Staff kiểm tra nội dung và grounding evidence. Nếu hợp lệ,
-phiên bản được chuyển cho Manager phê duyệt.
-
-
-Khi Manager phê duyệt, phiên bản có thể trở thành \textit{Published} hoặc được
-commit vào repository.
-
-
-Nếu phiên bản không phù hợp, người có quyền có thể khôi phục về phiên bản trước.
-Rollback không xóa lịch sử cũ mà được ghi nhận như một sự kiện mới trong change
-log, gồm người thực hiện, thời gian và phiên bản được khôi phục.
-
-
-\section{Phân quyền}
-\begin{longtable}{p{3cm} p{10.3cm}}
-\toprule
-\textbf{Vai trò} & \textbf{Trách nhiệm}\\
-\midrule
-Developer & Kết nối GitHub, tạo tài liệu, xem đề xuất AI, chỉnh sửa draft và gửi review.\\
-Staff & Kiểm tra grounding evidence, so sánh phiên bản, chỉnh sửa, approve hoặc reject.\\
-Manager & Phê duyệt cuối, quyết định publish/commit và rollback phiên bản.\\
-Technical Lead & Quản lý chính sách auto-update, collection, version history và chất lượng tài liệu.\\
-Administrator & Quản lý người dùng, quyền, GitHub integration, cấu hình AI và hệ thống.\\
-\bottomrule
-\end{longtable}
-
-
-\section{Tiêu chí nghiệm thu}
-\begin{enumerate}
-    \item Phát hiện được thay đổi từ commit hoặc Pull Request.
-    \item Xác định được code entity và tài liệu có khả năng bị ảnh hưởng.
-    \item Tạo được phiên bản tài liệu mới sau cập nhật.
-    \item Lưu được thông tin phiên bản và nguồn thay đổi.
-    \item Cho phép xem Diff giữa các phiên bản.
-    \item Staff có thể review và Manager có thể approve/reject.
-    \item Người có quyền có thể rollback mà không làm mất lịch sử.
-    \item Toàn bộ quá trình có thể truy vết qua change log/audit trail.
-\end{enumerate}
-
-
-\section{Kết luận}
-File \texttt{requirements.tex} đóng vai trò là tài liệu yêu cầu, kết nối
-\texttt{auto\_update.tex} và \texttt{knowledge\_base.tex}. Auto Update cung cấp
-cơ chế phát hiện và phân tích thay đổi từ GitHub, còn Knowledge Base \& Version
-History cung cấp cơ chế lưu trữ, quản lý và truy xuất tài liệu.
-
-
-Chuỗi liên kết chính:
-\[
-\text{GitHub}
-\rightarrow
-\text{Auto Update}
-\rightarrow
-\text{Impact Analysis}
-\rightarrow
-\text{AI Update}
-\rightarrow
-\text{Knowledge Base}
-\rightarrow
-\text{Version History}
-\rightarrow
-\text{Review/Approve/Rollback}
-\]
-
-
+	
+	\maketitle
+	
+	\tableofcontents
+	
+	\newpage
+	
+	% =========================================================
+	\section{Tổng quan}
+	% =========================================================
+	
+	\subsection{Mục đích tài liệu}
+	
+	Tài liệu này mô tả các yêu cầu phần mềm của hệ thống
+	\textbf{LivingDocs -- Design and Implementation of an AI-Assisted
+		Self-Updating Document System for Engineering Teams}.
+	
+	LivingDocs là hệ thống hỗ trợ duy trì tài liệu phần mềm bằng trí tuệ nhân tạo,
+	nhằm phát hiện documentation drift, hỗ trợ tạo và cập nhật tài liệu từ mã nguồn,
+	đồng thời cung cấp quy trình kiểm duyệt có sự tham gia của con người.
+	
+	Tài liệu tập trung vào:
+	\begin{itemize}
+		\item Yêu cầu của người dùng.
+		\item Yêu cầu chức năng.
+		\item Yêu cầu phi chức năng.
+		\item Vai trò và quyền của các nhóm người dùng.
+		\item Quy trình quản lý tài liệu và documentation drift.
+		\item Các yêu cầu về kiểm duyệt, truy vết và phiên bản tài liệu.
+	\end{itemize}
+	
+	Tài liệu này \textbf{không mô tả chi tiết thiết kế hệ thống,
+		kiến trúc triển khai, cấu trúc cơ sở dữ liệu hoặc mã nguồn}.
+	Các nội dung này thuộc các giai đoạn thiết kế và triển khai sau của dự án.
+	
+	% =========================================================
+	\section{Phạm vi hệ thống}
+	% =========================================================
+	
+	LivingDocs hướng tới việc tự động hóa quá trình duy trì tài liệu trong
+	các dự án phần mềm.
+	
+	Hệ thống có khả năng:
+	
+	\begin{itemize}
+		\item Kết nối với GitHub repository.
+		\item Tiếp nhận thay đổi từ commit và Pull Request.
+		\item Phân tích thay đổi mã nguồn.
+		\item Liên kết mã nguồn với tài liệu tương ứng.
+		\item Phát hiện documentation drift.
+		\item Phân loại mức độ và loại drift.
+		\item Đề xuất cập nhật tài liệu bằng AI.
+		\item Tự động tạo tài liệu từ mã nguồn.
+		\item Quản lý phiên bản và lịch sử thay đổi của tài liệu.
+		\item Hỗ trợ quy trình kiểm duyệt bởi Staff và Manager.
+		\item Cung cấp knowledge base để tìm kiếm và liên kết tài liệu với mã nguồn.
+		\item Cung cấp chức năng quản trị và cấu hình hệ thống.
+	\end{itemize}
+	
+	% =========================================================
+	\section{Mục tiêu hệ thống}
+	% =========================================================
+	
+	Các mục tiêu chính của LivingDocs gồm:
+	
+	\begin{itemize}
+		\item Giảm documentation debt trong quá trình phát triển phần mềm.
+		\item Phát hiện tài liệu không còn đồng bộ với mã nguồn.
+		\item Phát hiện cả thay đổi tham chiếu và thay đổi mang tính ngữ nghĩa.
+		\item Giảm công sức thủ công trong việc viết và duy trì tài liệu.
+		\item Tăng độ chính xác và tính nhất quán của tài liệu.
+		\item Hỗ trợ tự động tạo tài liệu từ mã nguồn.
+		\item Đảm bảo mọi thay đổi tài liệu đều có thể truy vết.
+		\item Đảm bảo AI hoạt động dưới sự kiểm soát của con người.
+		\item Hỗ trợ quy trình review và approval trước khi tài liệu được publish.
+	\end{itemize}
+	
+	% =========================================================
+	\section{Đối tượng sử dụng}
+	% =========================================================
+	
+	Hệ thống bao gồm các nhóm người dùng chính sau:
+	
+	\begin{longtable}{p{4cm} p{9.5cm}}
+		\toprule
+		\textbf{Vai trò} & \textbf{Mô tả} \\
+		\midrule
+		
+		Developer (Author) &
+		Người phát triển phần mềm, sử dụng hệ thống để kết nối repository,
+		tạo tài liệu, xem documentation drift và gửi tài liệu để review. \\
+		
+		Staff (Reviewer) &
+		Người thực hiện bước review đầu tiên đối với tài liệu do AI tạo hoặc
+		tự động cập nhật. \\
+		
+		Manager (Approver) &
+		Người thực hiện bước phê duyệt cuối cùng và quyết định việc publish
+		hoặc commit tài liệu. \\
+		
+		Technical Lead / Documentation Owner &
+		Người quản lý chất lượng tài liệu, chính sách documentation drift,
+		template và governance. \\
+		
+		Administrator &
+		Người quản lý người dùng, role, permission, repository,
+		integration và các cấu hình hệ thống. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Yêu cầu người dùng}
+	% =========================================================
+	
+	\subsection{Developer (Author)}
+	
+	Developer cần có khả năng:
+	
+	\begin{itemize}
+		\item Đăng ký, đăng nhập và đăng xuất.
+		\item Quản lý thông tin cá nhân và notification preferences.
+		\item Kết nối tài khoản GitHub.
+		\item Chọn repository và thêm repository vào workspace.
+		\item Xem trạng thái kết nối repository.
+		\item Đồng bộ lại repository khi cần.
+		\item Xem Pull Request và commit đã được hệ thống tiếp nhận.
+		\item Tạo tài liệu từ source code bằng AI.
+		\item Chọn template cho tài liệu được tạo.
+		\item Xem các code entity chưa có tài liệu.
+		\item Xem trước tài liệu do AI tạo.
+		\item Chỉnh sửa tài liệu trước khi gửi review.
+		\item Xem grounding evidence của tài liệu.
+		\item Gửi tài liệu vào workflow review.
+		\item Xem trạng thái workflow của tài liệu.
+		\item Xem documentation drift alert.
+		\item Xem code change và evidence liên quan.
+		\item Xem loại và mức độ nghiêm trọng của drift.
+		\item Xem và xử lý đề xuất cập nhật tài liệu từ AI.
+		\item Xem lịch sử phiên bản tài liệu.
+		\item So sánh các phiên bản tài liệu.
+		\item Roll back tài liệu về phiên bản trước.
+		\item Tìm kiếm tài liệu và code entity trong knowledge base.
+	\end{itemize}
+	
+	\subsection{Staff (Reviewer)}
+	
+	Staff cần có khả năng:
+	
+	\begin{itemize}
+		\item Xem hàng đợi tài liệu đang chờ review.
+		\item Mở tài liệu cùng grounding evidence.
+		\item Xem change log trong quá trình review.
+		\item So sánh phiên bản được tạo/cập nhật với phiên bản đã được approve.
+		\item Kiểm tra tài liệu có tuân theo template hay không.
+		\item Kiểm tra nội dung tài liệu có phù hợp với source code hay không.
+		\item Thêm review comment.
+		\item Yêu cầu chỉnh sửa tài liệu.
+		\item Chỉnh sửa các lỗi nhỏ trong tài liệu.
+		\item Approve tài liệu ở bước Staff review.
+		\item Reject tài liệu và gửi feedback cho Developer.
+		\item Lọc và sắp xếp review queue.
+		\item Xem review history và trạng thái tài liệu.
+	\end{itemize}
+	
+	\subsection{Manager (Approver)}
+	
+	Manager cần có khả năng:
+	
+	\begin{itemize}
+		\item Xem tài liệu đã vượt qua Staff review.
+		\item Xem Staff review comments.
+		\item Xem grounding evidence.
+		\item Xem toàn bộ audit trail của tài liệu.
+		\item Approve tài liệu để publish hoặc commit.
+		\item Reject tài liệu hoặc yêu cầu chỉnh sửa.
+		\item Roll back tài liệu về phiên bản đã được approve trước đó.
+		\item Cấu hình loại tài liệu yêu cầu Manager approval.
+		\item Cấu hình merge policy cho documentation drift nghiêm trọng.
+		\item Đảm bảo tài liệu chỉ được publish hoặc commit sau khi được phê duyệt.
+		\item Xem lịch sử các quyết định approval.
+		\item Delegate hoặc reassign trách nhiệm approval.
+	\end{itemize}
+	
+	\subsection{Technical Lead / Documentation Owner}
+	
+	Technical Lead / Documentation Owner cần có khả năng:
+	
+	\begin{itemize}
+		\item Quản lý documentation collections.
+		\item Gán quyền sở hữu tài liệu.
+		\item Cấu hình documentation drift policy.
+		\item Cấu hình drift thresholds.
+		\item Theo dõi documentation health dashboard.
+		\item Xem documentation-to-code dependency graph.
+		\item Xem các chỉ số chất lượng tài liệu.
+		\item Theo dõi các documentation drift chưa được xử lý.
+		\item Xuất documentation health và compliance reports.
+		\item Cấu hình automatic documentation update policy.
+		\item Theo dõi version history và change log.
+		\item Lọc change log theo role, document, repository hoặc thời gian.
+		\item Roll back tài liệu hoặc documentation collection.
+		\item Tạo, chỉnh sửa, clone và xóa documentation template.
+		\item Quản lý template sections, headings và placeholders.
+		\item Quản lý thư viện template mặc định.
+		\item Gán default template cho documentation collection hoặc document type.
+		\item Quản lý version của template.
+		\item Preview template trước khi publish.
+	\end{itemize}
+	
+	\subsection{Administrator}
+	
+	Administrator cần có khả năng:
+	
+	\begin{itemize}
+		\item Quản lý users, roles và permissions.
+		\item Quản lý Developer, Staff, Manager, Technical Lead và Administrator.
+		\item Quản lý Staff và Manager trong approval workflow.
+		\item Quản lý workspace và repository.
+		\item Cấu hình GitHub App và GitHub OAuth.
+		\item Cấu hình GitHub Actions và webhook integration.
+		\item Quản lý external service integrations.
+		\item Cấu hình source-code languages được hệ thống hỗ trợ.
+		\item Cấu hình documentation generation settings.
+		\item Cấu hình automatic documentation update trigger.
+		\item Cấu hình auto-update policy.
+		\item Cấu hình change-log và audit-log retention.
+		\item Cấu hình AI settings.
+		\item Cấu hình documentation indexing và retrieval.
+		\item Theo dõi AI processing jobs.
+		\item Theo dõi event pipelines và system health.
+		\item Xem audit logs và system analytics.
+		\item Cấu hình notification policies.
+	\end{itemize}
+	
+	% =========================================================
+	\section{Yêu cầu chức năng}
+	% =========================================================
+	
+	\subsection{Account và Authentication}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR01 &
+		Hệ thống phải cho phép người dùng đăng ký tài khoản. \\
+		
+		FR02 &
+		Hệ thống phải cho phép người dùng đăng nhập và đăng xuất. \\
+		
+		FR03 &
+		Hệ thống phải hỗ trợ đăng nhập bằng email/password hoặc GitHub OAuth. \\
+		
+		FR04 &
+		Hệ thống phải cho phép người dùng quản lý profile và notification preferences. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{GitHub Connection}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR05 &
+		Hệ thống phải cho phép Developer kết nối GitHub account thông qua GitHub OAuth. \\
+		
+		FR06 &
+		Hệ thống phải cho phép người dùng xem và cấp repository access scopes được yêu cầu. \\
+		
+		FR07 &
+		Hệ thống phải cho phép người dùng chọn repository từ GitHub account và thêm vào workspace. \\
+		
+		FR08 &
+		Hệ thống phải cho phép disconnect repository hoặc revoke GitHub connection. \\
+		
+		FR09 &
+		Hệ thống phải hiển thị connection status, default branch và thời gian synchronization gần nhất. \\
+		
+		FR10 &
+		Hệ thống phải cho phép người dùng manually trigger repository re-synchronization. \\
+		
+		FR11 &
+		Hệ thống phải hiển thị Pull Request và commit đã được ingest. \\
+		
+		FR12 &
+		Hệ thống phải thông báo khi GitHub token hoặc webhook không còn hợp lệ. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{AI Source-Code Reading và Documentation Generation}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR13 &
+		Hệ thống phải cho phép tạo documentation cho một file, module/package hoặc toàn bộ repository. \\
+		
+		FR14 &
+		Hệ thống phải tạo documentation dựa trên source code và các code entities liên quan. \\
+		
+		FR15 &
+		Hệ thống phải cho phép người dùng chọn documentation template. \\
+		
+		FR16 &
+		Hệ thống phải hiển thị documentation coverage gaps. \\
+		
+		FR17 &
+		Hệ thống phải cho phép preview documentation được tạo bởi AI. \\
+		
+		FR18 &
+		Hệ thống phải cho phép Developer chỉnh sửa AI-generated documentation trước khi submit. \\
+		
+		FR19 &
+		Hệ thống phải cung cấp grounding evidence cho documentation được tạo. \\
+		
+		FR20 &
+		Hệ thống phải cho phép submit documentation vào review workflow. \\
+		
+		FR21 &
+		Hệ thống phải hiển thị workflow status của documentation. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Automatic Documentation Update}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR22 &
+		Khi source code thay đổi trong Pull Request hoặc commit, hệ thống phải xác định documentation bị ảnh hưởng. \\
+		
+		FR23 &
+		Hệ thống phải tự động cập nhật documentation bị ảnh hưởng và tạo version mới. \\
+		
+		FR24 &
+		Hệ thống phải cho phép bật hoặc tắt automatic documentation update cho repository, module hoặc document. \\
+		
+		FR25 &
+		Hệ thống phải cho phép xem documentation đã được AI tự động cập nhật. \\
+		
+		FR26 &
+		Hệ thống phải hiển thị commit và diff đã kích hoạt automatic documentation update. \\
+		
+		FR27 &
+		Hệ thống phải cho phép so sánh phiên bản tự động cập nhật với phiên bản đang được publish. \\
+		
+		FR28 &
+		Hệ thống phải cho phép accept, edit hoặc dismiss phiên bản được AI cập nhật. \\
+		
+		FR29 &
+		Hệ thống phải cho phép regenerate hoặc re-update documentation khi cần. \\
+		
+		FR30 &
+		Hệ thống phải cho phép rollback documentation về phiên bản trước automatic update. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Documentation Drift Detection và Review}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR31 &
+		Hệ thống phải phát hiện documentation drift từ các thay đổi trong Pull Request. \\
+		
+		FR32 &
+		Hệ thống phải phân tích code change để xác định documentation có khả năng bị ảnh hưởng. \\
+		
+		FR33 &
+		Hệ thống phải cung cấp grounding evidence cho mỗi documentation drift alert. \\
+		
+		FR34 &
+		Hệ thống phải phân loại documentation drift theo loại Referential, Signature hoặc Semantic. \\
+		
+		FR35 &
+		Hệ thống phải phân loại documentation drift theo mức Low, Medium, High hoặc Critical. \\
+		
+		FR36 &
+		Hệ thống phải tạo documentation update suggestion dựa trên code changes đã được xác minh. \\
+		
+		FR37 &
+		Hệ thống phải cho phép người dùng accept, edit hoặc dismiss documentation update suggestion. \\
+		
+		FR38 &
+		Hệ thống phải cho phép manually trigger documentation drift analysis cho Pull Request hoặc document cụ thể. \\
+		
+		FR39 &
+		Hệ thống phải lưu documentation drift history và resolution status. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Documentation Change Log và Version History}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR40 &
+		Hệ thống phải lưu complete change history của mỗi document. \\
+		
+		FR41 &
+		Hệ thống phải cho phép người dùng xem difference giữa hai phiên bản bất kỳ. \\
+		
+		FR42 &
+		Mỗi version phải ghi nhận role tạo thay đổi, timestamp và trigger tương ứng. \\
+		
+		FR43 &
+		Hệ thống phải cho phép restore hoặc rollback document về version trước đó. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Knowledge Base}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR44 &
+		Hệ thống phải cho phép tìm kiếm documentation và linked code entities. \\
+		
+		FR45 &
+		Hệ thống phải hiển thị quan hệ giữa documentation và source code. \\
+		
+		FR46 &
+		Hệ thống phải cho phép điều hướng từ documentation tới source code và ngược lại. \\
+		
+		FR47 &
+		Hệ thống phải cho phép browse repositories, documentation collections và templates. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\subsection{Staff Review Workflow}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR48 &
+		Hệ thống phải cung cấp review queue cho Staff. \\
+		
+		FR49 &
+		Staff phải có thể mở documentation cùng grounding evidence. \\
+		
+		FR50 &
+		Staff phải có thể xem change log của documentation. \\
+		
+		FR51 &
+		Staff phải có thể so sánh documentation với phiên bản đã được approve gần nhất. \\
+		
+		FR52 &
+		Staff phải có thể kiểm tra documentation có tuân theo assigned template hay không. \\
+		
+		FR53 &
+		Staff phải có thể kiểm tra documentation có nhất quán với source code hay không. \\
+		
+		FR54 &
+		Staff phải có thể thêm review comments và yêu cầu chỉnh sửa. \\
+		
+		FR55 &
+		Staff phải có thể chỉnh sửa các vấn đề nhỏ trong documentation. \\
+		
+		FR56 &
+		Staff phải có thể approve documentation và chuyển sang Manager. \\
+		
+		FR57 &
+		Staff phải có thể reject documentation và gửi feedback cho Developer. \\
+		
+		FR58 &
+		Staff phải có thể filter và sort review queue. \\
+		
+		FR59 &
+		Staff phải có thể xem review history và current status. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\subsection{Manager Approval Workflow}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR60 &
+		Hệ thống phải cung cấp danh sách documentation đã vượt qua Staff review và chờ Manager approval. \\
+		
+		FR61 &
+		Manager phải có thể xem documentation cùng Staff comments và grounding evidence. \\
+		
+		FR62 &
+		Manager phải có thể xem complete audit trail của documentation. \\
+		
+		FR63 &
+		Manager phải có thể approve documentation để publish hoặc commit. \\
+		
+		FR64 &
+		Manager phải có thể reject documentation hoặc yêu cầu chỉnh sửa. \\
+		
+		FR65 &
+		Manager phải có thể rollback documentation về phiên bản approved trước đó. \\
+		
+		FR66 &
+		Manager phải có thể cấu hình documentation type yêu cầu Manager approval. \\
+		
+		FR67 &
+		Manager phải có thể cấu hình merge policy cho documentation drift Critical. \\
+		
+		FR68 &
+		Hệ thống chỉ được publish hoặc commit documentation sau khi hoàn tất approval theo policy. \\
+		
+		FR69 &
+		Hệ thống phải lưu audit trail của approval decision. \\
+		
+		FR70 &
+		Manager phải có thể delegate hoặc reassign approval responsibility. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\subsection{Documentation Governance}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR71 &
+		Technical Lead / Documentation Owner phải có thể quản lý documentation collections và document ownership. \\
+		
+		FR72 &
+		Technical Lead / Documentation Owner phải có thể cấu hình drift detection policies và thresholds. \\
+		
+		FR73 &
+		Hệ thống phải cung cấp documentation health dashboard. \\
+		
+		FR74 &
+		Hệ thống phải hiển thị documentation freshness, coverage và drift status. \\
+		
+		FR75 &
+		Hệ thống phải cung cấp documentation-to-code dependency graph. \\
+		
+		FR76 &
+		Hệ thống phải cung cấp documentation quality metrics. \\
+		
+		FR77 &
+		Hệ thống phải cho phép theo dõi documentation drift chưa được giải quyết. \\
+		
+		FR78 &
+		Hệ thống phải cho phép export documentation health và compliance reports. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\subsection{Documentation Template Management}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR79 &
+		Technical Lead / Documentation Owner phải có thể tạo documentation template. \\
+		
+		FR80 &
+		Technical Lead / Documentation Owner phải có thể chỉnh sửa, clone và xóa template. \\
+		
+		FR81 &
+		Hệ thống phải cho phép định nghĩa template sections, headings và placeholders. \\
+		
+		FR82 &
+		Hệ thống phải hỗ trợ thư viện template mặc định như API reference, README, module guide,
+		onboarding guide và ADR. \\
+		
+		FR83 &
+		Hệ thống phải cho phép gán default template cho documentation collection hoặc document type. \\
+		
+		FR84 &
+		Hệ thống phải quản lý template versions. \\
+		
+		FR85 &
+		Hệ thống phải cho phép rollback template về phiên bản trước. \\
+		
+		FR86 &
+		Hệ thống phải cho phép cấu hình formatting và output rules cho AI-generated documentation. \\
+		
+		FR87 &
+		Hệ thống phải cho phép preview template trước khi publish. \\
+		
+		FR88 &
+		AI-generated và auto-updated documentation phải tuân theo selected template structure. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\subsection{Administration}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		FR89 &
+		Administrator phải có thể quản lý users, roles và permissions. \\
+		
+		FR90 &
+		Administrator phải có thể quản lý workspace và repositories. \\
+		
+		FR91 &
+		Administrator phải có thể cấu hình GitHub App và OAuth connection. \\
+		
+		FR92 &
+		Administrator phải có thể cấu hình GitHub Actions và webhook integration. \\
+		
+		FR93 &
+		Administrator phải có thể quản lý external service integrations. \\
+		
+		FR94 &
+		Administrator phải có thể cấu hình source-code languages được hệ thống hỗ trợ. \\
+		
+		FR95 &
+		Administrator phải có thể cấu hình documentation generation settings. \\
+		
+		FR96 &
+		Administrator phải có thể cấu hình documentation update triggers. \\
+		
+		FR97 &
+		Administrator phải có thể cấu hình auto-update policy theo documentation type. \\
+		
+		FR98 &
+		Administrator phải có thể cấu hình change-log và audit-log retention. \\
+		
+		FR99 &
+		Administrator phải có thể cấu hình AI settings. \\
+		
+		FR100 &
+		Administrator phải có thể cấu hình documentation indexing và retrieval settings. \\
+		
+		FR101 &
+		Administrator phải có thể monitor AI processing jobs, event pipelines và system health. \\
+		
+		FR102 &
+		Administrator phải có thể xem audit logs và system analytics. \\
+		
+		FR103 &
+		Administrator phải có thể cấu hình notification policies. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Workflow trạng thái Documentation}
+	% =========================================================
+	
+	Documentation được quản lý qua các trạng thái:
+	
+	\begin{longtable}{p{3.5cm} p{9.5cm}}
+		\toprule
+		\textbf{Trạng thái} & \textbf{Ý nghĩa} \\
+		\midrule
+		
+		Draft &
+		Documentation đang được tạo hoặc chỉnh sửa và chưa được submit review. \\
+		
+		In Review &
+		Documentation đang được Staff review. \\
+		
+		Approved &
+		Documentation đã được phê duyệt theo workflow. \\
+		
+		Rejected &
+		Documentation bị từ chối và cần được chỉnh sửa. \\
+		
+		Published &
+		Documentation đã được publish hoặc commit sau khi hoàn tất approval. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Documentation Drift}
+	% =========================================================
+	
+	\subsection{Loại Documentation Drift}
+	
+	LivingDocs phải hỗ trợ phân loại documentation drift thành:
+	
+	\begin{longtable}{p{3.5cm} p{9.5cm}}
+		\toprule
+		\textbf{Loại} & \textbf{Ý nghĩa} \\
+		\midrule
+		
+		Referential &
+		Documentation tham chiếu tới code entity không còn phù hợp. \\
+		
+		Signature &
+		Documentation không còn phù hợp với signature hoặc interface hiện tại
+		của code entity. \\
+		
+		Semantic &
+		Documentation không còn phản ánh đúng behavior hoặc ý nghĩa của source code. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Mức độ nghiêm trọng}
+	
+	\begin{longtable}{p{3.5cm} p{9.5cm}}
+		\toprule
+		\textbf{Mức độ} & \textbf{Ý nghĩa} \\
+		\midrule
+		
+		Low &
+		Thay đổi nhỏ, ảnh hưởng hạn chế đến documentation. \\
+		
+		Medium &
+		Thay đổi đáng kể và cần được xem xét. \\
+		
+		High &
+		Documentation có khả năng gây hiểu sai đáng kể. \\
+		
+		Critical &
+		Documentation có sai lệch nghiêm trọng và cần được xử lý ngay. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Audit và Traceability}
+	% =========================================================
+	
+	Hệ thống phải đảm bảo mọi thay đổi documentation có thể được truy vết.
+	
+	Mỗi documentation version phải ghi nhận tối thiểu:
+	
+	\begin{itemize}
+		\item Acting role: AI, Staff hoặc Manager.
+		\item Timestamp.
+		\item Triggering commit hoặc Pull Request.
+		\item Review action nếu thay đổi phát sinh từ review.
+		\item Phiên bản tài liệu trước đó.
+	\end{itemize}
+	
+	Hệ thống phải duy trì lịch sử thay đổi đầy đủ để hỗ trợ audit,
+	rollback và kiểm tra nguồn gốc của documentation.
+	
+	% =========================================================
+	\section{Yêu cầu phi chức năng}
+	% =========================================================
+	
+	\subsection{Performance}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR01 &
+		Hệ thống phải phân tích documentation drift của một Pull Request trong
+		vòng tối đa 2 phút đối với repository có tối đa 100,000 dòng source code. \\
+		
+		NFR02 &
+		Hệ thống phải hỗ trợ xử lý đồng thời ít nhất 20 Pull Request mà không
+		suy giảm hiệu năng đáng kể. \\
+		
+		NFR03 &
+		Thời gian phản hồi của các API operation thông thường không được vượt quá
+		2 giây trong điều kiện workload bình thường. \\
+		
+		NFR04 &
+		Full-text documentation search phải trả về kết quả trong vòng 1 giây. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Availability}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR05 &
+		Hệ thống phải duy trì availability tối thiểu 99.5\% trong điều kiện vận hành bình thường. \\
+		
+		NFR06 &
+		Failure của background processing không được làm ảnh hưởng đến user-facing services. \\
+		
+		NFR07 &
+		AI processing jobs phải tự động retry khi task thất bại. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Scalability}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR08 &
+		Hệ thống phải hỗ trợ horizontal scaling cho AI analysis services. \\
+		
+		NFR09 &
+		Hệ thống phải hỗ trợ nhiều workspace và repository. \\
+		
+		NFR10 &
+		Event-driven processing phải có khả năng mở rộng workload mà không yêu cầu
+		thay đổi business logic. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Reliability}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR11 &
+		Documentation drift detection phải tạo kết quả deterministic đối với cùng
+		một code change. \\
+		
+		NFR12 &
+		Mọi processing event phải có khả năng truy vết thông qua audit logs. \\
+		
+		NFR13 &
+		Processing job thất bại phải được lưu để phục hồi sau. \\
+		
+		NFR14 &
+		Mọi documentation change phải có thể truy vết tới acting role,
+		commit hoặc Pull Request và timestamp. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Security}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR15 &
+		Authentication phải sử dụng OAuth2/OpenID Connect (OIDC). \\
+		
+		NFR16 &
+		Hệ thống phải áp dụng Role-Based Access Control (RBAC). \\
+		
+		NFR17 &
+		RBAC phải giới hạn quyền truy cập theo các role Developer, Staff, Manager,
+		Technical Lead và Administrator. \\
+		
+		NFR18 &
+		Mọi communication phải được bảo vệ bằng HTTPS/TLS. \\
+		
+		NFR19 &
+		Sensitive credentials phải được lưu trữ an toàn. \\
+		
+		NFR20 &
+		Mọi administrative operation phải được ghi nhận trong audit log. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Maintainability}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR21 &
+		Hệ thống phải có các service boundary rõ ràng để hỗ trợ khả năng bảo trì. \\
+		
+		NFR22 &
+		Source code phải tuân thủ coding standards được thống nhất trong dự án. \\
+		
+		NFR23 &
+		Các API của hệ thống phải được document rõ ràng. \\
+		
+		NFR24 &
+		CI/CD pipeline phải hỗ trợ tự động build, test và deploy trong giai đoạn triển khai. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Usability}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR25 &
+		Web application phải cung cấp responsive interface cho desktop và tablet. \\
+		
+		NFR26 &
+		Người dùng có thể review AI-generated documentation suggestion trong không quá
+		3 interactions. \\
+		
+		NFR27 &
+		Documentation drift severity phải được hiển thị rõ ràng bằng visual indicators. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{Compatibility}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR28 &
+		GitHub phải được hỗ trợ như source control platform chính. \\
+		
+		NFR29 &
+		Hệ thống phải có khả năng mở rộng để hỗ trợ GitLab và Azure DevOps trong tương lai. \\
+		
+		NFR30 &
+		REST APIs phải có khả năng được sử dụng bởi third-party applications. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	\subsection{AI Quality}
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Yêu cầu} \\
+		\midrule
+		
+		NFR31 &
+		Mỗi AI-generated documentation update phải có grounding evidence như code diff,
+		commit hoặc ticket. \\
+		
+		NFR32 &
+		AI-generated suggestion phải có confidence score. \\
+		
+		NFR33 &
+		Hệ thống phải cho phép human review trước khi áp dụng AI-generated update. \\
+		
+		NFR34 &
+		Automatic documentation update phải tuân theo approval policy được cấu hình. \\
+		
+		NFR35 &
+		Mọi AI-generated, auto-updated hoặc human-edited document version phải được
+		ghi nhận trong change log. \\
+		
+		NFR36 &
+		Người dùng phải có khả năng rollback documentation về bất kỳ version nào
+		đã được lưu trong lịch sử. \\
+		
+		NFR37 &
+		Hệ thống phải duy trì lịch sử documentation change đầy đủ và có khả năng
+		chống chỉnh sửa trái phép để phục vụ auditing. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Business Rules}
+	% =========================================================
+	
+	\begin{longtable}{p{1.5cm} p{11.8cm}}
+		\toprule
+		\textbf{ID} & \textbf{Business Rule} \\
+		\midrule
+		
+		BR01 &
+		Documentation được tạo hoặc tự động cập nhật phải đi qua review workflow
+		theo policy của documentation type. \\
+		
+		BR02 &
+		Staff là cấp review đầu tiên đối với AI-generated và auto-updated documentation. \\
+		
+		BR03 &
+		Manager là cấp phê duyệt cuối cùng đối với documentation yêu cầu Manager approval. \\
+		
+		BR04 &
+		Documentation không được publish hoặc commit nếu chưa hoàn thành các bước
+		approval bắt buộc. \\
+		
+		BR05 &
+		Documentation update phải có grounding evidence để người review xác minh. \\
+		
+		BR06 &
+		Mọi documentation version phải được ghi nhận trong change log. \\
+		
+		BR07 &
+		Critical documentation drift có thể được áp dụng merge policy ``warn'' hoặc
+		``block'' tùy cấu hình của Manager/Documentation Owner. \\
+		
+		BR08 &
+		Auto-apply chỉ được thực hiện đối với documentation type đã được cấu hình
+		cho phép auto-apply sau approval. \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Traceability}
+	% =========================================================
+	
+	Các nhóm yêu cầu chính của LivingDocs được liên kết với các chức năng:
+	
+	\begin{longtable}{p{4cm} p{9cm}}
+		\toprule
+		\textbf{Nhóm} & \textbf{Yêu cầu liên quan} \\
+		\midrule
+		
+		Authentication &
+		FR01--FR04, NFR15--NFR17 \\
+		
+		GitHub Integration &
+		FR05--FR12, NFR28--NFR30 \\
+		
+		AI Documentation Generation &
+		FR13--FR21, NFR31--NFR33 \\
+		
+		Automatic Documentation Update &
+		FR22--FR30, BR01, BR08 \\
+		
+		Documentation Drift Detection &
+		FR31--FR39, NFR11, NFR31--NFR33 \\
+		
+		Version History &
+		FR40--FR43, NFR35--NFR37 \\
+		
+		Knowledge Base &
+		FR44--FR47, NFR04 \\
+		
+		Staff Review &
+		FR48--FR59, BR02 \\
+		
+		Manager Approval &
+		FR60--FR70, BR03--BR04 \\
+		
+		Documentation Governance &
+		FR71--FR78 \\
+		
+		Template Management &
+		FR79--FR88 \\
+		
+		Administration &
+		FR89--FR103, NFR20 \\
+		
+		\bottomrule
+	\end{longtable}
+	
+	% =========================================================
+	\section{Giới hạn của tài liệu Requirements}
+	% =========================================================
+	
+	Tài liệu này chỉ tập trung vào \textbf{Software Requirements} của LivingDocs.
+	
+	Các nội dung sau không thuộc phạm vi chi tiết của tài liệu này:
+	
+	\begin{itemize}
+		\item Thiết kế kiến trúc chi tiết.
+		\item Thiết kế database và ERD.
+		\item Thiết kế API chi tiết.
+		\item Thiết kế giao diện Frontend.
+		\item Thiết kế microservice chi tiết.
+		\item Cấu trúc source code.
+		\item Chi tiết triển khai Backend/Frontend.
+		\item Docker configuration.
+		\item CI/CD implementation.
+		\item Test case implementation.
+	\end{itemize}
+	
+	Những nội dung trên sẽ được thực hiện ở các giai đoạn Design,
+	Implementation và Testing tương ứng của dự án.
+	
+	% =========================================================
+	\section{Kết luận}
+	% =========================================================
+	
+	Tài liệu Requirements xác định các yêu cầu cần thiết cho hệ thống LivingDocs,
+	bao gồm quản lý người dùng, kết nối GitHub, phân tích source code,
+	tạo và cập nhật documentation bằng AI, phát hiện documentation drift,
+	review và approval workflow, quản lý version, knowledge base,
+	documentation governance và administration.
+	
+	Các yêu cầu phi chức năng xác định các tiêu chí về performance,
+	availability, scalability, reliability, security, maintainability,
+	usability, compatibility và AI quality.
+	
+	Tài liệu này là cơ sở để nhóm thực hiện các giai đoạn thiết kế,
+	triển khai và kiểm thử hệ thống trong các bước tiếp theo.
+	
 \end{document}
