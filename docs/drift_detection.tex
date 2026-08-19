@@ -1,1 +1,198 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
 
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[itemize]{leftmargin=1.2cm}
+\setlist[enumerate]{leftmargin=1.2cm}
+
+\title{\textbf{LivingDocs -- Documentation Drift Detection}\\
+\large Tài liệu thiết kế chức năng Phát hiện Độ lệch Tài liệu (Drift Detection)}
+\author{Báo cáo môn Công nghệ phần mềm}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Tổng quan}
+Mô-đun \textbf{Documentation Drift Detection} thuộc hệ thống LivingDocs có nhiệm vụ tự động phát hiện sự không đồng bộ (drift) giữa mã nguồn phần mềm trên GitHub và tài liệu dự án tương ứng. Khi có các thay đổi về mã nguồn (qua commit hoặc Pull Request), hệ thống sẽ phân tích cú pháp, đánh giá ngữ nghĩa và so sánh với nội dung tài liệu hiện có để đưa ra cảnh báo kịp thời.
+
+Tài liệu này liên kết với yêu cầu hệ thống tại \texttt{drift\_detection_requirements.tex}.
+
+\section{Mục tiêu & Phạm vi}
+\begin{itemize}
+    \item Lắng nghe và tiếp nhận các sự kiện commit, Pull Request từ GitHub.
+    \item Phân tích cấu trúc mã nguồn bằng AST (Abstract Syntax Tree) và Semantic Analysis.
+    \item So sánh thông tin giữa mã nguồn và tài liệu hiện có.
+    \item Đánh giá điểm số và phân loại mức độ drift (No Drift, Minor, Moderate, Critical).
+    \item Tự động tạo báo cáo drift và gửi cảnh báo tới Staff / Technical Lead.
+\end{itemize}
+
+\section{Chi tiết Chức năng (Functional Details)}
+
+\subsection{Tiếp nhận sự kiện GitHub (FR01)}
+Hệ thống sử dụng Webhook để nhận thông tin khi có commit mới được push hoặc Pull Request được mở/cập nhật trên repository được theo dõi.
+
+\subsection{Phân tích Mã nguồn (FR02)}
+Mã nguồn bị thay đổi được phân tích qua bộ đọc AST nhằm trích xuất các thành phần kỹ thuật:
+\begin{itemize}
+    \item Tên hàm, lớp, phương thức, giao diện (Interface).
+    \item Danh sách tham số đầu vào và kiểu dữ liệu trả về.
+    \item Các ghi chú (docstrings/comments) liên quan.
+\end{itemize}
+
+\subsection{So sánh Tài liệu - Mã nguồn & Chấm điểm (FR03, FR04)}
+Hệ thống truy xuất các tài liệu liên quan đến các file mã nguồn vừa thay đổi và thực hiện so sánh nội dung.
+Dựa trên mức độ chênh lệch, điểm số drift được tính toán và phân loại:
+\begin{itemize}
+    \item \textbf{No Drift:} Không có sự thay đổi về mặt logic hoặc tài liệu đã đầy đủ.
+\item \textbf{Minor Drift:} Thay đổi nhỏ (ví dụ: sửa lỗi chính tả comment, đổi tên biến nội bộ).
+    \item \textbf{Moderate Drift:} Thay đổi chữ ký hàm, thêm/bớt tham số chưa cập nhật vào tài liệu.
+    \item \textbf{Critical Drift:} Thay đổi lớn về cấu hình, luồng nghiệp vụ hoặc xóa hàm/lớp quan trọng.
+\end{itemize}
+
+\subsection{Tạo Báo cáo & Cảnh báo (FR05, FR06)}
+Hệ thống tạo báo cáo chi tiết gồm:
+\begin{itemize}
+    \item Mã commit / Pull Request ID.
+    \item File mã nguồn và file tài liệu bị ảnh hưởng.
+    \item Bằng chứng sai lệch (Diff / Evidence).
+    \item Mức độ nghiêm trọng và gợi ý cập nhật.
+\end{itemize">
+Cảnh báo được gửi tới Staff hoặc Technical Lead qua giao diện hệ thống hoặc email notification.
+
+\section{Quy trình xử lý}
+\begin{verbatim}
+GitHub Event (Commit/PR) 
+            |
+            v
+   Phan tich AST/Semantic
+            |
+            v
+   So sanh voi Tai lieu
+            |
+            v
+   Tinh diem & Phan loai Drift
+            |
+            v
+   Tao Bao cao & Gui Canh bao
+\end{verbatim}
+
+\section{Tiêu chí nghiệm thu}
+\begin{enumerate}
+    \item Tiếp nhận chính xác Webhook event từ GitHub.
+    \item Trích xuất thành công các code entities từ commit/PR.
+    \item Phát hiện và phân loại chính xác các cấp độ drift.
+    \item Tạo báo cáo chi tiết và gửi thông báo đúng đối tượng trách nhiệm.
+\end{enumerate}
+
+\end{document}
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[itemize]{leftmargin=1.2cm}
+\setlist[enumerate]{leftmargin=1.2cm}
+
+\title{\textbf{LivingDocs -- Documentation Drift Detection}\\
+\large Tài liệu thiết kế chức năng Phát hiện Độ lệch Tài liệu (Drift Detection)}
+\author{Báo cáo môn Công nghệ phần mềm}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Tổng quan}
+Mô-đun \textbf{Documentation Drift Detection} thuộc hệ thống LivingDocs có nhiệm vụ tự động phát hiện sự không đồng bộ (drift) giữa mã nguồn phần mềm trên GitHub và tài liệu dự án tương ứng. Khi có các thay đổi về mã nguồn (qua commit hoặc Pull Request), hệ thống sẽ phân tích cú pháp, đánh giá ngữ nghĩa và so sánh với nội dung tài liệu hiện có để đưa ra cảnh báo kịp thời.
+
+Tài liệu này liên kết với yêu cầu hệ thống tại \texttt{drift\_detection_requirements.tex}.
+
+\section{Mục tiêu & Phạm vi}
+\begin{itemize}
+    \item Lắng nghe và tiếp nhận các sự kiện commit, Pull Request từ GitHub.
+    \item Phân tích cấu trúc mã nguồn bằng AST (Abstract Syntax Tree) và Semantic Analysis.
+    \item So sánh thông tin giữa mã nguồn và tài liệu hiện có.
+    \item Đánh giá điểm số và phân loại mức độ drift (No Drift, Minor, Moderate, Critical).
+    \item Tự động tạo báo cáo drift và gửi cảnh báo tới Staff / Technical Lead.
+\end{itemize}
+
+\section{Chi tiết Chức năng (Functional Details)}
+
+\subsection{Tiếp nhận sự kiện GitHub (FR01)}
+Hệ thống sử dụng Webhook để nhận thông tin khi có commit mới được push hoặc Pull Request được mở/cập nhật trên repository được theo dõi.
+
+\subsection{Phân tích Mã nguồn (FR02)}
+Mã nguồn bị thay đổi được phân tích qua bộ đọc AST nhằm trích xuất các thành phần kỹ thuật:
+\begin{itemize}
+    \item Tên hàm, lớp, phương thức, giao diện (Interface).
+    \item Danh sách tham số đầu vào và kiểu dữ liệu trả về.
+    \item Các ghi chú (docstrings/comments) liên quan.
+\end{itemize}
+
+\subsection{So sánh Tài liệu - Mã nguồn & Chấm điểm (FR03, FR04)}
+Hệ thống truy xuất các tài liệu liên quan đến các file mã nguồn vừa thay đổi và thực hiện so sánh nội dung.
+Dựa trên mức độ chênh lệch, điểm số drift được tính toán và phân loại:
+\begin{itemize}
+    \item \textbf{No Drift:} Không có sự thay đổi về mặt logic hoặc tài liệu đã đầy đủ.
+\item \textbf{Minor Drift:} Thay đổi nhỏ (ví dụ: sửa lỗi chính tả comment, đổi tên biến nội bộ).
+    \item \textbf{Moderate Drift:} Thay đổi chữ ký hàm, thêm/bớt tham số chưa cập nhật vào tài liệu.
+    \item \textbf{Critical Drift:} Thay đổi lớn về cấu hình, luồng nghiệp vụ hoặc xóa hàm/lớp quan trọng.
+\end{itemize}
+
+\subsection{Tạo Báo cáo & Cảnh báo (FR05, FR06)}
+Hệ thống tạo báo cáo chi tiết gồm:
+\begin{itemize}
+    \item Mã commit / Pull Request ID.
+    \item File mã nguồn và file tài liệu bị ảnh hưởng.
+    \item Bằng chứng sai lệch (Diff / Evidence).
+    \item Mức độ nghiêm trọng và gợi ý cập nhật.
+\end{itemize">
+Cảnh báo được gửi tới Staff hoặc Technical Lead qua giao diện hệ thống hoặc email notification.
+
+\section{Quy trình xử lý}
+\begin{verbatim}
+GitHub Event (Commit/PR) 
+            |
+            v
+   Phan tich AST/Semantic
+            |
+            v
+   So sanh voi Tai lieu
+            |
+            v
+   Tinh diem & Phan loai Drift
+            |
+            v
+   Tao Bao cao & Gui Canh bao
+\end{verbatim}
+
+\section{Tiêu chí nghiệm thu}
+\begin{enumerate}
+    \item Tiếp nhận chính xác Webhook event từ GitHub.
+    \item Trích xuất thành công các code entities từ commit/PR.
+    \item Phát hiện và phân loại chính xác các cấp độ drift.
+    \item Tạo báo cáo chi tiết và gửi thông báo đúng đối tượng trách nhiệm.
+\end{enumerate}
+
+\end{document}
