@@ -1,0 +1,339 @@
+openapi: 3.0.3
+
+info:
+  title: LivingDocs GitHub Integration API
+  description: >
+    REST API specification for GitHub authentication,
+    repository management and GitHub webhook handling.
+  version: 1.0.0
+
+servers:
+  - url: https://api.livingdocs.example.com/api/v1
+    description: LivingDocs API Server
+
+tags:
+  - name: GitHub Authentication
+    description: GitHub OAuth2 authentication
+  - name: Repository
+    description: Repository connection and management
+  - name: Webhook
+    description: GitHub webhook processing
+
+paths:
+
+  /auth/github:
+    get:
+      tags:
+        - GitHub Authentication
+      summary: Start GitHub OAuth2 authentication
+      description: >
+        Starts the GitHub OAuth2 authorization flow and redirects
+        the user to GitHub for authentication and permission approval.
+      operationId: startGitHubAuth
+
+      responses:
+        '302':
+          description: Redirect to GitHub OAuth2 authorization page
+
+        '500':
+          description: Internal server error
+
+
+  /repos/connect:
+    post:
+      tags:
+        - Repository
+      summary: Connect a GitHub repository
+      description: >
+        Connects a selected GitHub repository to the user's
+        LivingDocs workspace.
+      operationId: connectRepository
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectRepositoryRequest'
+
+      responses:
+        '201':
+          description: Repository connected successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repository'
+
+        '400':
+          description: Invalid repository information
+
+        '401':
+          description: Unauthorized
+
+        '404':
+          description: Repository not found on GitHub
+
+        '409':
+          description: Repository already connected
+
+        '500':
+          description: Internal server error
+
+
+  /repos/list:
+    get:
+      tags:
+        - Repository
+      summary: Get connected repositories
+      description: >
+        Returns repositories connected to the current
+        user's LivingDocs workspace.
+      operationId: listRepositories
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        '200':
+          description: Connected repository list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repositories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Repository'
+
+        '401':
+          description: Unauthorized
+
+        '500':
+          description: Internal server error
+
+
+  /webhooks/handle:
+    post:
+      tags:
+        - Webhook
+      summary: Handle GitHub webhook
+      description: >
+        Receives GitHub Pull Request or Commit webhook events.
+        The webhook signature must be verified before processing.
+        Documentation analysis should be processed asynchronously
+        to maintain the API response time requirement.
+      operationId: handleGitHubWebhook
+
+      parameters:
+
+        - name: X-Hub-Signature-256
+          in: header
+          required: true
+          description: >
+            GitHub webhook signature used to verify
+            the authenticity of the request.
+          schema:
+            type: string
+
+        - name: X-GitHub-Event
+          in: header
+          required: true
+          description: GitHub webhook event type.
+          schema:
+            type: string
+            enum:
+              - push
+              - pull_request
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GitHubWebhookPayload'
+
+      responses:
+        '200':
+          description: Webhook received and accepted
+
+        '400':
+          description: Invalid webhook payload
+
+        '401':
+          description: Invalid webhook signature
+
+        '500':
+          description: Webhook processing error
+
+
+components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  schemas:
+
+    ConnectRepositoryRequest:
+      type: object
+      required:
+        - repo_id
+        - owner
+        - name
+
+      properties:
+
+        repo_id:
+          type: integer
+          format: int64
+          description: GitHub repository ID
+          example: 123456789
+
+        owner:
+          type: string
+          description: Repository owner
+          example: livingdocs
+
+        name:
+          type: string
+          description: Repository name
+          example: documentation-service
+
+        default_branch:
+          type: string
+          description: Repository default branch
+          example: main
+
+
+    Repository:
+      type: object
+
+      properties:
+
+        repo_id:
+          type: integer
+          format: int64
+          description: GitHub repository ID
+          example: 123456789
+
+        name:
+          type: string
+          description: Repository name
+          example: documentation-service
+
+        owner:
+          type: string
+          description: Repository owner
+          example: livingdocs
+
+        default_branch:
+          type: string
+          description: Default repository branch
+          example: main
+
+        connection_status:
+          type: string
+          description: GitHub connection status
+          enum:
+            - CONNECTED
+            - DISCONNECTED
+            - EXPIRED
+            - ERROR
+          example: CONNECTED
+
+        last_sync_time:
+          type: string
+          format: date-time
+          description: Last successful or attempted synchronization time
+          example: '2026-08-23T10:30:00Z'
+
+        sync_status:
+          type: string
+          description: Repository synchronization status
+          enum:
+            - SUCCESS
+            - IN_PROGRESS
+            - FAILED
+            - NEVER_SYNCED
+          example: SUCCESS
+
+
+    GitHubWebhookPayload:
+      type: object
+      description: GitHub webhook event payload
+
+      properties:
+
+        repository:
+          type: object
+          properties:
+
+            id:
+              type: integer
+              format: int64
+              example: 123456789
+
+            name:
+              type: string
+              example: documentation-service
+
+
+        sender:
+          type: object
+          properties:
+
+            login:
+              type: string
+              example: developer
+
+
+        commits:
+          type: array
+          description: Commit information for push events
+          items:
+            type: object
+            properties:
+
+              id:
+                type: string
+                example: a1b2c3d4
+
+              message:
+                type: string
+                example: Update API documentation
+
+
+        pull_request:
+          type: object
+          description: Pull Request information
+          properties:
+
+            id:
+              type: integer
+              example: 12345
+
+            title:
+              type: string
+              example: Update documentation
+
+            action:
+              type: string
+              example: opened
+
+
+x-performance:
+  responseTimeTarget: "<= 2 seconds"
+  description: >
+    Standard API operations should return a response within
+    2 seconds under normal operating conditions.
+    GitHub webhook processing should acknowledge the request
+    quickly and perform AI-based documentation analysis
+    asynchronously.
