@@ -1,35 +1,40 @@
 package com.livingdocs.backend.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.livingdocs.backend.model.AuditTrail;
+import com.livingdocs.backend.model.Document;
+import com.livingdocs.backend.repository.AuditTrailRepository;
+import com.livingdocs.backend.repository.DocumentRepository;
+import com.livingdocs.backend.service.GithubPushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.livingdocs.backend.model.Document;
-import com.livingdocs.backend.repository.DocumentRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/documents")
-@CrossOrigin(origins = "*") // Cho phép tất cả các nguồn kết nối để tránh lỗi CORS khi Vy chạy thử
+@CrossOrigin(origins = "*")
 public class DocumentController {
 
     @Autowired
     private DocumentRepository documentRepository;
 
-    // API 1: Lấy danh sách toàn bộ tài liệu đang chờ duyệt để hiển thị lên Dashboard của Vy
+    @Autowired
+    private AuditTrailRepository auditTrailRepository;
+
+    @Autowired
+    private GithubPushService githubPushService;
+
+    // API 1: Lấy danh sách toàn bộ tài liệu
     @GetMapping
     public List<Document> getAllDocuments() {
         return documentRepository.findAll();
     }
 
-    // API 2: Lấy chi tiết một tài liệu theo ID phục vụ màn hình Workspace đối chiếu song song
+    // API 2: Lấy chi tiết một tài liệu theo ID
     @GetMapping("/{id}")
     public ResponseEntity<Document> getDocumentById(@PathVariable String id) {
         Optional<Document> document = documentRepository.findById(id);
@@ -37,14 +42,78 @@ public class DocumentController {
                        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // API 3: Thực hiện duyệt phê duyệt tài liệu (Xóa khỏi hàng đợi sau khi duyệt thành công)
-    @DeleteMapping("/{id}/approve")
-    public ResponseEntity<Void> approveDocument(@PathVariable String id) {
-        if (!documentRepository.existsById(id)) {
+    // API 3: Phê duyệt tài liệu (Staff) — đổi trạng thái + ghi audit log
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<Document> approveDocument(@PathVariable String id,
+                                                      @RequestBody(required = false) Map<String, String> body) {
+        Optional<Document> docOpt = documentRepository.findById(id);
+        if (docOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        documentRepository.deleteById(id);
-        // Ở các Sprint sau, chúng ta sẽ bổ sung code tự động cập nhật Audit Trail và đẩy file lên GitHub tại đây.
-        return ResponseEntity.ok().build();
+
+        String feedback = body != null ? body.getOrDefault("feedback", "") : "";
+
+        Document doc = docOpt.get();
+        doc.setStatus("APPROVED");
+        documentRepository.save(doc);
+
+        auditTrailRepository.save(buildLog(id, "APPROVED", "STAFF", "Bui Nguyen Yen Vy", feedback));
+
+        return ResponseEntity.ok(doc);
+    }
+
+    // API 4: Từ chối tài liệu (Reject) — đổi trạng thái + ghi audit log
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Document> rejectDocument(@PathVariable String id,
+                                                     @RequestBody(required = false) Map<String, String> body) {
+        Optional<Document> docOpt = documentRepository.findById(id);
+        if (docOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String feedback = body != null ? body.getOrDefault("feedback", "") : "";
+
+        Document doc = docOpt.get();
+        doc.setStatus("REJECTED");
+        documentRepository.save(doc);
+
+        auditTrailRepository.save(buildLog(id, "REJECTED", "STAFF", "Bui Nguyen Yen Vy", feedback));
+
+        return ResponseEntity.ok(doc);
+    }
+
+    // API 5: Xuất bản tài liệu (Manager Publish) — gọi GithubPushService mô phỏng
+    @PostMapping("/{id}/publish")
+    public ResponseEntity<Document> publishDocument(@PathVariable String id) {
+        Optional<Document> docOpt = documentRepository.findById(id);
+        if (docOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Document doc = docOpt.get();
+        if (!"APPROVED".equals(doc.getStatus())) {
+            return ResponseEntity.badRequest().build(); // Chưa Approve thì không cho Publish
+        }
+
+        String commitHash = githubPushService.simulatePush(doc.getName(), doc.getRepository());
+
+        doc.setStatus("PUBLISHED");
+        doc.setCommitHash(commitHash);
+        documentRepository.save(doc);
+
+        auditTrailRepository.save(buildLog(id, "PUBLISHED", "MANAGER", "Bui Nguyen Yen Vy (as Manager)", ""));
+
+        return ResponseEntity.ok(doc);
+    }
+
+    private AuditTrail buildLog(String docId, String action, String role, String actor, String feedback) {
+        AuditTrail log = new AuditTrail();
+        log.setDocumentId(docId);
+        log.setAction(action);
+        log.setActorRole(role);
+        log.setActorName(actor);
+        log.setTimestamp(LocalDateTime.now());
+        log.setFeedback(feedback);
+        return log;
     }
 }
