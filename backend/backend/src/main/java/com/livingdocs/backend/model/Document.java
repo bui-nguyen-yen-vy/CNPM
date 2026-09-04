@@ -29,4 +29,7 @@ public class Document {
     private String targetTemplate;
     private String associatedTicket;
     private String confidenceScore;
+
+    @Column(columnDefinition = "TEXT DEFAULT 'PENDING'")
+    private String status; 
 }

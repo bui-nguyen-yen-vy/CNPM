@@ -1,0 +1,12 @@
+# Ignore environment variables
+.env
+docs/.env
+
+# Ignore LaTeX build files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
