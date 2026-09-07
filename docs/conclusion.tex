@@ -1,42 +1,51 @@
 \section{Conclusion}
+
 \subsection{Project Summary}
-Trong bối cảnh phát triển phần mềm hiện đại, việc duy trì tài liệu kỹ thuật luôn đồng bộ với mã nguồn là một thách thức lớn đối với các nhóm phát triển. Nhiều dự án gặp tình trạng tài liệu nhanh chóng trở nên lỗi thời do không được cập nhật thường xuyên, gây khó khăn cho quá trình bảo trì, mở rộng và chuyển giao hệ thống.
-Dự án \textbf{LivingDocs} được đề xuất nhằm giải quyết vấn đề này thông qua việc kết hợp các công nghệ hiện đại như GitHub Integration, Trí tuệ nhân tạo (AI), Retrieval-Augmented Generation (RAG) và Workflow Automation. Hệ thống hướng tới việc tự động hóa quá trình tạo, cập nhật và quản lý tài liệu kỹ thuật dựa trên những thay đổi của mã nguồn, từ đó giảm đáng kể khối lượng công việc thủ công và nâng cao chất lượng tài liệu.
-Trong phạm vi môn học Công nghệ Phần mềm, nhóm đã tiến hành phân tích yêu cầu, thiết kế kiến trúc tổng thể và xây dựng tài liệu mô tả cho các thành phần chính của hệ thống. Những nội dung này tạo nền tảng cho việc phát triển và triển khai hệ thống trong các giai đoạn tiếp theo.
+In the context of modern software development, maintaining technical documentation that is always synchronized with source code is a major challenge for development teams. Many projects face the issue of documentation quickly becoming outdated due to infrequent updates, causing difficulties in maintenance, expansion, and system handover.
+
+The \textbf{LivingDocs} project was proposed to address this problem by combining modern technologies such as GitHub Integration, Artificial Intelligence (AI), Retrieval-Augmented Generation (RAG), and Workflow Automation. The system aims to automate the creation, updating, and management of technical documentation based on source code changes, thereby significantly reducing manual workload and improving documentation quality.
+
+Within the scope of the Software Engineering course, the team conducted requirement analysis, designed the overall architecture, and developed descriptive documentation for the main system components. These deliverables form the foundation for future development and deployment phases.
+
 \subsection{Project Achievements}
-Trong quá trình thực hiện dự án, nhóm đã hoàn thành các nội dung chính sau:
+During the project, the team accomplished the following key tasks:
 \begin{itemize}
-    \item Phân tích yêu cầu chức năng và phi chức năng của hệ thống.
-    \item Thiết kế quy trình tích hợp GitHub thông qua cơ chế OAuth2 và GitHub API.
-    \item Xây dựng quy trình tự động cập nhật tài liệu dựa trên sự kiện từ GitHub.
-    \item Đề xuất kiến trúc AI hỗ trợ phân tích mã nguồn và sinh tài liệu kỹ thuật.
-    \item Thiết kế cơ chế quản lý phiên bản tài liệu và phát hiện sự sai lệch giữa tài liệu và mã nguồn.
-    \item Xây dựng quy trình kiểm thử và kế hoạch đánh giá chất lượng hệ thống.
+    \item Analyzed functional and non-functional requirements of the system.
+    \item Designed GitHub integration workflow using OAuth2 and GitHub API.
+    \item Built an automated documentation update process triggered by GitHub events.
+    \item Proposed an AI architecture to support source code analysis and technical documentation generation.
+    \item Designed a version management mechanism for documentation and detection of inconsistencies between documentation and source code.
+    \item Developed testing procedures and a system quality evaluation plan.
 \end{itemize}
-Những kết quả trên góp phần hình thành một mô hình quản lý tài liệu hiện đại, hỗ trợ quá trình phát triển phần mềm một cách hiệu quả và có hệ thống.
+
+These results contribute to forming a modern documentation management model that effectively supports software development in a systematic way.
+
 \subsection{Project Limitations}
-Do giới hạn về thời gian thực hiện và phạm vi của môn học, dự án vẫn còn một số hạn chế nhất định.
+Due to time constraints and the scope of the course, the project still has certain limitations:
 \begin{itemize}
-    \item Hệ thống mới dừng ở mức thiết kế và mô tả giải pháp, chưa triển khai đầy đủ tất cả các chức năng.
-    \item Một số thành phần như AI Engine, Vector Database và Workflow Automation chưa được kiểm thử trên môi trường thực tế.
-    \item Chưa thực hiện đánh giá hiệu năng, khả năng chịu tải và bảo mật của hệ thống.
-    \item Chưa tích hợp đầy đủ với quy trình CI/CD trong môi trường phát triển thực tế.
+    \item The system remains at the design and solution description stage, without full implementation of all functions.
+    \item Some components such as the AI Engine, Vector Database, and Workflow Automation have not been tested in real environments.
+    \item Performance, scalability, and security evaluations have not yet been conducted.
+    \item Full integration with CI/CD processes in real development environments has not been implemented.
 \end{itemize}
-Những hạn chế này sẽ được xem là cơ sở để tiếp tục hoàn thiện hệ thống trong các giai đoạn phát triển sau.
+
+These limitations will serve as the basis for further improvement in subsequent development phases.
+
 \subsection{Future Development}
-Trong tương lai, hệ thống LivingDocs có thể được mở rộng theo nhiều hướng nhằm nâng cao hiệu quả sử dụng và khả năng ứng dụng thực tế.
-Một số hướng phát triển bao gồm:
+In the future, the LivingDocs system can be expanded in various directions to enhance usability and practical application. Potential development directions include:
 \begin{itemize}
-    \item Triển khai đầy đủ các thành phần Backend, Frontend và Database.
-    \item Tích hợp các mô hình AI có khả năng phân tích mã nguồn chính xác hơn.
-    \item Mở rộng khả năng hỗ trợ nhiều nền tảng quản lý mã nguồn như GitLab hoặc Bitbucket.
-    \item Bổ sung cơ chế kiểm thử tự động và triển khai liên tục (CI/CD).
-    \item Phát triển hệ thống phân quyền chi tiết hơn cho từng vai trò người dùng.
-    \item Tối ưu hiệu năng của hệ thống khi xử lý các dự án có quy mô lớn.
-    \item Tăng cường các giải pháp bảo mật và giám sát trong quá trình vận hành.
+    \item Full implementation of Backend, Frontend, and Database components.
+    \item Integration of AI models with more accurate source code analysis capabilities.
+    \item Extending support to multiple source code management platforms such as GitLab or Bitbucket.
+    \item Adding automated testing and continuous deployment (CI/CD) mechanisms.
+    \item Developing a more detailed role-based access control system.
+    \item Optimizing system performance for large-scale projects.
+    \item Strengthening security and monitoring solutions during operation.
 \end{itemize}
-Việc tiếp tục phát triển theo các định hướng trên sẽ giúp LivingDocs trở thành một nền tảng quản lý tài liệu kỹ thuật thông minh, đáp ứng tốt hơn nhu cầu của các nhóm phát triển phần mềm trong thực tế.
+
+Advancing along these directions will help LivingDocs become an intelligent technical documentation management platform, better meeting the needs of real-world software development teams.
+
 \subsection{Conclusion}
-Nhìn chung, dự án \textbf{LivingDocs} đã đề xuất một giải pháp hỗ trợ quản lý tài liệu kỹ thuật theo hướng tự động, thông minh và đồng bộ với quá trình phát triển phần mềm. Thông qua việc tích hợp GitHub, ứng dụng Trí tuệ nhân tạo và xây dựng quy trình tự động hóa, hệ thống hướng tới mục tiêu giảm thiểu công việc thủ công, nâng cao tính chính xác của tài liệu và cải thiện hiệu quả cộng tác trong nhóm phát triển.
-Mặc dù dự án hiện vẫn đang ở giai đoạn thiết kế và xây dựng tài liệu, các kết quả đạt được đã thể hiện tính khả thi của giải pháp và tạo tiền đề cho việc triển khai trong tương lai. Với những hướng phát triển đã đề xuất, LivingDocs có tiềm năng trở thành một công cụ hỗ trợ quản lý tài liệu hiện đại, góp phần nâng cao chất lượng phát triển và bảo trì phần mềm trong các dự án thực tế.
-% Test commit
+Overall, the \textbf{LivingDocs} project has proposed a solution to support technical documentation management in an automated, intelligent, and synchronized manner with the software development process. Through GitHub integration, AI application, and workflow automation, the system aims to reduce manual work, improve documentation accuracy, and enhance collaboration efficiency within development teams.
+
+Although the project is currently at the design and documentation stage, the achieved results demonstrate the feasibility of the solution and lay the groundwork for future implementation. With the proposed development directions, LivingDocs has the potential to become a modern documentation management tool, contributing to improved quality in software development and maintenance in real-world projects.

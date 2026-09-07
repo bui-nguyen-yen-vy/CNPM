@@ -1,101 +1,65 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T5]{fontenc}
-\usepackage[vietnamese]{babel}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{enumitem}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{booktabs}
-\usepackage{hyperref}
-\usepackage{amsmath}
+\chapter{System Administration (Administrator)}
 
-\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
-\setlist[itemize]{leftmargin=1.2cm}
-\setlist[enumerate]{leftmargin=1.2cm}
+The System Administration module plays a pivotal role in maintaining system operations, ensuring security and compliance, managing role-based access control, and configuring Artificial Intelligence (AI Engine) parameters for the entire \textbf{LivingDocs} platform.
 
-\title{\textbf{LivingDocs -- Administration \& System Configuration}\\
-\large Tài liệu thiết kế chức năng Quản trị & Cấu hình Hệ thống}
-\author{Báo cáo môn Công nghệ phần mềm}
-\date{}
-
-\begin{document}
-\maketitle
-\tableofcontents
-\newpage
-
-\section{Tổng quan}
-Mô-đun \textbf{Administration \& System Configuration} (viết tắt là \texttt{administration.tex}) đóng vai trò quản trị tập trung cho toàn bộ hệ thống LivingDocs. Mô-đun này cung cấp các công cụ cho Administrator để quản lý người dùng, phân quyền truy cập, cấu hình tích hợp với GitHub, thiết lập các thông số mô hình AI, và truy vết mọi hoạt động qua audit log.
-
-Tài liệu này liên kết với yêu cầu hệ thống tại \texttt{administration\_requirements.tex}.
-
-\section{Mục tiêu & Phạm vi}
+\section{User Management \& Role-Based Access Control (RBAC)}
+The system enforces a strict Role-Based Access Control (RBAC) model to regulate access permissions for every organization member:
 \begin{itemize}
-    \item Quản lý vòng đời tài khoản người dùng (tạo, sửa, khóa, xóa).
-    \item Phân quyền theo các vai trò hệ thống (Developer, Staff, Manager, Technical Lead, Administrator).
-    \item Cấu hình kết nối GitHub Repositories (Webhook, Access Tokens, Branch tracking).
-    \item Cấu hình tham số AI (chọn Model, điều chỉnh Prompt Templates, thiết lập ngưỡng Drift Thresholds).
-    \item Lưu trữ và tra cứu lịch sử thay đổi hệ thống (Audit Trail / Audit Log).
-\end{itemize}
-
-\section{Chi tiết Chức năng (Functional Details)}
-
-\subsection{Quản lý Người dùng & Phân quyền (FR07, FR08)}
-Administrator có thể thực hiện các thao tác quản trị tài khoản:
-\begin{itemize}
-    \item \textbf{Tạo & Quản lý tài khoản:} Thêm mới người dùng, cập nhật thông tin cá nhân, vô hiệu hóa hoặc xóa tài khoản.
-    \item \textbf{Gán vai trò (Role Assignment):}
+    \item \textbf{Account \& Role Governance:}
     \begin{itemize}
-        \item \textit{Developer:} Xem báo cáo drift của mã nguồn phụ trách.
-        \item \textit{Staff:} Kiểm tra báo cáo, xác nhận mức độ ảnh hưởng và xử lý drift.
-        \item \textit{Manager:} Giám sát tổng quan dự án.
-        \item \textit{Technical Lead:} Điều chỉnh ngưỡng phát hiện drift, phạm vi theo dõi.
-        \item \textit{Administrator:} Toàn quyền quản trị hệ thống và cấu hình.
+        \item Create, update, activate, or suspend user accounts within the system.
+        \item Assign and adjust user roles across 5 permission levels: \textit{Developer (Author)}, \textit{Staff (Reviewer)}, \textit{Manager (Approver)}, \textit{Technical Lead (Documentation Owner)}, and \textit{Administrator}.
+    \end{itemize}
+    \item \textbf{Workspace \& Repository Management:}
+    \begin{itemize}
+        \item Define and allocate Workspaces for engineering teams.
+        \item Grant repository access permissions to specific user groups or teams.
     \end{itemize}
 \end{itemize}
 
-\subsection{Cấu hình Tích hợp GitHub (FR09)}
-Thiết lập kết nối an toàn với các kho chứa mã nguồn trên GitHub:
+\section{Platform \& Version Control System Integration}
+Administrators are responsible for establishing secure connections with the Version Control System (VCS) infrastructure and third-party developer tools:
 \begin{itemize}
-\item Quản lý Personal Access Tokens (PAT) hoặc GitHub App Credentials.
-    \item Khai báo các Repository và Nhánh (Branch) cần theo dõi drift.
-    \item Thiết lập và kiểm tra URL Webhook nhận sự kiện commit/PR.
+    \item \textbf{GitHub App \& OAuth Connection Configuration:}
+    \begin{itemize}
+        \item Configure Client ID, Client Secret, and Private Keys for GitHub App and OAuth2/OIDC connections.
+        \item Manage repository access scopes requested during the GitHub App installation.
+    \end{itemize}
+    \item \textbf{GitHub Actions \& Webhook Integration:}
+    \begin{itemize}
+        \item Set up Webhook URLs to receive real-time event payloads from GitHub (Commits, Pull Requests, Merge events).
+        \item Manage Webhook Secret Keys to verify signature payload authenticity.
+    \end{itemize}
+    \item \textbf{External Tool Integrations:}
+    \begin{itemize}
+        \item Configure connections with task management tools (e.g., Jira) to extract issue context associated with code changes.
+        \item Set up notification channels (Slack, Microsoft Teams) for documentation drift alerts and pending approval reviews.
+    \end{itemize}
 \end{itemize}
 
-\subsection{Cấu hình Tham số AI & Drift (FR10, FR11)}
+\section{AI Engine Service Configuration}
+Administrators can fine-tune AI Engine parameters to balance documentation output accuracy and operational API costs:
 \begin{itemize}
-    \item Lựa chọn mô hình AI phân tích (LLM Model).
-    \item Tùy chỉnh Prompt Template phục vụ so sánh mã nguồn - tài liệu.
-    \item Thiết lập ngưỡng phân loại điểm số drift (Minor, Moderate, Critical).
-    \item Bật/Tắt tính năng tự động phát hiện drift theo từng dự án hoặc từng tập tài liệu (collection).
+    \item \textbf{Language Models \& Embeddings:}
+    \begin{itemize}
+        \item Select Large Language Models (LLMs) used for code analysis and documentation generation (e.g., GPT-4o, Claude 3.5 Sonnet, or open-source models such as Llama 3).
+        \item Configure Vector Embedding models used in Retrieval-Augmented Generation (RAG).
+    \end{itemize}
+    \item \textbf{AI Operational Parameters:}
+    \begin{itemize}
+        \item \textit{Confidence Threshold:} Set minimum confidence scores required before AI can suggest documentation updates automatically.
+        \item \textit{Token Budget:} Define token usage limits per task or workspace to manage LLM API expenditures.
+        \item \textit{Supported Languages:} Manage the list of programming languages supported for Abstract Syntax Tree (AST) parsing (e.g., Java, Python, TypeScript, Go, C++).
+    \end{itemize}
 \end{itemize}
 
-\subsection{Nhật ký Quản trị & Truy vết Audit Log (FR12)}
-Mọi hành động thay đổi cấu hình, phân quyền hoặc thao tác quản trị đều được ghi lại vào nhật ký Audit Log bao gồm:
+\section{Auto-Update Policies, Audit Logs \& System Operations}
 \begin{itemize}
-    \item Timestamp (Thời gian thực hiện).
-    \item User ID / Account thực hiện.
-    \item Loại hành động (Create, Update, Delete, Config Change).
-    \item Giá trị trước và sau khi thay đổi (Old/New Value).
+    \item \textbf{Auto-Update Governance:} Configure automatic documentation update triggers (on Commit, on PR, or on Merge) and set approval enforcement rules (route to Staff/Manager review vs. auto-apply after approval).
+    \item \textbf{Change Log \& Audit Trail Retention:} Set retention policies for document version histories and system audit logs to support compliance and traceability.
+    \item \textbf{System Monitoring \& Infrastructure Health:}
+    \begin{itemize}
+        \item Monitor runtime performance across Microservices (Spring Boot), AI Service (FastAPI), Message Broker (Kafka), and Database (PostgreSQL).
+        \item Manage event queues and inspect Dead Letter Queues (DLQ) for failed background AI tasks recovery.
+    \end{itemize}
 \end{itemize}
-
-\section{Quy trình Quản trị Hệ thống}
-\begin{verbatim}
-Admin Dang nhap -> Chon Module Admin -> Thay doi Cau hinh/Nguoi dung
-                                                  |
-                                                  v
-                                     Kiem tra & Luu Cau hinh
-                                                  |
-                                                  v
-                                        Ghi nhan Audit Log
-\end{verbatim}
-
-\section{Tiêu chí nghiệm thu}
-\begin{enumerate}
-    \item Quản lý tài khoản và phân quyền chính xác theo từng vai trò.
-    \item Tích hợp GitHub thành công và nhận được dữ liệu từ Webhook.
-    \item Cho phép tùy chỉnh linh hoạt tham số AI và ngưỡng cảnh báo.
-    \item Nhật ký Audit Log ghi nhận đầy đủ, không thể chỉnh sửa hoặc xóa lịch sử.
-\end{enumerate}
-
-\end{document}

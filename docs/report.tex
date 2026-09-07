@@ -1,30 +1,80 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[utf8]{vietnam} % Hỗ trợ tiếng Việt
-\usepackage{hyperref}      % Hỗ trợ tạo link mục lục
+\documentclass[12pt,a4paper]{report} % Sử dụng lớp 'report' để hỗ trợ các chương \chapter
+
+% --- GÓI CẤU HÌNH VĂN BẢN & NGÔN NGỮ ---
+\usepackage[utf8]{inputenc} % Đã sửa cú pháp utf8
+\usepackage[english]{babel} % Ngôn ngữ báo cáo tiếng Anh chuẩn Academic
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    top=25mm,
+    bottom=25mm,
+    left=30mm,
+    right=20mm
+}
+\usepackage{setspace}
+\onehalfspacing % Dãn dòng 1.5 chuẩn báo cáo
+
+% --- GÓI HỖ TRỢ BẢNG BỂ, HÌNH ẢNH & MÃ NGUỒN ---
+\usepackage{tabularx}   % Bảng tự động dãn cột (dùng trong workflow, testing)
+\usepackage{longtable}  % Bảng dài nhiều trang (dùng trong Test Cases, Requirements)
+\usepackage{booktabs}   % Kẻ bảng chuẩn Academic
+\usepackage{xcolor}     % Nhãn màu PASS/FAIL/CRITICAL
+\usepackage{graphicx}   % Chèn hình ảnh
+\usepackage{listings}   % Hỗ trợ định dạng Code Snippet/JSON/YAML
+
+% --- GÓI HỖ TRỢ LIÊN KẾT & TRÍCH DẪN ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={LivingDocs - Software Project Report},
+    pdfpagemode=FullScreen, % Đã sửa tham số pdfpagemode
+}
+
+% --- THÔNG TIN TRANG BÌA ---
+\title{
+    \Huge \textbf{LivingDocs System} \\[0.5em]
+    \Large Automated Documentation Generation \& Synchronization Platform \\[1.5em]
+    \large Capstone Project Report
+}
+\author{
+    \textbf{Software Engineering Project Team} \\
+    \small Department of Computer Science \& Software Engineering
+}
+\date{\today}
 
 \begin{document}
 
 % --- TRANG BÌA ---
-\title{Báo Cáo Dự Án Phần Mềm (CNPM)}
-\author{Tên Nhóm / Tên Sinh viên}
-\date{\today}
 \maketitle
+\thispagestyle{empty}
 
-\newpage
 % --- MỤC LỤC ---
+\newpage
+\pagenumbering{roman}
 \tableofcontents 
 \newpage
 
-% --- NỘI DUNG CÁC PHẦN ---
-% (Hiện tại mình ẩn các file khác đi bằng dấu %, chỉ mở github.tex để bạn test thử)
+% --- NỘI DUNG CHÍNH (CÁC CHƯƠNG .TEX) ---
+\pagenumbering{arabic}
 
-% \input{introduction.tex}
-% \input{requirement.tex}
-% \input{workflow.tex}
-
-\input{github.tex}  
+\input{introduction.tex}
 \input{requirement.tex}
-% \input{testing.tex}
-% \input{conclusion.tex}
+\input{workflow.tex}
+\input{github.tex}
+\input{ai_documentation.tex} 
+\input{drift_detection.tex}
+\input{auto_update.tex}
+\input{knowledge_base.tex}
+\input{admin.tex}
+\input{testing.tex}
+\input{conclusion.tex}
+
+% --- TÀI LIỆU THAM KHẢO ---
+% Liên kết tự động tới file references.bib trong thư mục docs/
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \end{document}

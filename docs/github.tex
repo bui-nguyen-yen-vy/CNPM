@@ -2,215 +2,221 @@
 
 \subsection{Introduction}
 
-GitHub được sử dụng như nền tảng quản lý mã nguồn của dự án LivingDocs. Toàn bộ tài liệu, mã nguồn và lịch sử thay đổi đều được lưu trữ tập trung trên GitHub nhằm hỗ trợ các thành viên làm việc nhóm hiệu quả hơn.
+GitHub is used as the source code management platform for the LivingDocs project. All documentation, source code, and change history are centrally stored on GitHub to support team collaboration more effectively.
 
-Trong dự án Công nghệ Phần mềm, việc tích hợp GitHub với hệ thống \textbf{LivingDocs} là cần thiết nhằm đạt được các mục tiêu sau:
+In the Software Engineering project, integrating GitHub with the \textbf{LivingDocs} system is necessary to achieve the following goals:
 
 \begin{itemize}
-    \item Quản lý mã nguồn tập trung và nhất quán giữa các thành viên trong nhóm.
-    \item Đồng bộ thay đổi mã nguồn với hệ thống tài liệu tự động.
-    \item Theo dõi lịch sử commit và Pull Request để kiểm soát tiến độ phát triển.
-    \item Hỗ trợ quy trình review và kiểm tra chất lượng phần mềm trước khi triển khai.
-    \item Giảm tình trạng tài liệu bị lỗi thời so với mã nguồn thực tế.
+    \item Centralized and consistent source code management among team members.
+    \item Synchronize source code changes with the automated documentation system.
+    \item Track commit history and Pull Requests to control development progress.
+    \item Support review processes and software quality checks before deployment.
+    \item Reduce outdated documentation compared to actual source code.
 \end{itemize}
 
-Nhờ khả năng tích hợp trực tiếp với GitHub, LivingDocs có thể tự động phát hiện thay đổi của mã nguồn và hỗ trợ cập nhật tài liệu tương ứng, giúp duy trì tính đồng bộ giữa tài liệu kỹ thuật và hệ thống đang phát triển.
+Thanks to direct integration with GitHub, LivingDocs can automatically detect source code changes and update corresponding documentation, maintaining synchronization between technical documents and the evolving system.
 
 \subsection{GitHub Connection Using OAuth2}
 
-Để người dùng có thể kết nối tài khoản GitHub với LivingDocs mà không phải cung cấp mật khẩu trực tiếp, hệ thống sử dụng cơ chế OAuth2 Authorization Code Flow do GitHub hỗ trợ.
-\paragraph{Cơ chế OAuth2}
+To allow users to connect their GitHub accounts to LivingDocs without providing passwords directly, the system uses the OAuth2 Authorization Code Flow supported by GitHub.
 
-OAuth2 cho phép người dùng cấp quyền truy cập cho LivingDocs mà không cần chia sẻ mật khẩu GitHub. Hệ thống chỉ nhận được một \texttt{access token} với phạm vi quyền hạn đã được người dùng chấp thuận.
+\paragraph{OAuth2 Mechanism}
 
-\paragraph{Quy trình đăng nhập và xác thực}
+OAuth2 allows users to grant LivingDocs access without sharing their GitHub password. The system only receives an \texttt{access token} with the scope approved by the user.
+
+\paragraph{Login and Authentication Process}
 
 \begin{enumerate}
-    \item Người dùng chọn chức năng \textbf{Connect GitHub}.
-    \item Hệ thống chuyển hướng đến trang xác thực của GitHub.
-    \item Người dùng đăng nhập GitHub và cấp quyền truy cập repository.
-    \item GitHub trả về một \texttt{authorization code}.
-    \item LivingDocs gửi code này đến GitHub để lấy \texttt{access token}.
-    \item Token được mã hóa và lưu trữ an toàn trong hệ thống.
+    \item The user selects the \textbf{Connect GitHub} function.
+    \item The system redirects to GitHub’s authentication page.
+    \item The user logs in to GitHub and grants repository access.
+    \item GitHub returns an \texttt{authorization code}.
+    \item LivingDocs sends this code to GitHub to obtain an \texttt{access token}.
+    \item The token is encrypted and securely stored in the system.
 \end{enumerate}
 
-\paragraph{Lợi ích của OAuth2}
+\paragraph{Benefits of OAuth2}
 
 \begin{itemize}
-    \item \textbf{Bảo mật cao}: không lưu mật khẩu GitHub trong hệ thống.
-    \item \textbf{Phân quyền rõ ràng}: chỉ truy cập những repository được cấp phép.
-    \item \textbf{Dễ thu hồi quyền}: người dùng có thể hủy quyền truy cập bất kỳ lúc nào trên GitHub.
-    \item \textbf{Tuân thủ chuẩn hiện đại}: tương thích với các chính sách bảo mật của GitHub.
+    \item \textbf{High security}: GitHub passwords are not stored in the system.
+    \item \textbf{Clear access control}: Only authorized repositories are accessible.
+    \item \textbf{Easy revocation}: Users can revoke access at any time on GitHub.
+    \item \textbf{Modern compliance}: Compatible with GitHub’s security policies.
 \end{itemize}
 
-Cơ chế này giúp LivingDocs duy trì khả năng tích hợp mạnh mẽ với GitHub mà vẫn đảm bảo an toàn cho dữ liệu và tài khoản của người dùng.
+This mechanism ensures LivingDocs maintains strong GitHub integration while keeping user data and accounts secure.
 
 \subsection{Repository Management}
 
-Sau khi kết nối GitHub thành công, LivingDocs cho phép người dùng lựa chọn các repository cần quản lý và đồng bộ với hệ thống tài liệu.
+After successfully connecting to GitHub, LivingDocs allows users to select repositories to manage and synchronize with the documentation system.
 
-\paragraph{Lựa chọn Repository}
+\paragraph{Repository Selection}
 
-Hệ thống sử dụng GitHub REST API để lấy danh sách repository mà người dùng có quyền truy cập. Người dùng có thể chọn một hoặc nhiều repository để đưa vào workspace của LivingDocs.
+The system uses the GitHub REST API to retrieve the list of repositories the user can access. Users can select one or multiple repositories to include in the LivingDocs workspace.
 
-Thông tin được lưu trữ bao gồm:
+Stored information includes:
 
 \begin{itemize}
     \item Repository ID.
-    \item Tên repository.
-    \item Chủ sở hữu (owner).
-    \item Nhánh mặc định (default branch).
-    \item Thời gian đồng bộ gần nhất.
+    \item Repository name.
+    \item Owner.
+    \item Default branch.
+    \item Last synchronization time.
 \end{itemize}
 
-\paragraph{Đồng bộ dữ liệu từ Branch chính}
+\paragraph{Data Synchronization from Main Branch}
 
-Theo thiết kế của hệ thống, sau khi kết nối GitHub thành công, người dùng sẽ có thể lựa chọn repository cần quản lý. Thông tin của repository sẽ được lưu để phục vụ cho quá trình theo dõi tài liệu và đồng bộ sau này.
-\begin{itemize}
-    \item Cập nhật commit mới nhất.
-    \item Lấy danh sách file thay đổi.
-    \item Đồng bộ Pull Request đã merge.
-    \item Cập nhật metadata của repository.
-\end{itemize}
-
-\paragraph{Theo dõi trạng thái cập nhật}
-
-Hệ thống duy trì trạng thái đồng bộ thông qua các chỉ số sau:
+Once connected, users can choose repositories to manage. Repository information is stored for tracking and synchronization:
 
 \begin{itemize}
-    \item Commit cuối cùng đã xử lý.
-    \item Pull Request đang mở.
-    \item Pull Request đã merge.
-    \item Thời gian đồng bộ gần nhất.
-    \item Trạng thái thành công hoặc thất bại của lần đồng bộ.
+    \item Update the latest commit.
+    \item Retrieve the list of changed files.
+    \item Synchronize merged Pull Requests.
+    \item Update repository metadata.
 \end{itemize}
 
-Trong giai đoạn hiện tại của dự án, nội dung này mới dừng ở mức thiết kế và mô tả giải pháp. Việc triển khai chức năng kết nối và đồng bộ Repository sẽ được thực hiện sau khi các thành phần Backend và Database của hệ thống được hoàn thiện.
+\paragraph{Update Status Tracking}
+
+The system maintains synchronization status through indicators such as:
+
+\begin{itemize}
+    \item Last processed commit.
+    \item Open Pull Requests.
+    \item Merged Pull Requests.
+    \item Last synchronization time.
+    \item Success or failure status of synchronization.
+\end{itemize}
+
+Currently, this content is at the design and solution description stage. Implementation of repository connection and synchronization will be carried out once the Backend and Database components are completed.
+
 \subsection{CI/CD Integration with GitHub Actions}
 
-Để hỗ trợ quá trình phát triển trong các giai đoạn tiếp theo, LivingDocs dự kiến tích hợp với \textbf{GitHub Actions} nhằm tự động hóa quy trình \textbf{Continuous Integration / Continuous Deployment (CI/CD)}. Việc tích hợp này sẽ được triển khai khi hệ thống hoàn thành các thành phần Backend, Frontend và Database.
-\paragraph{Workflow tự động Build/Test}
+To support development in later stages, LivingDocs plans to integrate with \textbf{GitHub Actions} to automate the \textbf{Continuous Integration / Continuous Deployment (CI/CD)} process. This integration will be implemented once Backend, Frontend, and Database components are ready.
 
-Trong giai đoạn triển khai hệ thống, khi có commit mới được đẩy lên repository hoặc Pull Request được tạo, GitHub Actions có thể được cấu hình để tự động kích hoạt workflow kiểm tra. Quy trình thường bao gồm:
+\paragraph{Automated Build/Test Workflow}
+
+During system deployment, when a new commit is pushed or a Pull Request is created, GitHub Actions can be configured to trigger automated workflows. The process typically includes:
 
 \begin{enumerate}
-    \item Checkout mã nguồn.
-    \item Thiết lập môi trường chạy.
-    \item Build project.
-    \item Chạy unit test và integration test.
-    \item Gửi kết quả về GitHub.
+    \item Checkout source code.
+    \item Set up runtime environment.
+    \item Build the project.
+    \item Run unit tests and integration tests.
+    \item Send results back to GitHub.
 \end{enumerate}
 
-\paragraph{Tự động cập nhật tài liệu khi Merge PR}
+\paragraph{Automatic Documentation Update on PR Merge}
 
-Sau khi Pull Request được merge vào branch chính, workflow có thể gọi API của LivingDocs để:
-
-\begin{itemize}
-    \item Phân tích thay đổi của mã nguồn.
-    \item Xác định tài liệu liên quan cần cập nhật.
-    \item Sinh đề xuất thay đổi tài liệu.
-    \item Đồng bộ phiên bản tài liệu mới vào hệ thống.
-\end{itemize}
-
-\paragraph{Lợi ích của CI/CD}
+After a Pull Request is merged into the main branch, the workflow can call LivingDocs API to:
 
 \begin{itemize}
-    \item \textbf{Giảm lỗi thủ công}: hạn chế quên cập nhật tài liệu hoặc bỏ sót bước kiểm tra.
-    \item \textbf{Tăng tốc độ phát triển}: kiểm tra tự động giúp phát hiện lỗi sớm hơn.
-    \item \textbf{Đảm bảo chất lượng}: mọi thay đổi đều được build và test trước khi đưa vào branch chính.
-    \item \textbf{Duy trì tính đồng bộ}: tài liệu luôn được cập nhật theo thay đổi của mã nguồn.
+    \item Analyze source code changes.
+    \item Identify related documentation to update.
+    \item Generate documentation update proposals.
+    \item Synchronize new documentation versions into the system.
 \end{itemize}
 
-Trong giai đoạn triển khai sau này, nhóm dự kiến tích hợp GitHub Actions để hỗ trợ quy trình CI/CD.
+\paragraph{Benefits of CI/CD}
+
+\begin{itemize}
+    \item \textbf{Reduce manual errors}: Avoid forgetting documentation updates or missing checks.
+    \item \textbf{Accelerate development}: Automated checks detect errors earlier.
+    \item \textbf{Ensure quality}: All changes are built and tested before merging.
+    \item \textbf{Maintain synchronization}: Documentation is always updated with source code changes.
+\end{itemize}
+
+In later stages, the team plans to integrate GitHub Actions to support CI/CD workflows.
+
 \subsection{Pull Request and Commit Tracking}
 
-Theo dõi Pull Request và commit là chức năng quan trọng giúp LivingDocs liên kết sự thay đổi của mã nguồn với tài liệu kỹ thuật tương ứng.
+Tracking Pull Requests and commits is essential for LivingDocs to link source code changes with corresponding technical documentation.
 
-\paragraph{Ghi nhận thay đổi từ Pull Request}
+\paragraph{Recording Changes from Pull Requests}
 
-Khi GitHub gửi sự kiện \texttt{pull\_request}, hệ thống sẽ:
+When GitHub sends a \texttt{pull\_request} event, the system will:
 
 \begin{enumerate}
-    \item Nhận webhook từ GitHub.
-    \item Xác minh chữ ký bảo mật của webhook.
-    \item Lấy danh sách file được thêm, sửa hoặc xóa.
-    \item Phân loại mức độ ảnh hưởng đến tài liệu.
-    \item Tạo bản ghi theo dõi trong hệ thống LivingDocs.
+    \item Receive the webhook from GitHub.
+    \item Verify the webhook’s security signature.
+    \item Retrieve the list of added, modified, or deleted files.
+    \item Classify the impact level on documentation.
+    \item Create a tracking record in LivingDocs.
 \end{enumerate}
 
-\paragraph{Liên kết Commit với tài liệu}
+\paragraph{Linking Commits to Documentation}
 
-Mỗi commit được gắn với:
+Each commit is associated with:
 
 \begin{itemize}
-    \item Module hoặc thành phần hệ thống bị ảnh hưởng.
-    \item API hoặc class được thay đổi.
-    \item Tài liệu thiết kế hoặc tài liệu API liên quan.
-    \item Phiên bản tài liệu cần cập nhật.
+    \item Affected system modules or components.
+    \item Changed APIs or classes.
+    \item Related design or API documentation.
+    \item Documentation version requiring update.
 \end{itemize}
 
-Cơ chế này cho phép truy vết từ tài liệu đến commit và ngược lại, hỗ trợ kiểm toán và bảo trì hệ thống hiệu quả hơn.
+This mechanism enables traceability between documentation and commits, supporting auditing and system maintenance.
 
-\paragraph{Quy trình Review và Merge}
+\paragraph{Review and Merge Workflow}
 
 \begin{enumerate}
-    \item Developer tạo Pull Request.
-    \item GitHub Actions tự động build và chạy test.
-    \item LivingDocs phân tích ảnh hưởng đến tài liệu.
-    \item Reviewer kiểm tra mã nguồn và đề xuất cập nhật tài liệu.
-    \item Sau khi được chấp thuận, Pull Request được merge vào branch chính.
-    \item Hệ thống kích hoạt đồng bộ tài liệu cuối cùng.
+    \item Developer creates a Pull Request.
+    \item GitHub Actions automatically build and run tests.
+    \item LivingDocs analyzes documentation impact.
+    \item Reviewer checks source code and proposes documentation updates.
+    \item Once approved, the Pull Request is merged into the main branch.
+    \item The system triggers final documentation synchronization.
 \end{enumerate}
 
-Quy trình này đảm bảo mọi thay đổi quan trọng của mã nguồn đều được xem xét cùng với tài liệu tương ứng trước khi chính thức tích hợp vào hệ thống.
+This workflow ensures all important source code changes are reviewed alongside corresponding documentation before integration.
 
 \subsection{Security and Error Handling}
 
-Do GitHub Integration làm việc với dịch vụ bên ngoài và dữ liệu mã nguồn quan trọng, hệ thống cần có cơ chế bảo mật và xử lý lỗi phù hợp để đảm bảo tính ổn định và an toàn.
+Since GitHub Integration works with external services and critical source code, the system requires proper security and error handling mechanisms to ensure stability and safety.
 
-\paragraph{Token hết hạn}
+\paragraph{Expired Tokens}
 
-Access token của GitHub có thể hết hạn hoặc bị người dùng thu hồi quyền truy cập. Khi phát hiện token không còn hợp lệ, LivingDocs sẽ:
-
-\begin{itemize}
-    \item Đánh dấu trạng thái kết nối là \texttt{EXPIRED}.
-    \item Tạm dừng quá trình đồng bộ repository.
-    \item Hiển thị thông báo yêu cầu người dùng kết nối lại GitHub.
-\end{itemize}
-
-\paragraph{Lỗi kết nối GitHub}
-
-Các lỗi phổ biến bao gồm:
+GitHub access tokens may expire or be revoked. When detected, LivingDocs will:
 
 \begin{itemize}
-    \item Mất kết nối mạng.
-    \item GitHub API không phản hồi.
-    \item Vượt quá giới hạn request (rate limit).
-    \item Webhook gửi thất bại.
+    \item Mark connection status as \texttt{EXPIRED}.
+    \item Pause repository synchronization.
+    \item Display a message requesting the user to reconnect GitHub.
 \end{itemize}
 
-Trong trường hợp GitHub API không phản hồi, hệ thống sẽ thử gửi lại yêu cầu nhiều lần trước khi thông báo lỗi đến người dùng.
-\paragraph{Cơ chế cảnh báo và Refresh Token}
+\paragraph{GitHub Connection Errors}
 
-LivingDocs hỗ trợ:
+Common errors include:
 
 \begin{itemize}
-    \item Cảnh báo khi token sắp hết hạn.
-    \item Gửi thông báo đến người dùng qua giao diện hệ thống.
-    \item Nếu access token không còn hợp lệ hoặc người dùng thu hồi quyền truy cập, hệ thống sẽ yêu cầu người dùng thực hiện kết nối lại GitHub để tiếp tục đồng bộ dữ liệu.
-    \item Ghi log toàn bộ quá trình xác thực và đồng bộ để hỗ trợ kiểm tra và khắc phục sự cố.
+    \item Network disconnection.
+    \item GitHub API not responding.
+    \item Exceeding request limits (rate limit).
+    \item Webhook delivery failure.
 \end{itemize}
 
-\paragraph{Đảm bảo an toàn dữ liệu khi đồng bộ}
+If GitHub API does not respond, the system retries multiple times before notifying the user.
 
-Để bảo vệ dữ liệu mã nguồn và thông tin xác thực, hệ thống áp dụng các biện pháp sau:
+\paragraph{Warning and Token Refresh Mechanism}
+
+LivingDocs supports:
 
 \begin{itemize}
-    \item Token được lưu trữ dưới dạng mã hóa nhằm đảm bảo an toàn thông tin và hạn chế nguy cơ rò rỉ dữ liệu xác thực.
-    \item Chỉ sử dụng giao thức HTTPS/TLS cho mọi kết nối với GitHub.
-    \item Xác minh chữ ký \texttt{X-Hub-Signature-256} của webhook để chống giả mạo yêu cầu.
-    \item Phân quyền truy cập theo vai trò người dùng (RBAC).
-    \item Không ghi token hoặc dữ liệu nhạy cảm vào log ứng dụng.
+    \item Alerts when tokens are about to expire.
+    \item Notifications to users via the system interface.
+    \item If tokens are invalid or revoked, the system requests reconnection to GitHub.
+    \item Logging all authentication and synchronization processes for troubleshooting.
 \end{itemize}
 
-Các nội dung trình bày trong chương này là cơ sở cho việc triển khai chức năng GitHub Integration trong các Sprint tiếp theo. Trong giai đoạn hiện tại, nhóm tập trung hoàn thiện yêu cầu, thiết kế hệ thống và tài liệu kỹ thuật trước khi bắt đầu phát triển mã nguồn.
+\paragraph{Data Security During Synchronization}
+
+To protect source code and credentials, the system applies:
+
+\begin{itemize}
+    \item Tokens stored in encrypted form to prevent leaks.
+    \item HTTPS/TLS for all GitHub connections.
+    \item Verification of webhook \texttt{X-Hub-Signature-256} to prevent forgery.
+    \item Role-Based Access Control (RBAC).
+    \item No logging of tokens or sensitive data in application logs.
+\end{itemize}
+
+This chapter provides the foundation for implementing GitHub Integration in upcoming sprints. At the current stage, the team focuses on requirements, system design, and technical documentation before starting source code development.
