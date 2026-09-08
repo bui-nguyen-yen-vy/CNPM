@@ -351,10 +351,10 @@ const handleReject = async (docId) => {
                   className="bg-[#1b1c24] border border-[#2c2f3d] rounded-lg px-3 py-1.5 text-xs font-medium text-[#c5c9d6] focus:outline-none focus:border-[#39ff14]"
                 >
                   <option value="All">Drift Severity: All</option>
-                  <option value="CRITICAL">CRITICAL 🚨</option>
-                  <option value="HIGH">HIGH 🟠</option>
-                  <option value="MEDIUM">MEDIUM 🟡</option>
-                  <option value="LOW">LOW 🟢</option>
+                  <option value="CRITICAL">CRITICAL </option>
+                  <option value="HIGH">HIGH </option>
+                  <option value="MEDIUM">MEDIUM </option>
+                  <option value="LOW">LOW </option>
                 </select>
               </div>
 
@@ -393,7 +393,7 @@ const handleReject = async (docId) => {
                             doc.severity === 'MEDIUM' ? 'bg-[#393d1a] text-[#e6c34a] border-[#646b1e]' :
                             'bg-[#1a3d24] text-[#4aff73] border-[#1e6b36]'
                           }`}>
-                            {doc.severity} {doc.severity === 'CRITICAL' ? '🚨' : ''}
+                            {doc.severity} 
                           </span>
                         </td>
                         <td className="py-4 px-6 text-[#848c9e]">{doc.date}</td>
@@ -402,7 +402,7 @@ const handleReject = async (docId) => {
                             onClick={() => handleOpenReview(doc)}
                             className="bg-[#ec4899] hover:bg-[#db2777] text-white font-semibold text-xs px-4 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95"
                           >
-                            🔍 Review
+                             Review
                           </button>
                         </td>
                       </tr>
@@ -490,7 +490,7 @@ const handleReject = async (docId) => {
                   selectedDoc.severity === 'MEDIUM' ? 'bg-[#393d1a] text-[#e6c34a] border-[#646b1e]' :
                   'bg-[#1a3d24] text-[#4aff73] border-[#1e6b36]'
                 }`}>
-                  Drift Severity: {selectedDoc.severity} {selectedDoc.severity === 'CRITICAL' ? '🚨' : ''}
+                  Drift Severity: {selectedDoc.severity} 
                 </span>
               </div>
             </div>
@@ -593,13 +593,13 @@ const handleReject = async (docId) => {
                     onClick={() => showNotification("Chức năng chỉnh sửa tài liệu trực tiếp trên Web sắp ra mắt (Giai đoạn sau)!", "info")}
                     className="flex-1 bg-[#ffdf00] hover:bg-[#e6c200] text-[#12131a] font-extrabold text-xs py-3 rounded-lg shadow transition-all active:scale-95 flex items-center justify-center space-x-1"
                   >
-                    <span>✏️ Edit Draft</span>
+                    <span> Edit Draft</span>
                   </button>
                   <button 
                     onClick={() => handleReject(selectedDoc.id)}
                     className="flex-1 bg-[#ff4a4a] hover:bg-[#d93838] text-white font-extrabold text-xs py-3 rounded-lg shadow transition-all active:scale-95 flex items-center justify-center space-x-1"
                   >
-                    <span>🛑 REJECT (Draft)</span>
+                    <span> REJECT (Draft)</span>
                   </button>
                   <button 
                     onClick={() => handleApprove(selectedDoc.id)}
@@ -637,7 +637,7 @@ const handleReject = async (docId) => {
                     }}
                     className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-black text-xs py-3 px-4 rounded-lg shadow transition-all active:scale-95 flex items-center justify-center space-x-1"
                   >
-                    <span>🚀 MANAGER PUBLISH</span>
+                    <span> MANAGER PUBLISH</span>
                   </button>
                 </div>
               </div>
