@@ -1,166 +1,111 @@
-\section{AI-Driven Documentation Generation Engine}
+\section{AI-Assisted Documentation Generation}
 
-\subsection{Introduction}
+This chapter describes how LivingDocs uses Artificial Intelligence to automatically generate technical documentation from source code while maintaining traceability and human verification before publication.
 
-Alongside source code management, Artificial Intelligence (AI) plays a core role in the \textbf{LivingDocs} system to automate the initialization, updating, and maintenance of technical documentation. By applying Large Language Models (LLMs), LivingDocs transforms complex source code into understandable, accurate, and real-time synchronized documentation.
+The design combines Static Code Analysis, Abstract Syntax Tree (AST), Retrieval-Augmented Generation (RAG), and Large Language Models (LLMs) to produce documentation that remains synchronized with repository changes.
 
-In the Software Engineering project, integrating the AI Engine into \textbf{LivingDocs} aims at the following goals:
+%================================================
 
-\begin{itemize}
-    \item Automatically generate technical documentation from source code without continuous manual intervention from developers.
-    \item Maintain contextual synchronization between actual source code and system documentation.
-    \item Support the generation of architecture diagrams, API documentation, and user guides with high accuracy.
-    \item Optimize documentation writing time, allowing the development team to focus on coding.
-    \item Detect and alert on documentation sections that are inconsistent or outdated compared to newly updated source code.
-\end{itemize}
+\section{Architecture Overview}
 
-Thanks to the combination of AI and repository monitoring, LivingDocs transforms documentation from a static file into a \textbf{living documentation system}, capable of evolving alongside the software product.
-
-\subsection{AI Architecture and Model Integration}
-
-To achieve high performance and optimal accuracy in processing programming languages, LivingDocs builds a flexible AI integration architecture, directly connected to advanced LLM services.
-
-\paragraph{AI Models and Integrated Services}
-
-The system connects to AI models via RESTful API/gRPC, leveraging leading models such as OpenAI GPT-4, Google Gemini Pro, or Anthropic Claude. These models are chosen for their ability to understand multi-language source code and generate high-quality natural text.
-
-\paragraph{Context Window and Token Management}
-
-Project source code often exceeds the context window limits of AI models. LivingDocs addresses this by:
-
-\begin{itemize}
-    \item Splitting source code into chunks (\texttt{code chunking}) based on grammar structure (Module, Class, Function).
-    \item Filtering information to only send relevant or changed code segments.
-    \item Optimizing token usage to save costs and reduce response time.
-\end{itemize}
-
-\paragraph{Benefits of Flexible AI Architecture}
-
-\begin{itemize}
-    \item \textbf{Scalability}: Easily switch or integrate new AI models in the future.
-    \item \textbf{High performance}: Handle multiple documentation requests in parallel across different modules.
-    \item \textbf{Cost optimization}: Apply caching and smart token management.
-    \item \textbf{Customization freedom}: Allow parameter tuning (\texttt{temperature}, \texttt{top\_p}) depending on document type.
-\end{itemize}
-
-\subsection{Automated Documentation Generation Process}
-
-The automated documentation generation process in LivingDocs combines static code parsing with the synthesis capabilities of the AI Engine.
-
-\paragraph{Source Code Analysis and Structure Extraction}
-
-Before sending data to AI, the system performs static code analysis to build an Abstract Syntax Tree (AST). This extracts core components such as:
-
-\begin{itemize}
-    \item Functions, methods, parameters, and return types.
-    \item Classes, interfaces, and their relationships.
-    \item API endpoints, HTTP methods, and request/response structures.
-    \item Inline comments available in the source code.
-\end{itemize}
-
-\paragraph{Automated Documentation Workflow}
+The AI documentation module follows the workflow below.
 
 \begin{enumerate}
-    \item The system receives source code change events (via GitHub Webhook or user command).
-    \item The AST parser extracts structure and details.
-    \item The Context Builder aggregates source code with related existing documentation.
-    \item The AI Engine processes the request and generates documentation in the required format.
-    \item The Post-processor verifies Markdown/LaTeX formatting and syntax.
-    \item The new documentation is displayed in the UI and ready for Pull Request updates.
+    \item Repository synchronization.
+    \item Source code parsing.
+    \item AST extraction.
+    \item Semantic context construction.
+    \item AI documentation generation.
+    \item Human review.
+    \item Publication.
 \end{enumerate}
 
-\paragraph{Types of Documentation Supported}
+%================================================
+
+\section{Documentation Generation Workflow}
+
+The Activity Diagram illustrates the complete AI documentation generation process.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/Activity_Diagram.png}
+    \caption{AI Documentation Generation Activity Diagram}
+    \label{fig:activity-ai}
+\end{figure}
+
+%================================================
+
+\section{Component Responsibilities}
+
+\begin{longtable}{|p{4cm}|p{8cm}|}
+\hline
+\textbf{Component} & \textbf{Responsibility}\\
+\hline
+GitHub Integration & Receives repository events through Webhooks.\\
+\hline
+Source Parser & Reads project files and extracts syntax information.\\
+\hline
+AST Engine & Builds Abstract Syntax Trees for supported languages.\\
+\hline
+Context Builder & Creates semantic context for AI processing.\\
+\hline
+RAG Pipeline & Retrieves relevant documentation before generation.\\
+\hline
+LLM Generator & Produces technical documentation drafts.\\
+\hline
+Review Engine & Sends generated drafts to human reviewers.\\
+\hline
+Version Manager & Stores document versions and audit history.\\
+\hline
+\end{longtable}
+
+%================================================
+
+\section{AST-Based Analysis}
+
+Instead of relying only on raw source code, LivingDocs first constructs an Abstract Syntax Tree (AST).
+
+The AST enables the system to identify:
 
 \begin{itemize}
-    \item \textbf{API Specifications}: Detailed request, response, status codes, and examples.
-    \item \textbf{Architecture Diagrams}: Generate Mermaid/PlantUML for class and sequence diagrams.
-    \item \textbf{User Guides}: Step-by-step feature instructions for end users.
-    \item \textbf{Changelog}: Summarize technical changes into understandable language for project managers.
+    \item Classes
+    \item Functions
+    \item Parameters
+    \item Return types
+    \item Dependencies
+    \item Structural relationships
 \end{itemize}
 
-\subsection{Retrieval-Augmented Generation (RAG) System}
+This structured representation improves documentation accuracy compared with plain-text generation.
 
-A major challenge in applying LLMs to software development is hallucination or lack of global project context. LivingDocs solves this by implementing \textbf{Retrieval-Augmented Generation (RAG)}.
+%================================================
 
-\paragraph{Concept of RAG in LivingDocs}
+\section{Retrieval-Augmented Generation}
 
-RAG combines semantic search with LLM text generation. Instead of sending isolated code, the system queries related documents and code across the project to provide additional context.
+The RAG pipeline enriches prompts with existing documentation before AI generation.
 
-\paragraph{Vectorization and Embedding Workflow}
+The process consists of:
 
 \begin{enumerate}
-    \item All documents and source code are converted into vector embeddings via an \texttt{Embedding Model}.
-    \item Vector data is stored and indexed in a Vector Database.
-    \item When documentation is requested, the system queries the most semantically similar vectors.
-    \item Results are packaged as context and sent to the LLM.
+    \item Retrieve related documentation.
+    \item Combine retrieved context with AST information.
+    \item Generate updated documentation.
+    \item Return grounded output.
 \end{enumerate}
 
-\paragraph{Benefits of RAG}
+Grounding evidence is displayed so reviewers can verify every generated section.
+
+%================================================
+
+\section{Output Verification}
+
+Every generated document includes:
 
 \begin{itemize}
-    \item \textbf{Superior accuracy}: Minimize hallucinations.
-    \item \textbf{Global context understanding}: Documentation reflects module relationships.
-    \item \textbf{Flexible knowledge updates}: No need to fine-tune AI models; just update the vector database.
+    \item Source code references.
+    \item Version information.
+    \item Generation timestamp.
+    \item Review status.
 \end{itemize}
 
-\subsection{Prompt Engineering and Quality Control}
-
-The quality of generated documentation depends heavily on prompt design and output quality control.
-
-\paragraph{Structured Prompt Design}
-
-LivingDocs builds a standardized prompt library based on strict design principles:
-
-\begin{itemize}
-    \item \textbf{Role assignment}: AI acts as a System Architect or Technical Writer.
-    \item \textbf{Format constraints}: Require AI to return Markdown or LaTeX/Mermaid.
-    \item \textbf{Few-shot prompting}: Provide sample project documents for style and structure consistency.
-\end{itemize}
-
-\paragraph{Review and Quality Control Workflow}
-
-\begin{enumerate}
-    \item \textbf{Automatic syntax check}: Verify Markdown, LaTeX, Mermaid syntax.
-    \item \textbf{Source code alignment}: Compare parameters and function names with actual code.
-    \item \textbf{Human-in-the-loop approval}: Developers/Tech Leads review and approve before merging.
-\end{enumerate}
-
-\paragraph{Continuous Improvement}
-
-The system records developer edits to AI-generated content. Feedback is used to refine prompts, improving future documentation quality.
-
-\subsection{Security, Privacy and Error Handling}
-
-Using AI with enterprise source code requires strict standards for security, intellectual property protection, and error handling.
-
-\paragraph{Source Code Security and Privacy}
-
-\begin{itemize}
-    \item \textbf{Zero Data Retention}: Connect via enterprise APIs where providers guarantee no training on user data.
-    \item \textbf{Data masking}: Automatically detect and remove API keys, passwords, IP addresses, and PII before sending to AI.
-    \item \textbf{Encrypted transmission}: Use HTTPS/TLS for all data exchanges.
-\end{itemize}
-
-\paragraph{API Error and Rate Limiting Handling}
-
-\begin{itemize}
-    \item \textbf{Rate limit handling}: Queue requests and retry with exponential backoff.
-    \item \textbf{Timeout handling}: Set reasonable timeouts and cancel tasks to avoid system blockage.
-\end{itemize}
-
-\paragraph{Fallback and Offline Mode}
-
-\begin{itemize}
-    \item \textbf{Model fallback}: Switch to backup AI models (e.g., GPT-4 → Claude or local LLM).
-    \item \textbf{Template-based documentation}: If AI services are unavailable, generate basic docs from AST.
-\end{itemize}
-
-\paragraph{Token Budgeting and Access Control}
-
-\begin{itemize}
-    \item Set token quotas per user/project to control costs.
-    \item Apply Role-Based Access Control (RBAC) for AI documentation features.
-    \item Log AI API usage history (without source code) for auditing and cost tracking.
-\end{itemize}
-
-These mechanisms allow \textbf{LivingDocs} to maximize the power of AI in automating documentation while maintaining reliability, security, and absolute safety for the system and user data.
+This design ensures that AI-generated content remains transparent and verifiable before publication.
