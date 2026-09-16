@@ -1,8 +1,10 @@
 \documentclass[12pt,a4paper]{report} % Sử dụng lớp 'report' để hỗ trợ các chương \chapter
 
 % --- GÓI CẤU HÌNH VĂN BẢN & NGÔN NGỮ ---
-\usepackage[utf8]{inputenc} % Đã sửa cú pháp utf8
 \usepackage[english]{babel} % Ngôn ngữ báo cáo tiếng Anh chuẩn Academic
+\usepackage{float}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
 \usepackage{geometry}
 \geometry{
     a4paper,
@@ -46,6 +48,7 @@
 \date{\today}
 
 \renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{section}}
 
 \begin{document}
 
@@ -63,6 +66,7 @@
 \pagenumbering{arabic}
 
 \input{introduction.tex}
+\input{management_plan.tex}
 \input{requirement.tex}
 \input{workflow.tex}
 \input{github.tex}
@@ -73,6 +77,7 @@
 \input{admin.tex}
 \input{testing.tex}
 \input{conclusion.tex}
+\input{release_guide.tex}
 
 % --- TÀI LIỆU THAM KHẢO ---
 % Liên kết tự động tới file references.bib trong thư mục docs/

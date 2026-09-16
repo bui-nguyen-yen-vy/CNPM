@@ -1,0 +1,374 @@
+\chapter{Project Management Plan}
+
+\section{Overview}
+
+This chapter presents the project management framework governing the LivingDocs
+capstone project, covering team organization, effort estimation, scheduling, risk
+management, quality assurance, training, communication, and configuration management.
+The project lifecycle spans six phases (Initiating, Planning, Executing, Testing,
+Monitoring \& Controlling, and Closing), with a total estimated effort of
+\textbf{232 man-days} distributed across a three-member team.
+
+\section{Team Organization}
+
+\begin{table}[htbp]
+\centering
+\caption{Project Team Members}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Full Name} & \textbf{Role} & \textbf{Email} & \textbf{Student ID} \\
+\hline
+\hline
+Nguyễn Văn Chiến & Supervisor & chiennv@ut.edu.vn & --- \\
+\hline
+Bùi Nguyễn Yến Vy & Leader & vybny772608@ut.edu.vn & 077307002608 \\
+\hline
+Trần Thanh Minh & Member & minhtt1343@ut.edu.vn & 080206001343 \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Responsibility Assignment Matrix (RACI)}
+
+Table~\ref{tab:raci} defines the RACI responsibility distribution across major
+project tasks (R = Responsible, A = Accountable, C = Consulted, I = Informed).
+
+\begin{footnotesize}
+\begin{longtable}{|p{3.1cm}|p{1.5cm}|p{1.7cm}|p{1.7cm}|p{1.7cm}|}
+\caption{Responsibility Assignment Matrix (RACI)}\label{tab:raci}\\
+\hline
+\hline
+\textbf{Project Activity / Task} & \textbf{Dev 1 (Vy)} & \textbf{Dev 2 (Minh)} & \textbf{Tech Lead} & \textbf{Project Manager} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Project Activity / Task} & \textbf{Dev 1 (Vy)} & \textbf{Dev 2 (Minh)} & \textbf{Tech Lead} & \textbf{Project Manager} \\
+\hline
+\hline
+\endhead
+Project Planning \& Effort Tracking & A & R & C & A \\
+\hline
+System Requirements Specification (SRS) & R & R & A & I \\
+\hline
+Software Design Description (SDD) & R & R & A & C \\
+\hline
+Frontend Development (ReactJS / Workspace UI) & R (Lead) & C & A & I \\
+\hline
+Backend API Development (Spring Boot) & C & R (Lead) & A & I \\
+\hline
+AI Engine \& RAG Integration (FastAPI / Pgvector) & C & R (Lead) & A & I \\
+\hline
+System Testing \& Defect Resolution & R & R & A & I \\
+\hline
+User Guides \& Final Project Report & R & R & A & A \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Effort Estimation \& Work Breakdown Structure (WBS)}
+
+Table~\ref{tab:wbs} details the complete Work Breakdown Structure (WBS) and effort
+allocation (in man-days) across all six phases of the LivingDocs project lifecycle,
+totaling 232 man-days.
+
+\begin{footnotesize}
+\begin{longtable}{|p{1.1cm}|p{4cm}|p{1.6cm}|p{1.4cm}|p{2.6cm}|}
+\caption{Work Breakdown Structure \& Effort Estimation}\label{tab:wbs}\\
+\hline
+\hline
+\textbf{WBS \#} & \textbf{Task Description} & \textbf{Complexity} & \textbf{Effort (Man-Days)} & \textbf{Assigned Lead / Role} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{WBS \#} & \textbf{Task Description} & \textbf{Complexity} & \textbf{Effort (Man-Days)} & \textbf{Assigned Lead / Role} \\
+\hline
+\hline
+\endhead
+1 & Initiating & Medium & 20 & Team / Lead \\
+\hline
+1.1 & Define Project Scope \& Vision & Medium & 12 & Tech Lead / PM \\
+\hline
+1.2 & Collect System Requirements & Medium & 8 & BA / System Analyst \\
+\hline
+2 & Planning & Medium & 14 & Team Lead \\
+\hline
+2.1 & Create Kick-off Meeting \& Alignment & Medium & 7 & Project Manager \\
+\hline
+2.2 & Create Project Management Plan & Medium & 7 & Project Manager \\
+\hline
+3 & Executing -- Analysis \& Design & Complex & 30 & Core Engineering \\
+\hline
+3.1 & Analysis Requirements \& Feasibility & Complex & 18 & System Analyst \\
+\hline
+3.2 & Design ERD, Architecture \& Web UI & Complex & 12 & UI/UX \& Architect \\
+\hline
+3.3 & Executing -- Implementation & Complex & 124 & Full-Stack Engineers \\
+\hline
+3.3.1 & Authentication \& GitHub OAuth Integration & Medium & 4 & Backend Lead \\
+\hline
+3.3.2 & User Management \& Role-Based Access Control & Medium & 17 & Full-Stack Dev \\
+\hline
+3.3.3 & Timeline \& Semester Management & Simple & 2 & Backend Dev \\
+\hline
+3.3.4 & Criteria Form \& Template Management & Medium & 4 & Backend Dev \\
+\hline
+3.3.5 & Project Registration \& Review Approval Flow & Medium & 14 & Full-Stack Dev \\
+\hline
+3.3.6 & Team Formation \& AI RAG Integration & Complex & 20 & AI \& Backend Lead \\
+\hline
+3.3.7 & Team Recruitment Blog \& Social Feed & Simple & 5 & Frontend Dev \\
+\hline
+3.3.8 & Project Progress \& Drift Tracking & Medium & 7 & AI Engineer \\
+\hline
+3.3.9 & Team Rate Contribution \& Peer Evaluation & Simple & 4 & Frontend Dev \\
+\hline
+3.3.10 & Capstone Defense Schedule Management & Medium & 4 & Backend Dev \\
+\hline
+3.3.11 & Messaging \& Real-Time Chat System & Complex & 10 & Full-Stack Dev \\
+\hline
+3.3.12 & Notification Pipeline \& Webhooks & Complex & 9 & Backend Dev \\
+\hline
+3.4 & Testing Phase & Complex & 24 & QA / Test Lead \\
+\hline
+3.4.1 & Unit Testing (Spring Boot \& FastAPI) & Complex & 8 & Developers / QA \\
+\hline
+3.4.2 & Integration Testing (API \& Webhooks) & Complex & 8 & QA Engineer \\
+\hline
+3.4.3 & System \& UAT Verification & Complex & 8 & QA / Stakeholders \\
+\hline
+3.5 & Monitoring and Controlling & Complex & 24 & Project Lead \\
+\hline
+3.5.1 & Process Control \& Sprint Execution & Complex & 12 & Project Manager \\
+\hline
+3.5.2 & Track Performance \& Quality Gate & Complex & 12 & QA / Tech Lead \\
+\hline
+3.6 & Closing Phase & Simple & 20 & Team Lead \\
+\hline
+3.6.1 & Final Software Engineering Report \& Presentation & Simple & 20 & All Team Members \\
+\hline
+\hline
+\textbf{TOTAL} & \textbf{Total Estimated Effort Across Project Lifecycle} & \textbf{Overall} & \textbf{232} & \textbf{LivingDocs Team} \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Project Schedule \& Milestones}
+
+Table~\ref{tab:sprints} summarizes the 14-sprint roadmap, detailing key objectives,
+core deliverables, and progress milestones.
+
+\begin{footnotesize}
+\begin{longtable}{|p{1.1cm}|p{2.4cm}|p{5.6cm}|p{2cm}|}
+\caption{Project Deliverables \& Sprint Schedule (Sprints 1--14)}\label{tab:sprints}\\
+\hline
+\hline
+\textbf{Sprint \#} & \textbf{Timeframe} & \textbf{Key Deliverables \& Objectives} & \textbf{Status / Report} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Sprint \#} & \textbf{Timeframe} & \textbf{Key Deliverables \& Objectives} & \textbf{Status / Report} \\
+\hline
+\hline
+\endhead
+Sprint 1 & 06/01/2025 -- 12/01/2025 & Collect user requirements, conduct technical training, finalize vision \& scope. & Report 1 (Done) \\
+\hline
+Sprint 2 & 13/01/2025 -- 19/01/2025 & Design ERD, UI wireframes, setup base Spring Boot \& ReactJS projects, CI/CD pipeline. & Report 2 (Done) \\
+\hline
+Sprint 3 & 03/02/2025 -- 09/02/2025 & Implement Authentication module, GitHub OAuth2 flow, and User Management RBAC. & Completed \\
+\hline
+Sprint 4 & 10/02/2025 -- 16/02/2025 & Implement Timeline Management, Semester configuration, and Criteria Form module. & Completed \\
+\hline
+Sprint 5 & 17/02/2025 -- 23/02/2025 & Implement Project Registration, Idea Evaluation, and Approval Engine. & Report 3 (Done) \\
+\hline
+Sprint 6 & 24/02/2025 -- 02/03/2025 & Implement Notification System, Webhooks, Messaging, and preparing release base. & Completed \\
+\hline
+Sprint 7 & 03/03/2025 -- 09/03/2025 & Implement Team Formation, AI Member Matching, and Collaborative Workspace. & Report 4 (Done) \\
+\hline
+Sprint 8 & 10/03/2025 -- 16/03/2025 & Implement Feedback \& Review Result module, input validation, and constraint rules. & Completed \\
+\hline
+Sprint 9 & 17/03/2025 -- 23/03/2025 & Continue validation checks across all modules; perform comprehensive system code review. & Completed \\
+\hline
+Sprint 10 & 24/03/2025 -- 30/03/2025 & Execute Integration Testing across Backend REST APIs, AI Engine, and ReactJS UI. & Completed \\
+\hline
+Sprint 11 & 31/03/2025 -- 06/04/2025 & Execute System Testing, UAT scenarios, and performance optimization. & Report 5 (Done) \\
+\hline
+Sprint 12 & 07/04/2025 -- 13/04/2025 & Release Candidate 1.0 deployment to Supabase Cloud \& Vercel. & Report 6 (Done) \\
+\hline
+Sprint 13 & 14/04/2025 -- 20/04/2025 & Review all project features, verify audit logs, and polish User Guides. & Report 7 (Done) \\
+\hline
+Sprint 14 & 21/04/2025 -- 27/04/2025 & Finalize Capstone Final Report LaTeX/Word documents and prepare final presentation. & Final Stage \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Risk Management}
+
+Table~\ref{tab:risk} details the risk management framework, identifying operational,
+technical, and security risks alongside proactive response strategies.
+
+\begin{footnotesize}
+\begin{longtable}{|p{1.4cm}|p{4cm}|p{1.3cm}|p{1.7cm}|p{4.4cm}|}
+\caption{Project Risk Register \& Mitigation Plan}\label{tab:risk}\\
+\hline
+\hline
+\textbf{Risk ID} & \textbf{Risk Description \& Threat Scenario} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response \& Mitigation Strategy} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Risk ID} & \textbf{Risk Description \& Threat Scenario} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response \& Mitigation Strategy} \\
+\hline
+\hline
+\endhead
+RSK-01 & GitHub API rate limit or Webhook notification failure preventing event ingestion. & High & Medium & Implement exponential backoff retries, event logging, and message queueing via Kafka/RabbitMQ. \\
+\hline
+RSK-02 & AI Model hallucination or inaccurate documentation suggestions generated by LLM. & High & Medium & Enforce strict Human-in-the-Loop review workflow (Staff \& Manager) and grounding evidence checks. \\
+\hline
+RSK-03 & Data security breach or exposure of sensitive GitHub OAuth tokens / API keys. & Critical & Low & Encrypt credentials at rest using Supabase secrets; enforce HTTPS/TLS and strict RBAC controls. \\
+\hline
+RSK-04 & Database vector synchronization latency between PostgreSQL and AI RAG engine. & Medium & Medium & Optimize HNSW vector indexes in Pgvector and implement asynchronous background indexing workers. \\
+\hline
+RSK-05 & Sprint schedule delays due to complex AST parsing across multiple programming languages. & High & Medium & Prioritize Java \& TypeScript first as core MVP targets; defer secondary languages to future releases. \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Quality Assurance \& Defect Management}
+
+Table~\ref{tab:defect} outlines the quality targets, expected defect distribution
+percentages, and defect prevention notes across five testing stages.
+
+\begin{footnotesize}
+\begin{longtable}{|p{1.1cm}|p{2.3cm}|p{2.6cm}|p{1.6cm}|p{1.1cm}|p{3cm}|}
+\caption{Defect Prevention \& Testing Stage Distribution}\label{tab:defect}\\
+\hline
+\hline
+\textbf{Stage \#} & \textbf{Testing Stage} & \textbf{Focus Area} & \textbf{Defect Threshold} & \textbf{\% Share} & \textbf{Quality Notes} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Stage \#} & \textbf{Testing Stage} & \textbf{Focus Area} & \textbf{Defect Threshold} & \textbf{\% Share} & \textbf{Quality Notes} \\
+\hline
+\hline
+\endhead
+1 & Reviewing & Backend \& Frontend Code Review (Spring Boot / ReactJS) & $<$30 defects & 5\% & Focus on security, performance, clean architecture, and maintainability. \\
+\hline
+2 & Unit Test & Business Logic, Auth, State Management \& AST Parsers & $<$20 defects & 3\% & Ensure correctness of AST parsing, prompt generation, and auth tokens. \\
+\hline
+3 & Integration Test & API Endpoints, Supabase Pgvector \& Webhook Sync & $<$5 defects & 1\% & Verify smooth API interactions, state consistency, and webhook reliability. \\
+\hline
+4 & System Test & Full System Workflows, Database \& Diff Viewer UI & $<$5 defects & 1\% & Ensure end-to-end navigation, diff side-by-side accuracy, and stability. \\
+\hline
+5 & Acceptance Test & Multi-tier Review Workflows (Developer $\rightarrow$ Staff $\rightarrow$ Manager) & $<$5 defects & 1\% & Validate human-in-the-loop governance against business requirements. \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Team Training \& Onboarding Plan}
+
+Table~\ref{tab:training} outlines the technical skill enhancement plan designed for
+all team members at the start of the project.
+
+\begin{footnotesize}
+\begin{longtable}{|p{1.4cm}|p{3.2cm}|p{2.3cm}|p{2cm}|p{3cm}|}
+\caption{Technical Skill \& Onboarding Training Plan}\label{tab:training}\\
+\hline
+\hline
+\textbf{Module \#} & \textbf{Training Domain / Technology} & \textbf{Target Participants} & \textbf{Schedule} & \textbf{Waiver / Completion Criteria} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Module \#} & \textbf{Training Domain / Technology} & \textbf{Target Participants} & \textbf{Schedule} & \textbf{Waiver / Completion Criteria} \\
+\hline
+\hline
+\endhead
+TRN-01 & Java 17 \& Spring Boot Microservices & Backend Developers & Week 1 (7 Days) & Mandatory --- Build RESTful API sample. \\
+\hline
+TRN-02 & ReactJS, TypeScript \& TailwindCSS & Frontend Developers & Week 1 (14 Days) & Mandatory --- Pass UI component test. \\
+\hline
+TRN-03 & Git Workflow \& GitHub Actions CI/CD & All Team Members & Week 1 (3 Days) & Mandatory --- Pass PR \& branch flow test. \\
+\hline
+TRN-04 & Supabase PostgreSQL \& Pgvector Indexing & Backend \& AI Developers & Week 2 (4 Days) & Mandatory --- Execute vector query script. \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Communication Plan}
+
+Table~\ref{tab:comm} outlines communication channels, frequency, and tools used to
+keep all stakeholders aligned.
+
+\begin{footnotesize}
+\begin{longtable}{|p{2.4cm}|p{2cm}|p{3.2cm}|p{2cm}|p{2.4cm}|}
+\caption{Project Communication \& Sync Plan}\label{tab:comm}\\
+\hline
+\hline
+\textbf{Communication Item} & \textbf{Target Audience} & \textbf{Main Purpose} & \textbf{Frequency} & \textbf{Method / Tool} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Communication Item} & \textbf{Target Audience} & \textbf{Main Purpose} & \textbf{Frequency} & \textbf{Method / Tool} \\
+\hline
+\hline
+\endhead
+Team Weekly Meeting & All Team Members & Review plan, schedule, weekly work achievements, and progress. & Fridays @ 17:30 & Offline / Google Meet \\
+\hline
+Weekly Progress Report & Supervisors \& Members & Review progress, code \& documentation status, resolve blockers. & Once per week & Google Meet / Drive \\
+\hline
+Daily Standup & Development Team & Quick sync on daily completed tasks and immediate roadblocks. & Daily @ 09:00 & Google Meet / Discord \\
+\hline
+Unscheduled Meeting & Affected Team Members & Resolve critical blocking issues or urgent architectural bugs. & Ad-hoc on demand & Google Meet \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\section{Configuration \& Version Management}
+
+Table~\ref{tab:config} lists the configuration management tools, repositories, and
+deployment infrastructure utilized across the project.
+
+\begin{footnotesize}
+\begin{longtable}{|p{3cm}|p{3.4cm}|p{5.6cm}|}
+\caption{Configuration Management \& Infrastructure Stack}\label{tab:config}\\
+\hline
+\hline
+\textbf{Category} & \textbf{Selected Tool / Platform} & \textbf{Purpose \& Management Scope} \\
+\hline
+\hline
+\endfirsthead
+\hline
+\textbf{Category} & \textbf{Selected Tool / Platform} & \textbf{Purpose \& Management Scope} \\
+\hline
+\hline
+\endhead
+Source Code Control & GitHub (Git) & Managed via feature branches, Pull Request reviews, and CI/CD. \\
+\hline
+Task \& Backlog Tracking & Trello \& Jira & Kanban boards, sprint backlogs, and task cards. \\
+\hline
+Document Management & Google Drive \& MS Word & Project proposals, preliminary reports, and shared assets. \\
+\hline
+Core Technologies & Java Spring Boot \& ReactJS & Backend microservices API and responsive web frontend. \\
+\hline
+AI \& ML Framework & Python FastAPI \& OpenAI / Gemini & AI documentation generation engine, RAG pipeline, and AST parsers. \\
+\hline
+Database Systems & Supabase PostgreSQL \& Pgvector & Relational data tables and 1536-dimensional vector embedding storage. \\
+\hline
+Deployment \& Containers & Docker, Vercel \& Render & Cloud containerization, frontend hosting, and backend API hosting. \\
+\hline
+\hline
+\end{longtable}
+\end{footnotesize}
