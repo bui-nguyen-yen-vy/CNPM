@@ -1,8 +1,8 @@
-\chapter{Automatic Documentation Update on Source-Code Change}
+\section{Automatic Documentation Update on Source-Code Change}
 
 Documentation drift occurs frequently in software engineering when code evolves continuously through Commits and Pull Requests while technical documentation remains untouched. The \textbf{Automatic Documentation Update} module in LivingDocs addresses this issue by automatically maintaining synchronization between source code changes and project documentation.
 
-\section{Module Overview \& Objectives}
+\subsection{Module Overview \& Objectives}
 The primary objective of this module is to automate the end-to-end process of detecting code modifications and updating affected documentation artifacts:
 \begin{itemize}
     \item \textbf{Real-Time Event Detection:} Intercept source code modification events dispatched via GitHub Webhooks (Push Commits, PR creations/updates, and PR merges).
@@ -11,7 +11,7 @@ The primary objective of this module is to automate the end-to-end process of de
     \item \textbf{Side-by-Side Diff \& Rollback:} Provide interactive side-by-side diff views, track version change logs, and enable single-click version rollbacks.
 \end{itemize}
 
-\section{Functional Requirements}
+\subsection{Functional Requirements}
 
 \begin{table}[h!]
 \centering
@@ -32,9 +32,9 @@ The primary objective of this module is to automate the end-to-end process of de
 \end{tabularx}
 \end{table}
 
-\section{Detailed Use Cases}
+\subsection{Detailed Use Cases}
 
-\subsection{UC-AU-01: Automatic Update Triggering on Source Code Change}
+\subsubsection{UC-AU-01: Automatic Update Triggering on Source Code Change}
 \begin{itemize}
     \item \textbf{Actors:} System (GitHub Webhook / Event Bus), Developer.
     \item \textbf{Pre-conditions:} The repository is connected to LivingDocs and auto-update policies are active.
@@ -48,7 +48,7 @@ The primary objective of this module is to automate the end-to-end process of de
     \end{enumerate}
 \end{itemize}
 
-\subsection{UC-AU-02: Diff Comparison \& Developer Acceptance}
+\subsubsection{UC-AU-02: Diff Comparison \& Developer Acceptance}
 \begin{itemize}
     \item \textbf{Actors:} Developer / Author.
     \item \textbf{Pre-conditions:} An AI auto-updated draft is pending review.
@@ -65,7 +65,7 @@ The primary objective of this module is to automate the end-to-end process of de
     \end{enumerate}
 \end{itemize}
 
-\section{System Architecture \& Processing Flow}
+\subsection{System Architecture \& Processing Flow}
 The auto-update module relies on an event-driven microservices architecture:
 
 \begin{verbatim}
@@ -84,7 +84,7 @@ The auto-update module relies on an event-driven microservices architecture:
   3. Dispatch WebSocket notification to developer interface.
 \end{verbatim}
 
-\section{Database Schema}
+\subsection{Database Schema}
 The module maintains history, change logs, and configuration state using PostgreSQL tables:
 
 \begin{lstlisting}[language=SQL, caption={PostgreSQL Database Schema for Auto Update Module}]

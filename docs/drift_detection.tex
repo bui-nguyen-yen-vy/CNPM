@@ -1,11 +1,11 @@
-\chapter{Documentation Drift Detection}
+\section{Documentation Drift Detection}
 
-\section{Overview}
+\subsection{Overview}
 The \textbf{Documentation Drift Detection} module within the LivingDocs system is designed to automatically identify inconsistencies (drift) between source code hosted on GitHub and its associated documentation. Whenever code changes occur via commits or Pull Requests, the system parses the code, performs semantic evaluation, and compares it against existing documentation to issue timely alerts.
 
 This module aligns with the functional specifications defined in the system requirement documentation.
 
-\section{Objectives \& Scope}
+\subsection{Objectives \& Scope}
 \begin{itemize}
     \item Intercept and process commit and Pull Request events via GitHub Webhooks.
     \item Analyze source code structure using Abstract Syntax Tree (AST) parsing and semantic analysis.
@@ -14,12 +14,12 @@ This module aligns with the functional specifications defined in the system requ
     \item Automatically generate drift reports with grounding evidence and dispatch alerts to Staff and Technical Leads.
 \end{itemize}
 
-\section{Functional Details}
+\subsection{Functional Details}
 
-\subsection{GitHub Event Ingestion (FR01)}
+\subsubsection{GitHub Event Ingestion (FR01)}
 The system uses Webhooks to receive real-time updates whenever a new commit is pushed or a Pull Request is opened or updated in a monitored repository.
 
-\subsection{AST Source Code Parsing (FR02)}
+\subsubsection{AST Source Code Parsing (FR02)}
 Modified source code is processed through an AST parser to extract key technical entities:
 \begin{itemize}
     \item Class names, method signatures, interfaces, and package hierarchies.
@@ -27,7 +27,7 @@ Modified source code is processed through an AST parser to extract key technical
     \item Associated docstrings, inline comments, and annotations.
 \end{itemize}
 
-\subsection{Code-Doc Comparison \& Scoring (FR03, FR04)}
+\subsubsection{Code-Doc Comparison \& Scoring (FR03, FR04)}
 The system retrieves documentation linked to the modified source files and evaluates consistency across three drift categories:
 \begin{itemize}
     \item \textbf{Referential Drift:} Referenced classes, methods, or parameters have been deleted, moved, or renamed.
@@ -43,7 +43,7 @@ Drift severity is classified into four levels:
     \item \textbf{Critical (Breaking Drift):} Deleted/renamed core APIs, major architectural refactoring, or critical config changes.
 \end{itemize}
 
-\subsection{Report Generation \& Alerting (FR05, FR06)}
+\subsubsection{Report Generation \& Alerting (FR05, FR06)}
 The system automatically generates a detailed drift report comprising:
 \begin{itemize}
     \item Commit hash or Pull Request ID.
@@ -53,7 +53,7 @@ The system automatically generates a detailed drift report comprising:
 \end{itemize}
 Alerts are delivered to Staff reviewers or Technical Leads via the system web interface, Slack, or email notifications.
 
-\section{Processing Workflow}
+\subsection{Processing Workflow}
 \begin{verbatim}
   GitHub Event (Commit / PR)
               |
@@ -70,7 +70,7 @@ Alerts are delivered to Staff reviewers or Technical Leads via the system web in
  Report Generation & Notification Dispatch
 \end{verbatim}
 
-\section{Acceptance Criteria}
+\subsection{Acceptance Criteria}
 \begin{enumerate}
     \item Accurately receive and process Webhook event payloads from GitHub.
     \item Successfully parse modified source code and extract code entities via AST.

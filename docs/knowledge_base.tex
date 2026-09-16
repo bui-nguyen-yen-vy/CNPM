@@ -1,8 +1,8 @@
-\chapter{Knowledge Base \& Vector Retrieval Management}
+\section{Knowledge Base \& Vector Retrieval Management}
 
 The \textbf{Knowledge Base} serves as the central semantic memory for the LivingDocs system. It is responsible for indexing, vectorizing, and retrieving documentation chunks to support Retrieval-Augmented Generation (RAG) during automated documentation updates and drift detection workflows.
 
-\section{Module Overview \& Objectives}
+\subsection{Module Overview \& Objectives}
 The Knowledge Base module manages both raw documentation artifacts and their high-dimensional vector embeddings to enable fast, accurate semantic searches. Key functional objectives include:
 \begin{itemize}
     \item \textbf{Automated Chunking \& Ingestion:} Parse incoming Markdown/LaTeX documentation into semantic chunks and generate vector embeddings via embedding models.
@@ -11,7 +11,7 @@ The Knowledge Base module manages both raw documentation artifacts and their hig
     \item \textbf{Audit Trail \& History Tracking:} Maintain full version lineage for each knowledge chunk to support change auditing and seamless version rollbacks.
 \end{itemize}
 
-\section{Functional Requirements Matrix}
+\subsection{Functional Requirements Matrix}
 
 \begin{table}[h!]
 \centering
@@ -29,9 +29,9 @@ The Knowledge Base module manages both raw documentation artifacts and their hig
 \end{tabularx}
 \end{table}
 
-\section{Knowledge Processing \& Retrieval Pipeline}
+\subsection{Knowledge Processing \& Retrieval Pipeline}
 
-\subsection{Document Ingestion Flow}
+\subsubsection{Document Ingestion Flow}
 When a document is modified or auto-updated, the Knowledge Base ingestion pipeline executes the following steps:
 \begin{enumerate}
     \item \textbf{Preprocessing \& Parsing:} Parse document syntax (Markdown / LaTeX) and break text into optimal semantic chunks (250–500 tokens with overlapping boundaries).
@@ -40,7 +40,7 @@ When a document is modified or auto-updated, the Knowledge Base ingestion pipeli
     \item \textbf{Vector Upsert:} Store vectors and payload metadata in the Vector Store.
 \end{enumerate}
 
-\subsection{RAG Retrieval Sequence}
+\subsubsection{RAG Retrieval Sequence}
 \begin{verbatim}
   [AST / Code Diff Trigger] 
              |
@@ -57,7 +57,7 @@ When a document is modified or auto-updated, the Knowledge Base ingestion pipeli
   [Top-K Document Chunks] ---> [Inject into LLM Prompt Context]
 \end{verbatim}
 
-\section{Database Schema}
+\subsection{Database Schema}
 The Knowledge Base relies on PostgreSQL (with \texttt{pgvector} extension) or dedicated vector databases to manage chunk metadata and version relations.
 
 \begin{lstlisting}[language=SQL, caption={PostgreSQL Database Schema for Knowledge Base Chunks}]
